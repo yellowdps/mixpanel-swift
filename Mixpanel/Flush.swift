@@ -1,5 +1,5 @@
 //
-//  Flushing.swift
+//  Flush.swift
 //  Mixpanel
 //
 //  Created by Yarden Eitan on 6/3/16.
@@ -8,18 +8,24 @@
 
 import Foundation
 
-protocol FlushingDelegate {
-    func flush()
+protocol FlushDelegate {
+    func flush(completion: (() -> Void)?)
     func updateNetworkActivityIndicator(_ on: Bool)
 }
 
-class Flushing {
+protocol Lifecycle {
+    func applicationDidBecomeActive()
+    func applicationWillResignActive()
+}
+
+class Flush: Lifecycle {
     var serverURL = "https://api.mixpanel.com"
     var networkRequestsAllowedAfterTime: Double = 0
     var useIPAddressForGeoLocation = true
     var networkConsecutiveFailures = 0
     var timer: Timer?
-    var delegate: FlushingDelegate?
+    var delegate: FlushDelegate?
+    var flushOnBackground = true
     var _flushInterval: Double = 0
     var flushInterval: Double {
         set {
@@ -27,7 +33,7 @@ class Flushing {
             _flushInterval = newValue
             objc_sync_exit(self)
 
-            delegate?.flush()
+            delegate?.flush(completion: nil)
             startFlushTimer()
         }
         get {
@@ -51,42 +57,42 @@ class Flushing {
         flushQueue(.People, queue: &peopleQueue)
     }
 
-    func flushQueue(_ type: Flushing.FlushType, queue: inout Queue) {
-        if Date().timeIntervalSince1970 < self.networkRequestsAllowedAfterTime {
+    func flushQueue(_ type: Flush.FlushType, queue: inout Queue) {
+        if Date().timeIntervalSince1970 < networkRequestsAllowedAfterTime {
             return
         }
 
-        self.flushQueueAsync(&queue, type: type)
+        flushQueue(&queue, type: type)
     }
-
-
+    
     func startFlushTimer() {
         stopFlushTimer()
-        DispatchQueue.main.async(execute: {
-            if self.flushInterval > 0 {
+        if self.flushInterval > 0 {
+            DispatchQueue.main.async(execute: {
                 self.timer = Timer.scheduledTimer(timeInterval: self.flushInterval,
                                                   target: self,
                                                   selector: #selector(self.flushSelector),
                                                   userInfo: nil,
                                                   repeats: true)
-            }
-        })
+                
+            })
+        }
     }
 
     @objc func flushSelector() {
-        delegate?.flush()
+        delegate?.flush(completion: nil)
     }
 
     func stopFlushTimer() {
-        DispatchQueue.main.async(execute: {
-            if let timer = self.timer {
+        if let timer = self.timer {
+            DispatchQueue.main.async(execute: {
                 timer.invalidate()
-            }
-            self.timer = nil
-        })
+                self.timer = nil
+            })
+        }
     }
 
-    func flushQueueAsync(_ queue: inout Queue, type: FlushType) {
+    func flushQueue(_ queue: inout Queue, type: FlushType) {
         while queue.count > 0 {
             var shouldContinue = false
             let batchSize = min(queue.count, 50)
@@ -115,63 +121,77 @@ class Flushing {
         let responseParser: (Data) -> Int? = { data in
             let response = String(data: data, encoding: String.Encoding.utf8)
             if let response = response {
-                //TODO: Should we allow 0 if it can't parse the response to an int?
                 return Int(response) ?? 0
             }
             return nil
         }
-
-        let requestBody = "ip=\(Int(self.useIPAddressForGeoLocation))&data=\(requestData)"
+        let requestBody = "ip=\(Int(useIPAddressForGeoLocation))&data=\(requestData)"
                 .data(using: String.Encoding.utf8)
+        
+        let resource = Network.buildResource(path: type.rawValue,
+                                             method: Method.POST,
+                                             requestBody: requestBody,
+                                             headers: ["Accept-Encoding": "gzip"],
+                                             parse: responseParser)
+        
         delegate?.updateNetworkActivityIndicator(true)
-        flushRequestHandler(self.serverURL,
-                            resource: Resource(
-                                path: type.rawValue,
-                                method: Method.POST,
-                                requestBody: requestBody,
-                                headers: ["Accept-Encoding": "gzip"],
-                                parse: responseParser),
+        flushRequestHandler(serverURL,
+                            resource: resource,
                             completion: { success in
-                                completion(success)
-                                self.delegate?.updateNetworkActivityIndicator(false)
-        })
+                             completion(success)
+                             self.delegate?.updateNetworkActivityIndicator(false)
+                            }
+        )
     }
 
     private func flushRequestHandler(_ base: String,
                                      resource: Resource<Int>,
                                      completion: (Bool) -> Void) {
-        NetworkingLayer.apiRequest(base: base,
-                                   resource: resource,
-                                   failure: { (reason, data, response) in
-                self.networkConsecutiveFailures += 1
-                self.updateRetryDelay(response)
-                completion(false)
-            }, completion: { (result, response) in
-                self.networkConsecutiveFailures = 0
-                self.updateRetryDelay(response)
-                if result == 0 {
-                    print("\(base) api rejected some items")
-                }
-                completion(true)
-        })
+        
+        Network.apiRequest(base: base,
+                           resource: resource,
+                           failure: { (reason, data, response) in
+                            self.networkConsecutiveFailures += 1
+                            self.updateRetryDelay(response)
+                            completion(false)
+                           },
+                           success: { (result, response) in
+                            self.networkConsecutiveFailures = 0
+                            self.updateRetryDelay(response)
+                            if result == 0 {
+                                print("\(base) api rejected some items")
+                            }
+                            completion(true)
+                           }
+        )
+        
     }
 
     private func updateRetryDelay(_ response: URLResponse?) {
         let retryTimeStr = (response as? HTTPURLResponse)?.allHeaderFields["Retry-After"] as? String
         var retryTime: Double = retryTimeStr != nil ? Double(retryTimeStr!)! : 0
 
-        if self.networkConsecutiveFailures > 1 {
+        if networkConsecutiveFailures > 1 {
             retryTime = max(retryTime,
-                            self.retryBackOffTimeWithConsecutiveFailures(
+                            retryBackOffTimeWithConsecutiveFailures(
                                 self.networkConsecutiveFailures))
         }
         let retryDate = Date(timeIntervalSinceNow: retryTime)
-        self.networkRequestsAllowedAfterTime = retryDate.timeIntervalSince1970
+        networkRequestsAllowedAfterTime = retryDate.timeIntervalSince1970
     }
 
     private func retryBackOffTimeWithConsecutiveFailures(_ failureCount: Int) -> TimeInterval {
         let time = pow(2.0, Double(failureCount) - 1) * 60 + Double(arc4random_uniform(30))
         return min(max(60, time), 600)
+    }
+    
+    // MARK: - Lifecycle
+    func applicationDidBecomeActive() {
+        startFlushTimer()
+    }
+    
+    func applicationWillResignActive() {
+        stopFlushTimer()
     }
 
 }

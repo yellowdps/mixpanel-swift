@@ -13,8 +13,8 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        Mixpanel.mainInstance().identify("13792")
-        Mixpanel.mainInstance().people.setOnce(["$name":"Joe",
+        Mixpanel.mainInstance().identify(distinctId: "13792")
+        Mixpanel.mainInstance().people.setOnce(properties: ["$name":"Joe",
                                                 "$email":"joe.bloggs@mixpanel.com"])
     }
 
@@ -24,14 +24,14 @@ class ViewController: UIViewController {
     }
 
     @IBAction func trackAction(_ sender: AnyObject) {
-        Mixpanel.mainInstance().track("press button")
+        Mixpanel.mainInstance().track(event: "press button")
     }
 
     @IBAction func setPeopleAction(_ sender: AnyObject) {
-        Mixpanel.mainInstance().people.set(["weapon":"axe"])
+        Mixpanel.mainInstance().people.set(properties: ["weapon":"axe"])
     }
     @IBAction func signupAction(_ sender: AnyObject) {
         Mixpanel.mainInstance().createAlias("13792", distinctId: Mixpanel.mainInstance().distinctId)
-        Mixpanel.mainInstance().identify(Mixpanel.mainInstance().distinctId)
+        Mixpanel.mainInstance().identify(distinctId: Mixpanel.mainInstance().distinctId)
     }
 }

@@ -9,11 +9,11 @@
 import Foundation
 
 struct ArchivedProperties {
-    var superProperties: Properties
-    var timedEvents: Properties
-    var distinctId: String?
-    var peopleDistinctId: String?
-    var peopleUnidentifiedQueue: Queue
+    let superProperties: Properties
+    let timedEvents: Properties
+    let distinctId: String?
+    let peopleDistinctId: String?
+    let peopleUnidentifiedQueue: Queue
 }
 
 class Persistence {
@@ -43,7 +43,7 @@ class Persistence {
     }
 
     func filePathWithType(_ type: ArchiveType) -> String? {
-        return self.filePathFor(type.rawValue)
+        return filePathFor(type.rawValue)
     }
 
     func archive(_ eventsQueue: Queue, peopleQueue: Queue, properties: ArchivedProperties) {
@@ -61,17 +61,17 @@ class Persistence {
     }
 
     func archiveProperties(_ properties: ArchivedProperties) {
-        var p: Properties? = Properties()
-        p!["distinctId"] = properties.distinctId
-        p!["superProperties"] = properties.superProperties
-        p!["peopleDistinctId"] = properties.peopleDistinctId
-        p!["peopleUnidentifiedQueue"] = properties.peopleUnidentifiedQueue
-        p!["timedEvents"] = properties.timedEvents
+        var p: Properties = Properties()
+        p["distinctId"] = properties.distinctId
+        p["superProperties"] = properties.superProperties
+        p["peopleDistinctId"] = properties.peopleDistinctId
+        p["peopleUnidentifiedQueue"] = properties.peopleUnidentifiedQueue
+        p["timedEvents"] = properties.timedEvents
         archiveToFile(.Properties, object: p)
     }
 
     private func archiveToFile(_ type: ArchiveType, object: AnyObject?) {
-        let filePath = self.filePathWithType(type)
+        let filePath = filePathWithType(type)
         guard let path = filePath else {
             print("bad file path, cant fetch file")
             return
@@ -148,7 +148,7 @@ class Persistence {
     }
 
     private func unarchiveWithType(_ type: ArchiveType) -> AnyObject? {
-        let filePath = self.filePathWithType(type)
+        let filePath = filePathWithType(type)
         guard let path = filePath else {
             print("bad file path, cant fetch file")
             return nil
@@ -161,4 +161,5 @@ class Persistence {
 
         return unarchivedData
     }
+    
 }

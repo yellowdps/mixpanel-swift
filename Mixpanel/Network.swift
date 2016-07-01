@@ -1,5 +1,5 @@
 //
-//  NetworkingLayer.swift
+//  Network.swift
 //  Mixpanel
 //
 //  Created by Yarden Eitan on 6/2/16.
@@ -13,7 +13,7 @@ enum BasePath: String {
     case MixpanelAPI = "https://api.mixpanel.com"
 
     func getURL() -> URL {
-        return URL(fileURLWithPath: self.rawValue)
+        return URL(fileURLWithPath: rawValue)
     }
 }
 
@@ -37,12 +37,12 @@ enum Reason {
     case other(NSError)
 }
 
-class NetworkingLayer {
+class Network {
 
     class func apiRequest<A>(base: String,
                           resource: Resource<A>,
                           failure: (Reason, Data?, URLResponse?) -> (),
-                          completion: (A, URLResponse?) -> ()) {
+                          success: (A, URLResponse?) -> ()) {
         guard let request = createRequest(base, resource: resource) else {
             return
         }
@@ -66,7 +66,7 @@ class NetworkingLayer {
                 return
             }
 
-            completion(result, response)
+            success(result, response)
             }.resume()
     }
 
@@ -87,5 +87,9 @@ class NetworkingLayer {
             request.setValue(v, forHTTPHeaderField: k)
         }
         return request as URLRequest
+    }
+    
+    class func buildResource<A>(path: String, method: Method, requestBody: Data?, headers: [String: String], parse: (Data) -> A?) -> Resource<A> {
+        return Resource(path: path, method: method, requestBody: requestBody, headers: headers, parse: parse)
     }
 }

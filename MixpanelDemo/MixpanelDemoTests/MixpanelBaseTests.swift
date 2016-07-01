@@ -22,10 +22,10 @@ class MixpanelBaseTests: XCTestCase, MixpanelDelegate {
         super.setUp()
         
         LSNocilla.sharedInstance().start()
-        self.mixpanelWillFlush = false
-        self.mixpanel = Mixpanel.initWithToken(kTestToken, launchOptions: nil, flushInterval: 0)
-        self.mixpanel.reset()
-        self.waitForSerialQueue()
+        mixpanelWillFlush = false
+        mixpanel = Mixpanel.initialize(token: kTestToken, launchOptions: nil, flushInterval: 0)
+        mixpanel.reset()
+        waitForSerialQueue()
         NSLog("finished test setup")
     }
     
@@ -34,22 +34,22 @@ class MixpanelBaseTests: XCTestCase, MixpanelDelegate {
         LSNocilla.sharedInstance().stop()
         LSNocilla.sharedInstance().clearStubs()
         
-        self.mixpanel = nil
+        mixpanel = nil
     }
     
     func mixpanelWillFlush(_ mixpanel: MixpanelInstance) -> Bool {
-        return self.mixpanelWillFlush
+        return mixpanelWillFlush
     }
     
     func waitForSerialQueue() {
-        self.mixpanel.serialQueue.sync() {
+        mixpanel.serialQueue.sync() {
             return
         }
     }
     
     func flushAndWaitForSerialQueue() {
-        self.mixpanel.flush()
-        self.waitForSerialQueue()
+        mixpanel.flush()
+        waitForSerialQueue()
     }
     
     func assertDefaultPeopleProperties(_ properties: [String: AnyObject]) {

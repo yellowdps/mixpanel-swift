@@ -10,26 +10,30 @@ import Foundation
 
 
 @discardableResult
-public func initWithToken(_ apiToken: String,
-                          launchOptions: [NSObject: AnyObject]? = nil,
-                          flushInterval: Double = 60,
-                          instanceName: String = UUID().uuidString) -> MixpanelInstance {
-    return MixpanelManager.sharedInstance.initWithToken(apiToken,
-                                                        launchOptions: launchOptions,
-                                                        flushInterval: flushInterval,
-                                                        instanceName: instanceName)
+public func initialize(token apiToken: String,
+                       launchOptions: [NSObject: AnyObject]? = nil,
+                       flushInterval: Double = 60,
+                       instanceName: String = UUID().uuidString) -> MixpanelInstance {
+    return MixpanelManager.sharedInstance.initialize(token:         apiToken,
+                                                     launchOptions: launchOptions,
+                                                     flushInterval: flushInterval,
+                                                     instanceName:  instanceName)
 }
 
-public func getInstanceWithName(_ instanceName: String) -> MixpanelInstance? {
-    return MixpanelManager.sharedInstance.getInstanceWithName(instanceName)
+public func getInstance(name instanceName: String) -> MixpanelInstance? {
+    return MixpanelManager.sharedInstance.getInstance(name: instanceName)
 }
 
 public func mainInstance() -> MixpanelInstance {
     return MixpanelManager.sharedInstance.getMainInstance()!
 }
 
-func setMainInstance(newMainInstance: MixpanelInstance) {
-    MixpanelManager.sharedInstance.setMainInstance(newMainInstance: newMainInstance)
+public func setMainInstance(name instanceName: String) {
+    MixpanelManager.sharedInstance.setMainInstance(name: instanceName)
+}
+
+public func removeInstance(name instanceName: String) {
+    MixpanelManager.sharedInstance.removeInstance(name: instanceName)
 }
 
 class MixpanelManager {
@@ -41,10 +45,10 @@ class MixpanelManager {
         instances = [String: MixpanelInstance]()
     }
 
-    func initWithToken(_ apiToken: String,
-                       launchOptions: [NSObject: AnyObject]?,
-                       flushInterval: Double,
-                       instanceName: String) -> MixpanelInstance {
+    func initialize(token apiToken: String,
+                    launchOptions: [NSObject: AnyObject]?,
+                    flushInterval: Double,
+                    instanceName: String) -> MixpanelInstance {
         let instance = MixpanelInstance(apiToken: apiToken,
                                         launchOptions: launchOptions,
                                         flushInterval: flushInterval)
@@ -54,7 +58,7 @@ class MixpanelManager {
         return instance
     }
 
-    func getInstanceWithName(_ instanceName: String) -> MixpanelInstance? {
+    func getInstance(name instanceName: String) -> MixpanelInstance? {
         guard let instance = instances[instanceName] else {
             print("no such instance")
             return nil
@@ -66,8 +70,15 @@ class MixpanelManager {
         return mainInstance
     }
 
-    func setMainInstance(newMainInstance: MixpanelInstance) {
-        mainInstance = newMainInstance
+    func setMainInstance(name instanceName: String) {
+        guard let instance = instances[instanceName] else {
+            return
+        }
+        mainInstance = instance
+    }
+    
+    func removeInstance(name instanceName: String) {
+        instances[instanceName] = nil
     }
 
 }

@@ -1,5 +1,5 @@
 //
-//  Tracking.swift
+//  Track.swift
 //  Mixpanel
 //
 //  Created by Yarden Eitan on 6/3/16.
@@ -14,7 +14,7 @@ func += <K, V> (left: inout [K:V], right: [K:V]) {
     }
 }
 
-class Tracking {
+class Track {
     let apiToken: String
 
     init(apiToken: String) {
@@ -39,7 +39,7 @@ class Tracking {
         }
     }
 
-    func track(_ event: String?,
+    func track(event: String?,
                properties: [String:AnyObject]? = nil,
                eventsQueue: inout Queue,
                timedEvents: inout Properties,
@@ -52,13 +52,13 @@ class Tracking {
             ev = "mp_event"
         }
 
-        Tracking.assertPropertyTypes(properties)
+        Track.assertPropertyTypes(properties)
         let epochInterval = Date().timeIntervalSince1970
         let epochSeconds = Int(round(epochInterval))
         let eventStartTime = timedEvents[ev!] as? Int
         var p = [String : AnyObject]()
         p += automaticProperties
-        p["token"] = self.apiToken
+        p["token"] = apiToken
         p["time"] = epochSeconds
         if let eventStartTime = eventStartTime {
             timedEvents.removeValue(forKey: ev!)
@@ -81,14 +81,14 @@ class Tracking {
     }
 
     func registerSuperProperties(_ properties: Properties, superProperties: inout Properties) {
-        Tracking.assertPropertyTypes(properties)
+        Track.assertPropertyTypes(properties)
         superProperties += properties
     }
 
     func registerSuperPropertiesOnce(_ properties: [String : AnyObject],
                                      superProperties: inout Properties,
                                      defaultValue: AnyObject?) {
-        Tracking.assertPropertyTypes(properties)
+        Track.assertPropertyTypes(properties)
             _ = properties.map() {
                 let val = superProperties[$0.0]
                 if val == nil ||
@@ -106,7 +106,7 @@ class Tracking {
         superProperties.removeAll()
     }
 
-    func timeEvent(_ event: String?, timedEvents: inout Properties) {
+    func time(event: String?, timedEvents: inout Properties) {
         let startTime = Date().timeIntervalSince1970
         guard let event = event where event.characters.count > 0 else {
             print("mixpanel cannot time an empty event")

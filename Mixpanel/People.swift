@@ -27,8 +27,8 @@ public class People {
     init(apiToken: String, serialQueue: DispatchQueue) {
         self.apiToken = apiToken
         self.serialQueue = serialQueue
-        self.unidentifiedQueue = []
-        self.automaticPeopleProperties = collectAutomaticPeopleProperties()
+        unidentifiedQueue = []
+        automaticPeopleProperties = collectAutomaticPeopleProperties()
     }
 
     func collectAutomaticPeopleProperties() -> Properties {
@@ -50,7 +50,7 @@ public class People {
         let epochMilliseconds = round(Date().timeIntervalSince1970 * 1000)
         let ignoreTimeCopy = ignoreTime
 
-        self.serialQueue.async(execute: {
+        serialQueue.async(execute: {
             var r = Properties()
             var p = Properties()
             r["$token"] = self.apiToken
@@ -99,45 +99,45 @@ public class People {
 
     public func removePushDeviceToken() {
         let p = ["$properties": ["$ios_devices"]]
-        self.addPeopleRecordToQueueWithAction("$unset", properties: p)
+        addPeopleRecordToQueueWithAction("$unset", properties: p)
     }
 
-    public func set(_ properties: Properties?) {
+    public func set(properties: Properties?) {
         MPAssert(properties != nil, "properties must not be nil")
-        Tracking.assertPropertyTypes(properties)
+        Track.assertPropertyTypes(properties)
         guard let properties = properties else {
             return
         }
-        self.addPeopleRecordToQueueWithAction("$set", properties: properties)
+        addPeopleRecordToQueueWithAction("$set", properties: properties)
     }
 
-    public func set(_ property: String?, to: AnyObject?) {
+    public func set(property: String?, to: AnyObject?) {
         MPAssert(property != nil, "property must not be nil")
         MPAssert(to != nil, "to must not be nil")
         guard let property = property, to = to else {
             return
         }
-        set([property: to])
+        set(properties: [property: to])
     }
 
-    public func setOnce(_ properties: Properties?) {
+    public func setOnce(properties: Properties?) {
         MPAssert(properties != nil, "properties must not be nil")
-        Tracking.assertPropertyTypes(properties)
+        Track.assertPropertyTypes(properties)
         guard let properties = properties else {
             return
         }
-        self.addPeopleRecordToQueueWithAction("$set_once", properties: properties)
+        addPeopleRecordToQueueWithAction("$set_once", properties: properties)
     }
 
-    public func unset(_ properties: [String]?) {
+    public func unset(properties: [String]?) {
         MPAssert(properties != nil, "properties must not be nil")
         guard let properties = properties else {
             return
         }
-        self.addPeopleRecordToQueueWithAction("$unset", properties: ["$properties":properties])
+        addPeopleRecordToQueueWithAction("$unset", properties: ["$properties":properties])
     }
 
-    public func increment(_ properties: Properties?) {
+    public func increment(properties: Properties?) {
         MPAssert(properties != nil, "properties must not be nil")
         guard let properties = properties else {
             return
@@ -148,28 +148,28 @@ public class People {
             MPAssert(false, "increment property values should be numbers")
             return
         }
-        self.addPeopleRecordToQueueWithAction("$add", properties: properties)
+        addPeopleRecordToQueueWithAction("$add", properties: properties)
     }
 
-    public func increment(_ property: String?, by: Int?) {
+    public func increment(property: String?, by: Int?) {
         MPAssert(property != nil, "property must not be nil")
         MPAssert(by != nil, "amount must not be nil")
         guard let property = property, by = by else {
             return
         }
-        increment([property: by])
+        increment(properties: [property: by])
     }
 
-    public func append(_ properties: Properties?) {
+    public func append(properties: Properties?) {
         MPAssert(properties != nil, "properties must not be nil")
-        Tracking.assertPropertyTypes(properties)
+        Track.assertPropertyTypes(properties)
         guard let properties = properties else {
             return
         }
-        self.addPeopleRecordToQueueWithAction("$append", properties: properties)
+        addPeopleRecordToQueueWithAction("$append", properties: properties)
     }
 
-    public func union(_ properties: Properties?) {
+    public func union(properties: Properties?) {
         MPAssert(properties != nil, "properties must not be nil")
         guard let properties = properties else {
             return
@@ -180,18 +180,18 @@ public class People {
             MPAssert(true, "union property values should be an array")
             return
         }
-        self.addPeopleRecordToQueueWithAction("$union", properties: properties)
+        addPeopleRecordToQueueWithAction("$union", properties: properties)
     }
 
-    public func merge(_ properties: Properties?) {
+    public func merge(properties: Properties?) {
         MPAssert(properties != nil, "properties must not be nil")
         guard let properties = properties else {
             return
         }
-        self.addPeopleRecordToQueueWithAction("$merge", properties: properties)
+        addPeopleRecordToQueueWithAction("$merge", properties: properties)
     }
 
-    public func trackCharge(_ amount: Double?, properties: Properties? = nil) {
+    public func trackCharge(amount: Double?, properties: Properties? = nil) {
         MPAssert(amount != nil, "amount must not be nil")
         guard let amount = amount else {
             return
@@ -200,14 +200,14 @@ public class People {
         if let properties = properties {
             transaction += properties
         }
-        append(["$transactions": transaction])
+        append(properties: ["$transactions": transaction])
     }
 
     public func clearCharges() {
-        set(["$transactions": []])
+        set(properties: ["$transactions": []])
     }
 
     public func deleteUser() {
-        self.addPeopleRecordToQueueWithAction("$delete", properties: [:])
+        addPeopleRecordToQueueWithAction("$delete", properties: [:])
     }
 }

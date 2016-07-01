@@ -18,19 +18,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 
-        _ = Mixpanel.initWithToken("3d5965256713f8dbf078fbe27605eb76")
+        _ = Mixpanel.initialize(token: "3d5965256713f8dbf078fbe27605eb76")
         Mixpanel.mainInstance().flushInterval = 20
         Mixpanel.mainInstance().registerSuperProperties(["Plan": "Premium"])
-
+        Mixpanel.removeInstance(name: "lol")
         return true
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        Mixpanel.mainInstance().timeEvent("session length")
+        Mixpanel.mainInstance().time(event: "session length")
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-        Mixpanel.mainInstance().track("session length")
+        Mixpanel.mainInstance().track(event: "session length")
     }
 
 
