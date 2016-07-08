@@ -19,19 +19,17 @@ struct ArchivedProperties {
 class Persistence {
 
     enum ArchiveType: String {
-        case Events = "events"
-        case People = "people"
-        case Properties = "properties"
+        case Events
+        case People
+        case Properties
     }
 
-    private var apiToken: String = ""
-
-    init(apiToken: String) {
-        self.apiToken = apiToken
+    class func filePathWithType(_ type: ArchiveType, token: String) -> String? {
+        return filePathFor(type.rawValue, token: token)
     }
 
-    private func filePathFor(_ data: String) -> String? {
-        let filename = "mixpanel-\(apiToken)-\(data)"
+    class private func filePathFor(_ data: String, token: String) -> String? {
+        let filename = "mixpanel-\(token)-\(data)"
         let manager = FileManager.default()
         let url = manager.urlsForDirectory(.libraryDirectory, inDomains: .userDomainMask).last
 
@@ -42,60 +40,61 @@ class Persistence {
         return urlUnwrapped
     }
 
-    func filePathWithType(_ type: ArchiveType) -> String? {
-        return filePathFor(type.rawValue)
+    class func archive(_ eventsQueue: Queue,
+                       peopleQueue: Queue,
+                       properties: ArchivedProperties,
+                       token: String) {
+        archiveEvents(eventsQueue, token: token)
+        archivePeople(peopleQueue, token: token)
+        archiveProperties(properties, token: token)
     }
 
-    func archive(_ eventsQueue: Queue, peopleQueue: Queue, properties: ArchivedProperties) {
-        archiveEvents(eventsQueue)
-        archivePeople(peopleQueue)
-        archiveProperties(properties)
+    class func archiveEvents(_ eventsQueue: Queue, token: String) {
+        archiveToFile(.Events, object: eventsQueue, token: token)
     }
 
-    func archiveEvents(_ eventsQueue: Queue?) {
-        archiveToFile(.Events, object: eventsQueue)
+    class func archivePeople(_ peopleQueue: Queue, token: String) {
+        archiveToFile(.People, object: peopleQueue, token: token)
     }
 
-    func archivePeople(_ peopleQueue: Queue?) {
-        archiveToFile(.People, object: peopleQueue)
-    }
-
-    func archiveProperties(_ properties: ArchivedProperties) {
+    class func archiveProperties(_ properties: ArchivedProperties, token: String) {
         var p: Properties = Properties()
         p["distinctId"] = properties.distinctId
         p["superProperties"] = properties.superProperties
         p["peopleDistinctId"] = properties.peopleDistinctId
         p["peopleUnidentifiedQueue"] = properties.peopleUnidentifiedQueue
         p["timedEvents"] = properties.timedEvents
-        archiveToFile(.Properties, object: p)
+        archiveToFile(.Properties, object: p, token: token)
     }
 
-    private func archiveToFile(_ type: ArchiveType, object: AnyObject?) {
-        let filePath = filePathWithType(type)
+    class private func archiveToFile(_ type: ArchiveType, object: AnyObject, token: String) {
+        let filePath = filePathWithType(type, token: token)
         guard let path = filePath else {
             print("bad file path, cant fetch file")
             return
         }
 
-        if object == nil || !NSKeyedArchiver.archiveRootObject(object!, toFile: path) {
+        if !NSKeyedArchiver.archiveRootObject(object, toFile: path) {
             print("failed to archive \(type.rawValue)")
         }
+
     }
 
-    func unarchive() -> (eventsQueue: Queue,
+    class func unarchive(token: String) -> (eventsQueue: Queue,
         peopleQueue: Queue,
         superProperties: Properties,
         timedEvents: Properties,
         distinctId: String?,
         peopleDistinctId: String?,
         peopleUnidentifiedQueue: Queue) {
-        let eventsQueue = unarchiveEvents()
-        let peopleQueue = unarchivePeople()
+        let eventsQueue = unarchiveEvents(token: token)
+        let peopleQueue = unarchivePeople(token: token)
+            
         let (superProperties,
             timedEvents,
             distinctId,
             peopleDistinctId,
-            peopleUnidentifiedQueue) = unarchiveProperties()
+            peopleUnidentifiedQueue) = unarchiveProperties(token: token)
 
         return (eventsQueue,
                 peopleQueue,
@@ -106,7 +105,7 @@ class Persistence {
                 peopleUnidentifiedQueue)
     }
     
-    private func unarchiveWithFilePath(_ filePath: String) -> AnyObject? {
+    class private func unarchiveWithFilePath(_ filePath: String) -> AnyObject? {
         let unarchivedData: AnyObject? = NSKeyedUnarchiver.unarchiveObject(withFile: filePath)
         if unarchivedData == nil {
             do {
@@ -119,16 +118,16 @@ class Persistence {
         return unarchivedData
     }
 
-    private func unarchiveEvents() -> Queue {
-        return unarchiveWithType(.Events) as? Queue ?? []
+    class private func unarchiveEvents(token: String) -> Queue {
+        return unarchiveWithType(.Events, token: token) as? Queue ?? []
     }
 
-    private func unarchivePeople() -> Queue {
-        return unarchiveWithType(.People) as? Queue ?? []
+    class private func unarchivePeople(token: String) -> Queue {
+        return unarchiveWithType(.People, token: token) as? Queue ?? []
     }
 
-    private func unarchiveProperties() -> (Properties, Properties, String?, String?, Queue) {
-        let properties = unarchiveWithType(.Properties) as? Properties
+    class private func unarchiveProperties(token: String) -> (Properties, Properties, String?, String?, Queue) {
+        let properties = unarchiveWithType(.Properties, token: token) as? Properties
         let superProperties =
             properties?["superProperties"] as? Properties ?? Properties()
         let timedEvents =
@@ -147,8 +146,8 @@ class Persistence {
                 peopleUnidentifiedQueue)
     }
 
-    private func unarchiveWithType(_ type: ArchiveType) -> AnyObject? {
-        let filePath = filePathWithType(type)
+    class private func unarchiveWithType(_ type: ArchiveType, token: String) -> AnyObject? {
+        let filePath = filePathWithType(type, token: token)
         guard let path = filePath else {
             print("bad file path, cant fetch file")
             return nil
