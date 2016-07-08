@@ -60,7 +60,7 @@ class MixpanelManager {
 
     func getInstance(name instanceName: String) -> MixpanelInstance? {
         guard let instance = instances[instanceName] else {
-            print("no such instance")
+            Log.warn(message: "no such instance: \(instanceName)")
             return nil
         }
         return instance

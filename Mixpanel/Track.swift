@@ -48,7 +48,7 @@ class Track {
                distinctId: String?) {
         var ev = event
         if ev == nil || ev!.characters.count == 0 {
-            print("mixpanel track called with empty event parameter. using 'mp_event'")
+            Log.info(message: "mixpanel track called with empty event parameter. using 'mp_event'")
             ev = "mp_event"
         }
 
@@ -109,7 +109,7 @@ class Track {
     func time(event: String?, timedEvents: inout Properties) {
         let startTime = Date().timeIntervalSince1970
         guard let event = event where event.characters.count > 0 else {
-            print("mixpanel cannot time an empty event")
+            Log.error(message: "mixpanel cannot time an empty event")
             return
         }
         timedEvents[event] = startTime

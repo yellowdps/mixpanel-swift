@@ -58,6 +58,25 @@ public class MixpanelInstance: FlushDelegate {
             return BasePath.MixpanelAPI
         }
     }
+    public var loggingEnabled: Bool = false {
+        didSet {
+            if loggingEnabled {
+                Log.enableLevel(level: .Debug)
+                Log.enableLevel(level: .Info)
+                Log.enableLevel(level: .Warning)
+                Log.enableLevel(level: .Error)
+                
+                Log.info(message: "Logging Enabled")
+            } else {
+                Log.info(message: "Logging Disabled")
+                
+                Log.disableLevel(level: .Debug)
+                Log.disableLevel(level: .Info)
+                Log.disableLevel(level: .Warning)
+                Log.disableLevel(level: .Error)
+            }
+        }
+    }
     
     var apiToken = ""
     var superProperties = Properties()
@@ -73,7 +92,7 @@ public class MixpanelInstance: FlushDelegate {
         if let apiToken = apiToken where apiToken.characters.count > 0 {
             self.apiToken = apiToken
         }
-
+        
         trackInstance = Track(apiToken: self.apiToken)
         automaticProperties = AutomaticProperties(apiToken: self.apiToken)
         flushInstance.delegate = self
@@ -228,7 +247,7 @@ extension MixpanelInstance {
 
     public func identify(distinctId: String?) {
         guard let distinctId = distinctId where distinctId.characters.count > 0 else {
-            print("\(self) cannot identify blank distinct id")
+            Log.error(message: "\(self) cannot identify blank distinct id")
             return
         }
 
@@ -250,12 +269,12 @@ extension MixpanelInstance {
 
     public func createAlias(_ alias: String?, distinctId: String?) {
         guard let distinctId = distinctId where distinctId.characters.count > 0 else {
-            print("\(self) cannot identify blank distinct id")
+            Log.error(message: "\(self) cannot identify blank distinct id")
             return
         }
 
         guard let alias = alias where alias.characters.count > 0 else {
-            print("\(self) create alias called with empty alias")
+            Log.error(message: "\(self) create alias called with empty alias")
             return
         }
 
@@ -365,7 +384,7 @@ extension MixpanelInstance {
                 self.track(event: event,
                            properties: properties)
             } else {
-                print("malformed mixpanel push payload")
+                Log.info(message: "malformed mixpanel push payload")
             }
         }
     }
