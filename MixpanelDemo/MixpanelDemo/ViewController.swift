@@ -14,21 +14,16 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         Mixpanel.mainInstance().identify(distinctId: "13792")
-        Mixpanel.mainInstance().people.setOnce(properties: ["$name":"Joe",
-                                                "$email":"joe.bloggs@mixpanel.com"])
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        Mixpanel.mainInstance().people.setOnce(properties: ["$name": "Joe",
+                                                "$email": "joe.bloggs@mixpanel.com"])
     }
 
     @IBAction func trackAction(_ sender: AnyObject) {
-        Mixpanel.mainInstance().track(event: "press button")
+        Mixpanel.mainInstance().track(event: "pressed button")
     }
 
     @IBAction func setPeopleAction(_ sender: AnyObject) {
-        Mixpanel.mainInstance().people.set(properties: ["weapon":"axe"])
+        Mixpanel.mainInstance().people.set(properties: ["weapon": "axe"])
     }
     @IBAction func signupAction(_ sender: AnyObject) {
         Mixpanel.mainInstance().createAlias("13792", distinctId: Mixpanel.mainInstance().distinctId)
