@@ -56,10 +56,10 @@ class JSONHandler {
         case let obj as Array<AnyObject>:
             return obj.map() { makeObjectSerializable($0) }
 
-        case let obj as Properties:
+        case let obj as Dictionary<NSObject, AnyObject>:
             var serializedDict = [String: AnyObject]()
             _ = obj.map() { (k, v) in
-                serializedDict[k] =
+                serializedDict[k is String ? k as! String : k.description] =
                     makeObjectSerializable(v) }
             return serializedDict
 
@@ -78,5 +78,4 @@ class JSONHandler {
             return obj.description
         }
     }
-    
 }

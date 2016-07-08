@@ -8,33 +8,54 @@
 
 import Foundation
 
+protocol PeopleDelegate {
+    func archivePeople()
+    func addPeopleObject(_ r: Properties)
+}
+
 public class People {
 
-    public var ignoreTime = false
+    public var ignoreTime: Bool? = nil
 
     let apiToken: String
     let serialQueue: DispatchQueue
-    var peopleQueue = Queue()
-    var unidentifiedQueue = Queue()
+    var unidentifiedQueue: Queue
+    var automaticPeopleProperties: Properties!
     var distinctId: String? = nil
-    let automaticProperties: AutomaticProperties
+    var delegate: PeopleDelegate?
 
-    init(apiToken: String, serialQueue: DispatchQueue, automaticProperties: AutomaticProperties) {
+    init(apiToken: String, serialQueue: DispatchQueue) {
         self.apiToken = apiToken
         self.serialQueue = serialQueue
-        self.automaticProperties = automaticProperties
+        unidentifiedQueue = []
+        automaticPeopleProperties = collectAutomaticPeopleProperties()
+    }
+
+    func collectAutomaticPeopleProperties() -> Properties {
+        var p = Properties()
+        let infoDict = Bundle.main().infoDictionary
+        if let infoDict = infoDict {
+            p["$ios_app_version"] = infoDict["CFBundleVersion"]
+            p["$ios_app_release"] = infoDict["CFBundleShortVersionString"]
+        }
+        p["$ios_device_model"]  = MixpanelInstance.deviceModel()
+        p["$ios_ifa"]           = MixpanelInstance.IFA()
+        p["$ios_version"]       = UIDevice.current().systemVersion
+        p["$ios_lib_version"]   = MixpanelInstance.libVersion()
+
+        return p
     }
 
     func addPeopleRecordToQueueWithAction(_ action: String, properties: Properties) {
         let epochMilliseconds = round(Date().timeIntervalSince1970 * 1000)
         let ignoreTimeCopy = ignoreTime
 
-        serialQueue.async() {
+        serialQueue.async(execute: {
             var r = Properties()
             var p = Properties()
             r["$token"] = self.apiToken
             r["$time"] = epochMilliseconds
-            if ignoreTimeCopy {
+            if let ignoreTimeCopy = ignoreTimeCopy {
                 r["$ignore_time"] = ignoreTimeCopy
             }
             if action == "$unset" {
@@ -43,7 +64,7 @@ public class People {
                 r[action] = properties["$properties"]
             } else {
                 if action == "$set" || action == "$set_once" {
-                    p += self.automaticProperties.peopleProperties
+                    p += self.automaticPeopleProperties
                 }
                 p += properties
                 r[action] = p
@@ -51,24 +72,17 @@ public class People {
 
             if let distinctId = self.distinctId {
                 r["$distinct_id"] = distinctId
-                self.addPeopleObject(r)
+                self.delegate?.addPeopleObject(r)
             } else {
                 self.unidentifiedQueue.append(r)
-                if self.unidentifiedQueue.count > QueueConstants.queueSize {
+                if self.unidentifiedQueue.count > 500 {
                     self.unidentifiedQueue.remove(at: 0)
                 }
             }
-            Persistence.archivePeople(self.peopleQueue, token: self.apiToken)
-        }
-    }
-    
-    func addPeopleObject(_ r: Properties) {
-        peopleQueue.append(r)
-        if peopleQueue.count > QueueConstants.queueSize {
-            peopleQueue.remove(at: 0)
-        }
-    }
+            self.delegate?.archivePeople()
+        })
 
+    }
 
     // MARK: - People Public API
     public func addPushDeviceToken(_ deviceToken: Data) {
@@ -81,6 +95,11 @@ public class People {
         let tokens = [tokenString]
         let properties = ["$ios_devices": tokens]
         addPeopleRecordToQueueWithAction("$union", properties: properties)
+    }
+
+    public func removePushDeviceToken() {
+        let p = ["$properties": ["$ios_devices"]]
+        addPeopleRecordToQueueWithAction("$unset", properties: p)
     }
 
     public func set(properties: Properties?) {
@@ -156,7 +175,7 @@ public class People {
             return
         }
         let filtered = properties.values.filter() {
-            !($0 is [Any]) }
+            !($0 is [Any] || $0 is [AnyObject] || $0 is NSArray) }
         if filtered.count > 0 {
             MPAssert(true, "union property values should be an array")
             return
