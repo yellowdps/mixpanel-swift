@@ -62,7 +62,7 @@ class Track {
         p["time"] = epochSeconds
         if let eventStartTime = eventStartTime {
             timedEvents.removeValue(forKey: ev!)
-            p["$duration"] = Double(String(format: "%.3f", epochInterval - Double(eventStartTime)))
+            p["$duration"] = CFloat(String(format: "%.3f", epochInterval - Double(eventStartTime)))
         }
         if let distinctId = distinctId {
             p["distinct_id"] = distinctId
@@ -75,7 +75,7 @@ class Track {
         let trackEvent: [String: AnyObject] = ["event": ev!, "properties": p]
         eventsQueue.append(trackEvent)
 
-        if eventsQueue.count > QueueConstants.queueSize {
+        if eventsQueue.count > 5000 {
             eventsQueue.remove(at: 0)
         }
     }
@@ -85,15 +85,15 @@ class Track {
         superProperties += properties
     }
 
-    func registerSuperPropertiesOnce(_ properties: Properties,
+    func registerSuperPropertiesOnce(_ properties: [String : AnyObject],
                                      superProperties: inout Properties,
                                      defaultValue: AnyObject?) {
         Track.assertPropertyTypes(properties)
             _ = properties.map() {
-                let val = superProperties[$0.key]
+                let val = superProperties[$0.0]
                 if val == nil ||
                     (defaultValue != nil && (val as? NSObject == defaultValue as? NSObject)) {
-                    superProperties[$0.key] = $0.value
+                    superProperties[$0.0] = $0.1
                 }
             }
     }
