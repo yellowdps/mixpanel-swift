@@ -221,7 +221,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
         XCTAssertNotNil(p["mp_device_model"], "mp_device_model not set")
         XCTAssertNotNil(p["time"], "time not set")
         XCTAssertEqual(p["$manufacturer"] as? String, "Apple", "incorrect $manufacturer")
-        XCTAssertEqual(p["mp_lib"] as? String, "iphone", "incorrect mp_lib")
+        XCTAssertEqual(p["mp_lib"] as? String, "swift", "incorrect mp_lib")
         XCTAssertEqual(p["token"] as? String, kTestToken, "incorrect token")
     }
 

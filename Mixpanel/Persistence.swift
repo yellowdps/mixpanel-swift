@@ -19,15 +19,19 @@ struct ArchivedProperties {
 class Persistence {
 
     enum ArchiveType: String {
-        case Events = "events"
-        case People = "people"
-        case Properties = "properties"
+        case Events
+        case People
+        case Properties
     }
 
     private var apiToken: String = ""
 
     init(apiToken: String) {
         self.apiToken = apiToken
+    }
+    
+    func filePathWithType(_ type: ArchiveType) -> String? {
+        return filePathFor(type.rawValue)
     }
 
     private func filePathFor(_ data: String) -> String? {
@@ -42,21 +46,17 @@ class Persistence {
         return urlUnwrapped
     }
 
-    func filePathWithType(_ type: ArchiveType) -> String? {
-        return filePathFor(type.rawValue)
-    }
-
     func archive(_ eventsQueue: Queue, peopleQueue: Queue, properties: ArchivedProperties) {
         archiveEvents(eventsQueue)
         archivePeople(peopleQueue)
         archiveProperties(properties)
     }
 
-    func archiveEvents(_ eventsQueue: Queue?) {
+    func archiveEvents(_ eventsQueue: Queue) {
         archiveToFile(.Events, object: eventsQueue)
     }
 
-    func archivePeople(_ peopleQueue: Queue?) {
+    func archivePeople(_ peopleQueue: Queue) {
         archiveToFile(.People, object: peopleQueue)
     }
 
@@ -70,16 +70,17 @@ class Persistence {
         archiveToFile(.Properties, object: p)
     }
 
-    private func archiveToFile(_ type: ArchiveType, object: AnyObject?) {
+    private func archiveToFile(_ type: ArchiveType, object: AnyObject) {
         let filePath = filePathWithType(type)
         guard let path = filePath else {
             print("bad file path, cant fetch file")
             return
         }
 
-        if object == nil || !NSKeyedArchiver.archiveRootObject(object!, toFile: path) {
+        if !NSKeyedArchiver.archiveRootObject(object, toFile: path) {
             print("failed to archive \(type.rawValue)")
         }
+
     }
 
     func unarchive() -> (eventsQueue: Queue,
@@ -91,6 +92,7 @@ class Persistence {
         peopleUnidentifiedQueue: Queue) {
         let eventsQueue = unarchiveEvents()
         let peopleQueue = unarchivePeople()
+            
         let (superProperties,
             timedEvents,
             distinctId,

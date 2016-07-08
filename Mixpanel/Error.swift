@@ -8,10 +8,8 @@
 
 import Foundation
 
-//TODO: improve error handling and logging
-
 enum PropertyError: ErrorProtocol {
-    case invalidType(type: AnyObject)
+    case InvalidType(type: AnyObject)
 }
 
 class Assertions {

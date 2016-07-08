@@ -15,19 +15,18 @@ protocol PeopleDelegate {
 
 public class People {
 
-    public var ignoreTime: Bool? = nil
+    public var ignoreTime = false
 
     let apiToken: String
     let serialQueue: DispatchQueue
-    var unidentifiedQueue: Queue
-    var automaticPeopleProperties: Properties!
+    var unidentifiedQueue = Queue()
     var distinctId: String? = nil
+    var automaticPeopleProperties: Properties!
     var delegate: PeopleDelegate?
 
     init(apiToken: String, serialQueue: DispatchQueue) {
         self.apiToken = apiToken
         self.serialQueue = serialQueue
-        unidentifiedQueue = []
         automaticPeopleProperties = collectAutomaticPeopleProperties()
     }
 
@@ -39,7 +38,6 @@ public class People {
             p["$ios_app_release"] = infoDict["CFBundleShortVersionString"]
         }
         p["$ios_device_model"]  = MixpanelInstance.deviceModel()
-        p["$ios_ifa"]           = MixpanelInstance.IFA()
         p["$ios_version"]       = UIDevice.current().systemVersion
         p["$ios_lib_version"]   = MixpanelInstance.libVersion()
 
@@ -50,12 +48,12 @@ public class People {
         let epochMilliseconds = round(Date().timeIntervalSince1970 * 1000)
         let ignoreTimeCopy = ignoreTime
 
-        serialQueue.async(execute: {
+        serialQueue.async() {
             var r = Properties()
             var p = Properties()
             r["$token"] = self.apiToken
             r["$time"] = epochMilliseconds
-            if let ignoreTimeCopy = ignoreTimeCopy {
+            if ignoreTimeCopy {
                 r["$ignore_time"] = ignoreTimeCopy
             }
             if action == "$unset" {
@@ -75,13 +73,12 @@ public class People {
                 self.delegate?.addPeopleObject(r)
             } else {
                 self.unidentifiedQueue.append(r)
-                if self.unidentifiedQueue.count > 500 {
+                if self.unidentifiedQueue.count > QueueLimit {
                     self.unidentifiedQueue.remove(at: 0)
                 }
             }
             self.delegate?.archivePeople()
-        })
-
+        }
     }
 
     // MARK: - People Public API
@@ -95,11 +92,6 @@ public class People {
         let tokens = [tokenString]
         let properties = ["$ios_devices": tokens]
         addPeopleRecordToQueueWithAction("$union", properties: properties)
-    }
-
-    public func removePushDeviceToken() {
-        let p = ["$properties": ["$ios_devices"]]
-        addPeopleRecordToQueueWithAction("$unset", properties: p)
     }
 
     public func set(properties: Properties?) {
@@ -175,7 +167,7 @@ public class People {
             return
         }
         let filtered = properties.values.filter() {
-            !($0 is [Any] || $0 is [AnyObject] || $0 is NSArray) }
+            !($0 is [Any]) }
         if filtered.count > 0 {
             MPAssert(true, "union property values should be an array")
             return

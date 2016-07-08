@@ -56,6 +56,7 @@ class MixpanelPeopleTests: MixpanelBaseTests {
     }
 
     func testDropUnidentifiedPeopleRecords() {
+        QueueLimit = 500
         for i in 0..<505 {
             mixpanel.people.set(property: "i", to: i)
         }
@@ -68,6 +69,7 @@ class MixpanelPeopleTests: MixpanelBaseTests {
     }
 
     func testDropPeopleRecords() {
+        QueueLimit = 500
         mixpanel.identify(distinctId: "d1")
         for i in 0..<505 {
             mixpanel.people.set(property: "i", to: i)

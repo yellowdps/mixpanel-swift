@@ -13,13 +13,7 @@ protocol FlushDelegate {
     func updateNetworkActivityIndicator(_ on: Bool)
 }
 
-protocol Lifecycle {
-    func applicationDidBecomeActive()
-    func applicationWillResignActive()
-}
-
-class Flush: Lifecycle {
-    var serverURL = "https://api.mixpanel.com"
+class Flush: AppLifecycle {
     var networkRequestsAllowedAfterTime: Double = 0
     var useIPAddressForGeoLocation = true
     var networkConsecutiveFailures = 0
@@ -68,14 +62,14 @@ class Flush: Lifecycle {
     func startFlushTimer() {
         stopFlushTimer()
         if self.flushInterval > 0 {
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async() {
                 self.timer = Timer.scheduledTimer(timeInterval: self.flushInterval,
                                                   target: self,
                                                   selector: #selector(self.flushSelector),
                                                   userInfo: nil,
                                                   repeats: true)
                 
-            })
+            }
         }
     }
 
@@ -85,10 +79,10 @@ class Flush: Lifecycle {
 
     func stopFlushTimer() {
         if let timer = self.timer {
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async() {
                 timer.invalidate()
                 self.timer = nil
-            })
+            }
         }
     }
 
@@ -135,7 +129,7 @@ class Flush: Lifecycle {
                                              parse: responseParser)
         
         delegate?.updateNetworkActivityIndicator(true)
-        flushRequestHandler(serverURL,
+        flushRequestHandler(BasePath.MixpanelAPI,
                             resource: resource,
                             completion: { success in
                              completion(success)
@@ -164,7 +158,6 @@ class Flush: Lifecycle {
                             completion(true)
                            }
         )
-        
     }
 
     private func updateRetryDelay(_ response: URLResponse?) {
