@@ -8,40 +8,21 @@
 
 import Foundation
 
-protocol PeopleDelegate {
-    func archivePeople()
-    func addPeopleObject(_ r: Properties)
-}
-
 public class People {
 
     public var ignoreTime = false
 
     let apiToken: String
     let serialQueue: DispatchQueue
+    var peopleQueue = Queue()
     var unidentifiedQueue = Queue()
     var distinctId: String? = nil
-    var automaticPeopleProperties: Properties!
-    var delegate: PeopleDelegate?
+    let automaticProperties: AutomaticProperties
 
-    init(apiToken: String, serialQueue: DispatchQueue) {
+    init(apiToken: String, serialQueue: DispatchQueue, automaticProperties: AutomaticProperties) {
         self.apiToken = apiToken
         self.serialQueue = serialQueue
-        automaticPeopleProperties = collectAutomaticPeopleProperties()
-    }
-
-    func collectAutomaticPeopleProperties() -> Properties {
-        var p = Properties()
-        let infoDict = Bundle.main().infoDictionary
-        if let infoDict = infoDict {
-            p["$ios_app_version"] = infoDict["CFBundleVersion"]
-            p["$ios_app_release"] = infoDict["CFBundleShortVersionString"]
-        }
-        p["$ios_device_model"]  = MixpanelInstance.deviceModel()
-        p["$ios_version"]       = UIDevice.current().systemVersion
-        p["$ios_lib_version"]   = MixpanelInstance.libVersion()
-
-        return p
+        self.automaticProperties = automaticProperties
     }
 
     func addPeopleRecordToQueueWithAction(_ action: String, properties: Properties) {
@@ -62,7 +43,7 @@ public class People {
                 r[action] = properties["$properties"]
             } else {
                 if action == "$set" || action == "$set_once" {
-                    p += self.automaticPeopleProperties
+                    p += self.automaticProperties.peopleProperties
                 }
                 p += properties
                 r[action] = p
@@ -70,16 +51,24 @@ public class People {
 
             if let distinctId = self.distinctId {
                 r["$distinct_id"] = distinctId
-                self.delegate?.addPeopleObject(r)
+                self.addPeopleObject(r)
             } else {
                 self.unidentifiedQueue.append(r)
-                if self.unidentifiedQueue.count > QueueLimit {
+                if self.unidentifiedQueue.count > QueueConstants.queueSize {
                     self.unidentifiedQueue.remove(at: 0)
                 }
             }
-            self.delegate?.archivePeople()
+            Persistence.archivePeople(self.peopleQueue, token: self.apiToken)
         }
     }
+    
+    func addPeopleObject(_ r: Properties) {
+        peopleQueue.append(r)
+        if peopleQueue.count > QueueConstants.queueSize {
+            peopleQueue.remove(at: 0)
+        }
+    }
+
 
     // MARK: - People Public API
     public func addPushDeviceToken(_ deviceToken: Data) {

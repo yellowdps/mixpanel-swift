@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import CoreTelephony
 
 public protocol MixpanelDelegate {
     func mixpanelWillFlush(_ mixpanel: MixpanelInstance) -> Bool
@@ -21,9 +20,7 @@ protocol AppLifecycle {
     func applicationWillResignActive()
 }
 
-internal var QueueLimit = 5000
-
-public class MixpanelInstance: FlushDelegate, PeopleDelegate {
+public class MixpanelInstance: FlushDelegate {
 
     public var delegate: MixpanelDelegate?
     public var distinctId: String?
@@ -65,29 +62,26 @@ public class MixpanelInstance: FlushDelegate, PeopleDelegate {
     var apiToken = ""
     var superProperties = Properties()
     var eventsQueue = Queue()
-    var peopleQueue = Queue()
     var timedEvents = Properties()
     var serialQueue: DispatchQueue!
     var taskId = UIBackgroundTaskInvalid
-    var automaticProperties: Properties!
-    let telephonyInfo = CTTelephonyNetworkInfo()
-    let persistence: Persistence
+    let automaticProperties: AutomaticProperties
     let flushInstance = Flush()
     let trackInstance: Track
-
+    
     init(apiToken: String?, launchOptions: [NSObject: AnyObject]?, flushInterval: Double) {
         if let apiToken = apiToken where apiToken.characters.count > 0 {
             self.apiToken = apiToken
         }
 
-        persistence = Persistence(apiToken: self.apiToken)
         trackInstance = Track(apiToken: self.apiToken)
+        automaticProperties = AutomaticProperties(apiToken: self.apiToken)
         flushInstance.delegate = self
         let label = "com.mixpanel.\(apiToken).\(self)"
         serialQueue = DispatchQueue(label: label, attributes: DispatchQueueAttributes.serial)
-        people = People(apiToken: self.apiToken, serialQueue: serialQueue)
-        people.delegate = self
-        automaticProperties = collectAutomaticProperties()
+        people = People(apiToken: self.apiToken,
+                        serialQueue: serialQueue,
+                        automaticProperties: automaticProperties)
         distinctId = defaultDistinctId()
         flushInstance._flushInterval = flushInterval
 
@@ -197,29 +191,6 @@ public class MixpanelInstance: FlushDelegate, PeopleDelegate {
         }
     }
 
-    func collectAutomaticProperties() -> Properties {
-        var p = Properties()
-        let size = UIScreen.main().bounds.size
-        let infoDict = Bundle.main().infoDictionary
-        if let infoDict = infoDict {
-            p["$app_version"] =         infoDict["CFBundleVersion"]
-            p["$app_release"] =         infoDict["CFBundleShortVersionString"]
-            p["$app_build_number"] =    infoDict["CFBundleVersion"]
-            p["$app_version_string"] =  infoDict["CFBundleShortVersionString"]
-        }
-        p["$carrier"]           = telephonyInfo.subscriberCellularProvider?.carrierName
-        p["mp_lib"]             = "swift"
-        p["$lib_version"]       = MixpanelInstance.libVersion()
-        p["$manufacturer"]      = "Apple"
-        p["$os"]                = UIDevice.current().systemName
-        p["$os_version"]        = UIDevice.current().systemVersion
-        p["$model"]             = MixpanelInstance.deviceModel()
-        p["mp_device_model"]    = p["$model"] //legacy
-        p["$screen_height"]     = Int(size.height)
-        p["$screen_width"]      = Int(size.width)
-        return p
-    }
-
     func defaultDistinctId() -> String {
         var distinctId: String?
         if NSClassFromString("UIDevice") != nil {
@@ -240,48 +211,16 @@ public class MixpanelInstance: FlushDelegate, PeopleDelegate {
     }
 
     func description() -> String {
-        return "<Mixpanel: \(self), Token: \(apiToken), Events Queue Count: \(self.eventsQueue.count), People Queue Count: \(self.peopleQueue.count), Distinct Id: \(self.distinctId)>"
-    }
-
-    func getCurrentRadio() -> String? {
-        var radio = telephonyInfo.currentRadioAccessTechnology
-        let prefix = "CTRadioAccessTechnology"
-        if radio == nil {
-            radio = "None"
-        } else if radio!.hasPrefix(prefix) {
-            radio = (radio! as NSString).substring(from: prefix.characters.count)
-        }
-        return radio
+        return "<Mixpanel: \(self), Token: \(apiToken), Events Queue Count: \(eventsQueue.count), People Queue Count: \(people.peopleQueue.count), Distinct Id: \(distinctId)>"
     }
 
     @objc func setCurrentRadio() {
-        let currentRadio = self.getCurrentRadio()
+        let currentRadio = automaticProperties.getCurrentRadio()
         serialQueue.async() {
-            if self.automaticProperties != nil {
-                self.automaticProperties["$radio"] = currentRadio
-            }
+            self.automaticProperties.properties["$radio"] = currentRadio
         }
     }
 
-    static func deviceModel() -> String {
-        var systemInfo = utsname()
-        uname(&systemInfo)
-        let modelCode = withUnsafeMutablePointer(&systemInfo.machine) {
-            ptr in String(cString: UnsafePointer<CChar>(ptr))
-        }
-        if let model = String(validatingUTF8: modelCode) {
-            return model
-        }
-        return ""
-    }
-
-    static func libVersion() -> String? {
-        return Bundle.main().infoDictionary?["CFBundleShortVersionString"] as? String
-    }
-
-    static func inBackground() -> Bool {
-        return UIApplication.shared().applicationState == UIApplicationState.background
-    }
 }
 
 // MARK: - Identity
@@ -299,14 +238,13 @@ extension MixpanelInstance {
             if self.people.unidentifiedQueue.count > 0 {
                 for var r in self.people.unidentifiedQueue {
                     r["$distinct_id"] = distinctId
-                    self.peopleQueue.append(r)
+                    self.people.peopleQueue.append(r)
                 }
                 self.people.unidentifiedQueue.removeAll()
-                self.persistence.archivePeople(self.peopleQueue)
+                Persistence.archivePeople(self.people.peopleQueue, token: self.apiToken)
             }
-            if MixpanelInstance.inBackground() {
-                self.archiveProperties()
-            }
+            
+            self.archiveProperties()
         }
     }
 
@@ -332,9 +270,9 @@ extension MixpanelInstance {
             self.distinctId = self.defaultDistinctId()
             self.superProperties = Properties()
             self.eventsQueue = Queue()
-            self.peopleQueue = Queue()
             self.timedEvents = Properties()
             self.people.distinctId = nil
+            self.people.peopleQueue = Queue()
             self.people.unidentifiedQueue = Queue()
             self.archive()
         }
@@ -350,17 +288,20 @@ extension MixpanelInstance {
                                             distinctId: distinctId,
                                             peopleDistinctId: people.distinctId,
                                             peopleUnidentifiedQueue: people.unidentifiedQueue)
-        persistence.archive(eventsQueue, peopleQueue: peopleQueue, properties: properties)
+        Persistence.archive(eventsQueue,
+                            peopleQueue: people.peopleQueue,
+                            properties: properties,
+                            token: self.apiToken)
     }
 
     func unarchive() {
         (eventsQueue,
-         peopleQueue,
+         people.peopleQueue,
          superProperties,
          timedEvents,
          distinctId,
          people.distinctId,
-         people.unidentifiedQueue) = persistence.unarchive()
+         people.unidentifiedQueue) = Persistence.unarchive(token: self.apiToken)
 
         if distinctId == nil {
             distinctId = defaultDistinctId()
@@ -373,7 +314,7 @@ extension MixpanelInstance {
                                             distinctId: distinctId,
                                             peopleDistinctId: people.distinctId,
                                             peopleUnidentifiedQueue: people.unidentifiedQueue)
-        persistence.archiveProperties(properties)
+        Persistence.archiveProperties(properties, token: self.apiToken)
     }
 }
 
@@ -387,7 +328,7 @@ extension MixpanelInstance {
             }
 
             self.flushInstance.flushEventsQueue(&self.eventsQueue)
-            self.flushInstance.flushPeopleQueue(&self.peopleQueue)
+            self.flushInstance.flushPeopleQueue(&self.people.peopleQueue)
             self.archive()
 
             if let completion = completion {
@@ -406,11 +347,11 @@ extension MixpanelInstance {
                                      properties: properties,
                                      eventsQueue: &self.eventsQueue,
                                      timedEvents: &self.timedEvents,
-                                     automaticProperties: self.automaticProperties,
+                                     automaticProperties: self.automaticProperties.properties,
                                      superProperties: self.superProperties,
                                      distinctId: self.distinctId)
             
-            self.persistence.archiveEvents(self.eventsQueue)
+            Persistence.archiveEvents(self.eventsQueue, token: self.apiToken)
         }
     }
 
@@ -486,24 +427,7 @@ extension MixpanelInstance {
     func dispatchAndTrack(closure: () -> ()) {
         serialQueue.async() {
             closure()
-            if MixpanelInstance.inBackground() {
-                self.archiveProperties()
-            }
+            self.archiveProperties()
         }
     }
 }
-
-// MARK: - People
-extension MixpanelInstance {
-    func archivePeople() {
-        persistence.archivePeople(self.peopleQueue)
-    }
-
-    func addPeopleObject(_ r: Properties) {
-        peopleQueue.append(r)
-        if peopleQueue.count > QueueLimit {
-            peopleQueue.remove(at: 0)
-        }
-    }
-}
-

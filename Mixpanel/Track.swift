@@ -75,7 +75,7 @@ class Track {
         let trackEvent: [String: AnyObject] = ["event": ev!, "properties": p]
         eventsQueue.append(trackEvent)
 
-        if eventsQueue.count > QueueLimit {
+        if eventsQueue.count > QueueConstants.queueSize {
             eventsQueue.remove(at: 0)
         }
     }
@@ -90,10 +90,10 @@ class Track {
                                      defaultValue: AnyObject?) {
         Track.assertPropertyTypes(properties)
             _ = properties.map() {
-                let val = superProperties[$0.0]
+                let val = superProperties[$0.key]
                 if val == nil ||
                     (defaultValue != nil && (val as? NSObject == defaultValue as? NSObject)) {
-                    superProperties[$0.0] = $0.1
+                    superProperties[$0.key] = $0.value
                 }
             }
     }
