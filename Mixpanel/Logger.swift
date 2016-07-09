@@ -29,6 +29,7 @@ class Logger {
         enabledLevels.insert(level)
     }
     
+    /// Disable log messages of a specific `LogLevel` to prevent them from being logged
     func disableLevel(level: LogLevel) {
         enabledLevels.remove(level)
     }
@@ -36,6 +37,7 @@ class Logger {
     /// debug: Adds a debug message to the Mixpanel log
     /// - Parameter message: The message to be added to the log
     func debug(message: @autoclosure() -> Any, _ path: String = #file, _ function: String = #function) {
+        guard enabledLevels.contains(.Debug) else { return }
         forwardLogMessage(message: LogMessage(path: path, function: function, text: "\(message())",
                                               level: .Debug))
     }
@@ -43,6 +45,7 @@ class Logger {
     /// info: Adds an informational message to the Mixpanel log
     /// - Parameter message: The message to be added to the log
     func info(message: @autoclosure() -> Any, _ path: String = #file, _ function: String = #function) {
+        guard enabledLevels.contains(.Info) else { return }
         forwardLogMessage(message: LogMessage(path: path, function: function, text: "\(message())",
                                               level: .Info))
     }
@@ -50,6 +53,7 @@ class Logger {
     /// warn: Adds a warning message to the Mixpanel log
     /// - Parameter message: The message to be added to the log
     func warn(message: @autoclosure() -> Any, _ path: String = #file, _ function: String = #function) {
+        guard enabledLevels.contains(.Warning) else { return }
         forwardLogMessage(message: LogMessage(path: path, function: function, text: "\(message())",
                                               level: .Warning))
     }
@@ -57,14 +61,13 @@ class Logger {
     /// error: Adds an error message to the Mixpanel log
     /// - Parameter message: The message to be added to the log
     func error(message: @autoclosure() -> Any, _ path: String = #file, _ function: String = #function) {
+        guard enabledLevels.contains(.Error) else { return }
         forwardLogMessage(message: LogMessage(path: path, function: function, text: "\(message())",
                                                level: .Error))
     }
     
     /// This forwards a `LogMessage` to each logger that has been added
     private func forwardLogMessage(message: LogMessage) {
-        // Ensure this LogLevel has been enabled by the developer
-        guard enabledLevels.contains(message.level) else { return }
         // Forward the log message to every registered Logging instance
         loggers.forEach() { $0.addMessage(message: message) }
     }
