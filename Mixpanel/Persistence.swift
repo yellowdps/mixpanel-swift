@@ -28,8 +28,8 @@ class Persistence {
         return filePathFor(type.rawValue, token: token)
     }
 
-    class private func filePathFor(_ data: String, token: String) -> String? {
-        let filename = "mixpanel-\(token)-\(data)"
+    class private func filePathFor(_ archiveType: String, token: String) -> String? {
+        let filename = "mixpanel-\(token)-\(archiveType)"
         let manager = FileManager.default()
         let url = manager.urlsForDirectory(.libraryDirectory, inDomains: .userDomainMask).last
 

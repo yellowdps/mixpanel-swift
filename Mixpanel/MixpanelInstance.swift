@@ -20,7 +20,7 @@ protocol AppLifecycle {
     func applicationWillResignActive()
 }
 
-public class MixpanelInstance: FlushDelegate {
+public class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate {
 
     public var delegate: MixpanelDelegate?
     public var distinctId: String?
@@ -59,13 +59,20 @@ public class MixpanelInstance: FlushDelegate {
         }
     }
     
+    public var debugDescription: String {
+        return "Mixpanel(\n"
+        + "    Token: \(apiToken),\n"
+        + "    Events Queue Count: \(eventsQueue.count),\n"
+        + "    People Queue Count: \(people.peopleQueue.count),\n"
+        + "    Distinct Id: \(distinctId)\n"
+        + ")"
+    }
     var apiToken = ""
     var superProperties = Properties()
     var eventsQueue = Queue()
     var timedEvents = Properties()
     var serialQueue: DispatchQueue!
     var taskId = UIBackgroundTaskInvalid
-    let automaticProperties: AutomaticProperties
     let flushInstance = Flush()
     let trackInstance: Track
     
@@ -75,13 +82,11 @@ public class MixpanelInstance: FlushDelegate {
         }
 
         trackInstance = Track(apiToken: self.apiToken)
-        automaticProperties = AutomaticProperties(apiToken: self.apiToken)
         flushInstance.delegate = self
-        let label = "com.mixpanel.\(apiToken).\(self)"
+        let label = "com.mixpanel.\(self.apiToken)"
         serialQueue = DispatchQueue(label: label, attributes: DispatchQueueAttributes.serial)
         people = People(apiToken: self.apiToken,
-                        serialQueue: serialQueue,
-                        automaticProperties: automaticProperties)
+                        serialQueue: serialQueue)
         distinctId = defaultDistinctId()
         flushInstance._flushInterval = flushInterval
 
@@ -210,14 +215,10 @@ public class MixpanelInstance: FlushDelegate {
         }
     }
 
-    func description() -> String {
-        return "<Mixpanel: \(self), Token: \(apiToken), Events Queue Count: \(eventsQueue.count), People Queue Count: \(people.peopleQueue.count), Distinct Id: \(distinctId)>"
-    }
-
     @objc func setCurrentRadio() {
-        let currentRadio = automaticProperties.getCurrentRadio()
+        let currentRadio = AutomaticProperties.getCurrentRadio()
         serialQueue.async() {
-            self.automaticProperties.properties["$radio"] = currentRadio
+            AutomaticProperties.properties["$radio"] = currentRadio
         }
     }
 
@@ -347,7 +348,6 @@ extension MixpanelInstance {
                                      properties: properties,
                                      eventsQueue: &self.eventsQueue,
                                      timedEvents: &self.timedEvents,
-                                     automaticProperties: self.automaticProperties.properties,
                                      superProperties: self.superProperties,
                                      distinctId: self.distinctId)
             

@@ -11,29 +11,9 @@ import CoreTelephony
 
 class AutomaticProperties {
     
-    let telephonyInfo = CTTelephonyNetworkInfo()
-    let apiToken: String
-    var properties: Properties!
-    var peopleProperties: Properties!
+    static let telephonyInfo = CTTelephonyNetworkInfo()
     
-    init(apiToken: String) {
-        self.apiToken = apiToken
-        properties = collectAutomaticProperties()
-        peopleProperties = collectAutomaticPeopleProperties()
-    }
-    
-    func getCurrentRadio() -> String? {
-        var radio = telephonyInfo.currentRadioAccessTechnology
-        let prefix = "CTRadioAccessTechnology"
-        if radio == nil {
-            radio = "None"
-        } else if radio!.hasPrefix(prefix) {
-            radio = (radio! as NSString).substring(from: prefix.characters.count)
-        }
-        return radio
-    }
-    
-    func collectAutomaticProperties() -> Properties {
+    static var properties: Properties = {
         var p = Properties()
         let size = UIScreen.main().bounds.size
         let infoDict = Bundle.main().infoDictionary
@@ -43,7 +23,7 @@ class AutomaticProperties {
             p["$app_build_number"]     = infoDict["CFBundleVersion"]
             p["$app_version_string"]   = infoDict["CFBundleShortVersionString"]
         }
-        p["$carrier"]           = telephonyInfo.subscriberCellularProvider?.carrierName
+        p["$carrier"]           = AutomaticProperties.telephonyInfo.subscriberCellularProvider?.carrierName
         p["mp_lib"]             = "swift"
         p["$lib_version"]       = AutomaticProperties.libVersion()
         p["$manufacturer"]      = "Apple"
@@ -54,9 +34,9 @@ class AutomaticProperties {
         p["$screen_height"]     = Int(size.height)
         p["$screen_width"]      = Int(size.width)
         return p
-    }
+    }()
     
-    func collectAutomaticPeopleProperties() -> Properties {
+    static var peopleProperties: Properties = {
         var p = Properties()
         let infoDict = Bundle.main().infoDictionary
         if let infoDict = infoDict {
@@ -68,9 +48,20 @@ class AutomaticProperties {
         p["$ios_lib_version"]   = AutomaticProperties.libVersion()
         
         return p
-    }
+    }()
     
-    static func deviceModel() -> String {
+    class func getCurrentRadio() -> String? {
+        var radio = telephonyInfo.currentRadioAccessTechnology
+        let prefix = "CTRadioAccessTechnology"
+        if radio == nil {
+            radio = "None"
+        } else if radio!.hasPrefix(prefix) {
+            radio = (radio! as NSString).substring(from: prefix.characters.count)
+        }
+        return radio
+    }
+
+    class func deviceModel() -> String {
         var systemInfo = utsname()
         uname(&systemInfo)
         let modelCode = withUnsafeMutablePointer(&systemInfo.machine) {
@@ -82,7 +73,7 @@ class AutomaticProperties {
         return ""
     }
     
-    static func libVersion() -> String? {
+    class func libVersion() -> String? {
         return Bundle(for: self).infoDictionary?["CFBundleShortVersionString"] as? String
     }
     

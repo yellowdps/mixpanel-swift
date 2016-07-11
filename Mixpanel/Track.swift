@@ -43,7 +43,6 @@ class Track {
                properties: [String:AnyObject]? = nil,
                eventsQueue: inout Queue,
                timedEvents: inout Properties,
-               automaticProperties: Properties,
                superProperties: Properties,
                distinctId: String?) {
         var ev = event
@@ -57,7 +56,7 @@ class Track {
         let epochSeconds = Int(round(epochInterval))
         let eventStartTime = timedEvents[ev!] as? Int
         var p = [String : AnyObject]()
-        p += automaticProperties
+        p += AutomaticProperties.properties
         p["token"] = apiToken
         p["time"] = epochSeconds
         if let eventStartTime = eventStartTime {

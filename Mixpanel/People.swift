@@ -17,12 +17,10 @@ public class People {
     var peopleQueue = Queue()
     var unidentifiedQueue = Queue()
     var distinctId: String? = nil
-    let automaticProperties: AutomaticProperties
 
-    init(apiToken: String, serialQueue: DispatchQueue, automaticProperties: AutomaticProperties) {
+    init(apiToken: String, serialQueue: DispatchQueue) {
         self.apiToken = apiToken
         self.serialQueue = serialQueue
-        self.automaticProperties = automaticProperties
     }
 
     func addPeopleRecordToQueueWithAction(_ action: String, properties: Properties) {
@@ -43,7 +41,7 @@ public class People {
                 r[action] = properties["$properties"]
             } else {
                 if action == "$set" || action == "$set_once" {
-                    p += self.automaticProperties.peopleProperties
+                    p += AutomaticProperties.peopleProperties
                 }
                 p += properties
                 r[action] = p
