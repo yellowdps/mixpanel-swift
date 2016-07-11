@@ -58,6 +58,10 @@ public class MixpanelInstance: FlushDelegate {
             return BasePath.MixpanelAPI
         }
     }
+    
+    /// This allows enabling or disabling of all Mixpanel logs at run time.
+    /// - Note: All logging is disabled by default. Usually, this is only required
+    ///         if you are running in to issues with the SDK and you need support.
     public var loggingEnabled: Bool = false {
         didSet {
             if loggingEnabled {
