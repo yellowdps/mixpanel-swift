@@ -12,7 +12,7 @@ public protocol MixpanelDelegate {
     func mixpanelWillFlush(_ mixpanel: MixpanelInstance) -> Bool
 }
 
-public typealias Properties = [String:AnyObject]
+public typealias Properties = [String: AnyObject]
 public typealias Queue = [Properties]
 
 protocol AppLifecycle {
@@ -23,7 +23,7 @@ protocol AppLifecycle {
 public class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate {
 
     public var delegate: MixpanelDelegate?
-    public var distinctId: String?
+    public var distinctId = ""
     public var people: People!
     public var showNetworkActivityIndicator = true
     public var flushInterval: Double {
@@ -80,14 +80,13 @@ public class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate {
         if let apiToken = apiToken where apiToken.characters.count > 0 {
             self.apiToken = apiToken
         }
-
         trackInstance = Track(apiToken: self.apiToken)
         flushInstance.delegate = self
         let label = "com.mixpanel.\(self.apiToken)"
         serialQueue = DispatchQueue(label: label, attributes: DispatchQueueAttributes.serial)
+        distinctId = defaultDistinctId()
         people = People(apiToken: self.apiToken,
                         serialQueue: serialQueue)
-        distinctId = defaultDistinctId()
         flushInstance._flushInterval = flushInterval
 
         setupListeners()
@@ -227,8 +226,8 @@ public class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate {
 // MARK: - Identity
 extension MixpanelInstance {
 
-    public func identify(distinctId: String?) {
-        guard let distinctId = distinctId where distinctId.characters.count > 0 else {
+    public func identify(distinctId: String) {
+        if distinctId.characters.count == 0 {
             print("\(self) cannot identify blank distinct id")
             return
         }
@@ -249,13 +248,13 @@ extension MixpanelInstance {
         }
     }
 
-    public func createAlias(_ alias: String?, distinctId: String?) {
-        guard let distinctId = distinctId where distinctId.characters.count > 0 else {
+    public func createAlias(_ alias: String, distinctId: String) {
+        if distinctId.characters.count == 0 {
             print("\(self) cannot identify blank distinct id")
             return
         }
 
-        guard let alias = alias where alias.characters.count > 0 else {
+        if alias.characters.count == 0 {
             print("\(self) create alias called with empty alias")
             return
         }
@@ -304,7 +303,7 @@ extension MixpanelInstance {
          people.distinctId,
          people.unidentifiedQueue) = Persistence.unarchive(token: self.apiToken)
 
-        if distinctId == nil {
+        if distinctId == "" {
             distinctId = defaultDistinctId()
         }
     }
@@ -370,7 +369,7 @@ extension MixpanelInstance {
         }
     }
 
-    public func time(event: String?) {
+    public func time(event: String) {
         serialQueue.async() {
             self.trackInstance.time(event: event, timedEvents: &self.timedEvents)
         }
@@ -392,23 +391,15 @@ extension MixpanelInstance {
         }
     }
 
-    public func registerSuperProperties(_ properties: Properties?) {
-        guard let properties = properties else {
-            return
-        }
-        
+    public func registerSuperProperties(_ properties: Properties) {
         dispatchAndTrack() {
             self.trackInstance.registerSuperProperties(properties,
                                                        superProperties: &self.superProperties)
         }
     }
 
-    public func registerSuperPropertiesOnce(_ properties: Properties?,
+    public func registerSuperPropertiesOnce(_ properties: Properties,
                                             defaultValue: AnyObject? = nil) {
-        guard let properties = properties else {
-            return
-        }
-        
         dispatchAndTrack() {
             self.trackInstance.registerSuperPropertiesOnce(properties,
                                                            superProperties: &self.superProperties,

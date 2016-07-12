@@ -11,7 +11,7 @@ import Foundation
 struct ArchivedProperties {
     let superProperties: Properties
     let timedEvents: Properties
-    let distinctId: String?
+    let distinctId: String
     let peopleDistinctId: String?
     let peopleUnidentifiedQueue: Queue
 }
@@ -84,7 +84,7 @@ class Persistence {
         peopleQueue: Queue,
         superProperties: Properties,
         timedEvents: Properties,
-        distinctId: String?,
+        distinctId: String,
         peopleDistinctId: String?,
         peopleUnidentifiedQueue: Queue) {
         let eventsQueue = unarchiveEvents(token: token)
@@ -126,14 +126,14 @@ class Persistence {
         return unarchiveWithType(.People, token: token) as? Queue ?? []
     }
 
-    class private func unarchiveProperties(token: String) -> (Properties, Properties, String?, String?, Queue) {
+    class private func unarchiveProperties(token: String) -> (Properties, Properties, String, String?, Queue) {
         let properties = unarchiveWithType(.Properties, token: token) as? Properties
         let superProperties =
             properties?["superProperties"] as? Properties ?? Properties()
         let timedEvents =
             properties?["timedEvents"] as? Properties ?? Properties()
         let distinctId =
-            properties?["distinctId"] as? String ?? nil
+            properties?["distinctId"] as? String ?? ""
         let peopleDistinctId =
             properties?["peopleDistinctId"] as? String ?? nil
         let peopleUnidentifiedQueue =

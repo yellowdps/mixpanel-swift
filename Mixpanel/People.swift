@@ -81,46 +81,25 @@ public class People {
         addPeopleRecordToQueueWithAction("$union", properties: properties)
     }
 
-    public func set(properties: Properties?) {
-        MPAssert(properties != nil, "properties must not be nil")
+    public func set(properties: Properties) {
         Track.assertPropertyTypes(properties)
-        guard let properties = properties else {
-            return
-        }
         addPeopleRecordToQueueWithAction("$set", properties: properties)
     }
 
-    public func set(property: String?, to: AnyObject?) {
-        MPAssert(property != nil, "property must not be nil")
-        MPAssert(to != nil, "to must not be nil")
-        guard let property = property, to = to else {
-            return
-        }
+    public func set(property: String, to: AnyObject) {
         set(properties: [property: to])
     }
 
-    public func setOnce(properties: Properties?) {
-        MPAssert(properties != nil, "properties must not be nil")
+    public func setOnce(properties: Properties) {
         Track.assertPropertyTypes(properties)
-        guard let properties = properties else {
-            return
-        }
         addPeopleRecordToQueueWithAction("$set_once", properties: properties)
     }
 
-    public func unset(properties: [String]?) {
-        MPAssert(properties != nil, "properties must not be nil")
-        guard let properties = properties else {
-            return
-        }
+    public func unset(properties: [String]) {
         addPeopleRecordToQueueWithAction("$unset", properties: ["$properties":properties])
     }
 
-    public func increment(properties: Properties?) {
-        MPAssert(properties != nil, "properties must not be nil")
-        guard let properties = properties else {
-            return
-        }
+    public func increment(properties: Properties) {
         let filtered = properties.values.filter() {
             !($0 is Int || $0 is UInt || $0 is Double || $0 is Float) }
         if filtered.count > 0 {
@@ -130,29 +109,16 @@ public class People {
         addPeopleRecordToQueueWithAction("$add", properties: properties)
     }
 
-    public func increment(property: String?, by: Int?) {
-        MPAssert(property != nil, "property must not be nil")
-        MPAssert(by != nil, "amount must not be nil")
-        guard let property = property, by = by else {
-            return
-        }
+    public func increment(property: String, by: Int) {
         increment(properties: [property: by])
     }
 
-    public func append(properties: Properties?) {
-        MPAssert(properties != nil, "properties must not be nil")
+    public func append(properties: Properties) {
         Track.assertPropertyTypes(properties)
-        guard let properties = properties else {
-            return
-        }
         addPeopleRecordToQueueWithAction("$append", properties: properties)
     }
 
-    public func union(properties: Properties?) {
-        MPAssert(properties != nil, "properties must not be nil")
-        guard let properties = properties else {
-            return
-        }
+    public func union(properties: Properties) {
         let filtered = properties.values.filter() {
             !($0 is [Any]) }
         if filtered.count > 0 {
@@ -162,19 +128,11 @@ public class People {
         addPeopleRecordToQueueWithAction("$union", properties: properties)
     }
 
-    public func merge(properties: Properties?) {
-        MPAssert(properties != nil, "properties must not be nil")
-        guard let properties = properties else {
-            return
-        }
+    public func merge(properties: Properties) {
         addPeopleRecordToQueueWithAction("$merge", properties: properties)
     }
 
-    public func trackCharge(amount: Double?, properties: Properties? = nil) {
-        MPAssert(amount != nil, "amount must not be nil")
-        guard let amount = amount else {
-            return
-        }
+    public func trackCharge(amount: Double, properties: Properties? = nil) {
         var transaction: Properties = ["$amount": amount, "$time": Date()]
         if let properties = properties {
             transaction += properties

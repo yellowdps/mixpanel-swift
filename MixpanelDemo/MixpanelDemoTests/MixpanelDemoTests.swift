@@ -515,46 +515,6 @@ class MixpanelDemoTests: MixpanelBaseTests {
         XCTAssertTrue(mixpanel.people.peopleQueue.count == 1, "delegate should have stopped flush")
     }
 
-    func testNilArguments() {
-        let originalDistinctID: String = mixpanel.distinctId!
-        mixpanel.identify(distinctId: nil)
-        XCTAssertEqual(mixpanel.distinctId, originalDistinctID,
-                       "identify nil should do nothing.")
-        mixpanel.track(event: nil)
-        mixpanel.track(event: nil, properties: nil)
-        mixpanel.registerSuperProperties(nil)
-        mixpanel.registerSuperPropertiesOnce(nil)
-        mixpanel.registerSuperPropertiesOnce(nil, defaultValue: nil)
-        waitForSerialQueue()
-        // legacy behavior
-        XCTAssertTrue(mixpanel.eventsQueue.count == 2,
-                      "track with nil should create mp_event event")
-        XCTAssertEqual(mixpanel.eventsQueue.last?["event"] as? String,
-                       "mp_event", "track with nil should create mp_event event")
-        XCTAssertNotNil(mixpanel.currentSuperProperties(),
-                        "setting super properties to nil should have no effect")
-        XCTAssertTrue(mixpanel.currentSuperProperties().count == 0,
-                      "setting super properties to nil should have no effect")
-        XCTExpectAssert("should not take nil argument") {
-            mixpanel.people.set(properties: nil)
-        }
-        XCTExpectAssert("should not take nil argument") {
-            mixpanel.people.set(property: nil, to: "a")
-        }
-        XCTExpectAssert("should not take nil argument") {
-            mixpanel.people.set(property: "p1", to: nil)
-        }
-        XCTExpectAssert("should not take nil argument") {
-            mixpanel.people.increment(properties: nil)
-        }
-        XCTExpectAssert("should not take nil argument") {
-            mixpanel.people.increment(property: nil, by: 3)
-        }
-        XCTExpectAssert("should not take nil argument") {
-            mixpanel.people.increment(property: "p1", by: nil)
-        }
-    }
-
     func testEventTiming() {
         mixpanel.track(event: "Something Happened")
         waitForSerialQueue()
