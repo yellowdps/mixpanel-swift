@@ -43,7 +43,8 @@ Import Mixpanel into AppDelegate.swift, and initialize Mixpanel within `applicat
 
 
 ```
-func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+func application(_ application: UIApplication,
+                 didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
     Mixpanel.initialize(token: MIXPANEL_TOKEN)
 }
 ```
