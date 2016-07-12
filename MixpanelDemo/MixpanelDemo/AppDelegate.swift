@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 
-        _ = Mixpanel.initialize(token: "3d5965256713f8dbf078fbe27605eb76")
+        Mixpanel.initialize(token: "3d5965256713f8dbf078fbe27605eb76")
         Mixpanel.mainInstance().flushInterval = 20
         Mixpanel.mainInstance().registerSuperProperties(["Plan": "Premium"])
         Mixpanel.removeInstance(name: "lol")

@@ -95,5 +95,4 @@ class FlushRequest: Network {
         return Date().timeIntervalSince1970 < networkRequestsAllowedAfterTime
     }
     
-    
 }

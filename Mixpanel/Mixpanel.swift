@@ -8,35 +8,39 @@
 
 import Foundation
 
-
-@discardableResult
-public func initialize(token apiToken: String,
-                       launchOptions: [NSObject: AnyObject]? = nil,
-                       flushInterval: Double = 60,
-                       instanceName: String = UUID().uuidString) -> MixpanelInstance {
-    return MixpanelManager.sharedInstance.initialize(token:         apiToken,
-                                                     launchOptions: launchOptions,
-                                                     flushInterval: flushInterval,
-                                                     instanceName:  instanceName)
-}
-
-public func getInstance(name instanceName: String) -> MixpanelInstance? {
-    return MixpanelManager.sharedInstance.getInstance(name: instanceName)
-}
-
-public func mainInstance() -> MixpanelInstance {
-    return MixpanelManager.sharedInstance.getMainInstance()!
-}
-
-public func setMainInstance(name instanceName: String) {
-    MixpanelManager.sharedInstance.setMainInstance(name: instanceName)
-}
-
-public func removeInstance(name instanceName: String) {
-    MixpanelManager.sharedInstance.removeInstance(name: instanceName)
+public class Mixpanel {
+    
+    @discardableResult
+    public class func initialize(token apiToken: String,
+                                                    launchOptions: [NSObject: AnyObject]? = nil,
+                                                    flushInterval: Double = 60,
+                                                    instanceName: String = UUID().uuidString) -> MixpanelInstance {
+        return MixpanelManager.sharedInstance.initialize(token:         apiToken,
+                                                         launchOptions: launchOptions,
+                                                         flushInterval: flushInterval,
+                                                         instanceName:  instanceName)
+    }
+    
+    public class func getInstance(name instanceName: String) -> MixpanelInstance? {
+        return MixpanelManager.sharedInstance.getInstance(name: instanceName)
+    }
+    
+    public class func mainInstance() -> MixpanelInstance {
+        return MixpanelManager.sharedInstance.getMainInstance()!
+    }
+    
+    public class func setMainInstance(name instanceName: String) {
+        MixpanelManager.sharedInstance.setMainInstance(name: instanceName)
+    }
+    
+    public class func removeInstance(name instanceName: String) {
+        MixpanelManager.sharedInstance.removeInstance(name: instanceName)
+    }
+    
 }
 
 class MixpanelManager {
+    
     static let sharedInstance = MixpanelManager()
     private var instances: [String: MixpanelInstance]
     private var mainInstance: MixpanelInstance?
