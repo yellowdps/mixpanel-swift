@@ -14,7 +14,7 @@ The Mixpanel Swift library for iOS is an open source project, and we'd love to s
 Mixpanel supports `CocoaPods` for easy installation.
 To Install, see our **[full documentation »](https://mixpanel.com/help/reference/swift)**
 
-`pod 'Mixpanel-Swift'`
+`pod 'Mixpanel-swift'`
 
 # Carthage
 
