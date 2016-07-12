@@ -159,6 +159,8 @@
 				TargetAttributes = {
 					E115947C1CFF1491007F8B4F = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = E8FVX7QLET;
+						DevelopmentTeamName = "Mixpanel, Inc.";
 						LastSwiftMigration = 0800;
 					};
 				};
