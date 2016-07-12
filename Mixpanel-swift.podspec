@@ -8,5 +8,5 @@ Pod::Spec.new do |s|
   s.author       = { 'Mixpanel, Inc' => 'support@mixpanel.com' }
   s.source       = { :git => 'git@github.com:mixpanel/mixpanel-swift-private.git', :tag => "v#{s.version}" }
   s.ios.deployment_target = '8.0'
-  s.source_files = 'Source/*.swift'
+  s.source_files = 'Mixpanel/*.swift'
 end
