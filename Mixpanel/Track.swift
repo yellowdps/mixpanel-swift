@@ -43,7 +43,6 @@ class Track {
                properties: [String:AnyObject]? = nil,
                eventsQueue: inout Queue,
                timedEvents: inout Properties,
-               automaticProperties: Properties,
                superProperties: Properties,
                distinctId: String?) {
         var ev = event
@@ -57,12 +56,12 @@ class Track {
         let epochSeconds = Int(round(epochInterval))
         let eventStartTime = timedEvents[ev!] as? Int
         var p = [String : AnyObject]()
-        p += automaticProperties
+        p += AutomaticProperties.properties
         p["token"] = apiToken
         p["time"] = epochSeconds
         if let eventStartTime = eventStartTime {
             timedEvents.removeValue(forKey: ev!)
-            p["$duration"] = CFloat(String(format: "%.3f", epochInterval - Double(eventStartTime)))
+            p["$duration"] = Double(String(format: "%.3f", epochInterval - Double(eventStartTime)))
         }
         if let distinctId = distinctId {
             p["distinct_id"] = distinctId
@@ -75,7 +74,7 @@ class Track {
         let trackEvent: [String: AnyObject] = ["event": ev!, "properties": p]
         eventsQueue.append(trackEvent)
 
-        if eventsQueue.count > 5000 {
+        if eventsQueue.count > QueueConstants.queueSize {
             eventsQueue.remove(at: 0)
         }
     }
@@ -85,15 +84,15 @@ class Track {
         superProperties += properties
     }
 
-    func registerSuperPropertiesOnce(_ properties: [String : AnyObject],
+    func registerSuperPropertiesOnce(_ properties: Properties,
                                      superProperties: inout Properties,
                                      defaultValue: AnyObject?) {
         Track.assertPropertyTypes(properties)
             _ = properties.map() {
-                let val = superProperties[$0.0]
+                let val = superProperties[$0.key]
                 if val == nil ||
                     (defaultValue != nil && (val as? NSObject == defaultValue as? NSObject)) {
-                    superProperties[$0.0] = $0.1
+                    superProperties[$0.key] = $0.value
                 }
             }
     }

@@ -9,17 +9,26 @@
 import Foundation
 
 
-enum BasePath: String {
-    case MixpanelAPI = "https://api.mixpanel.com"
-
-    func getURL() -> URL {
-        return URL(fileURLWithPath: rawValue)
+struct BasePath {
+    static var MixpanelAPI = "https://api.mixpanel.com"
+    
+    static func buildURL(base: String, path: String) -> URL? {
+        guard let url = try? URL(string: base)?.appendingPathComponent(path) else {
+            return nil
+        }
+        
+        guard let urlUnwrapped = url else {
+            return nil
+        }
+        
+        return urlUnwrapped
     }
+    
 }
 
 enum Method: String {
-    case GET = "GET"
-    case POST = "POST"
+    case GET
+    case POST
 }
 
 struct Resource<A> {
@@ -31,58 +40,54 @@ struct Resource<A> {
 }
 
 enum Reason {
-    case parseError
-    case noData
-    case notOKStatusCode(statusCode: Int)
-    case other(NSError)
+    case ParseError
+    case NoData
+    case NotOKStatusCode(statusCode: Int)
+    case Other(NSError)
 }
 
 class Network {
-
+    
     class func apiRequest<A>(base: String,
                           resource: Resource<A>,
                           failure: (Reason, Data?, URLResponse?) -> (),
                           success: (A, URLResponse?) -> ()) {
-        guard let request = createRequest(base, resource: resource) else {
+        guard let request = buildURLRequest(base, resource: resource) else {
             return
         }
-
+        
         let session = URLSession.shared()
         session.dataTask(with: request) { (data, response, error) -> Void in
             guard let httpResponse = response as? HTTPURLResponse else {
-                failure(Reason.other(error!), data, response)
+                failure(Reason.Other(error!), data, response)
                 return
             }
             guard httpResponse.statusCode == 200 else {
-                failure(Reason.notOKStatusCode(statusCode: httpResponse.statusCode), data, response)
+                failure(Reason.NotOKStatusCode(statusCode: httpResponse.statusCode), data, response)
                 return
             }
             guard let responseData = data else {
-                failure(Reason.noData, data, response)
+                failure(Reason.NoData, data, response)
                 return
             }
             guard let result = resource.parse(responseData) else {
-                failure(Reason.parseError, data, response)
+                failure(Reason.ParseError, data, response)
                 return
             }
-
+            
             success(result, response)
-            }.resume()
+        }.resume()
     }
-
-    private class func createRequest<A>(_ base: String, resource: Resource<A>) -> URLRequest? {
-        guard let url = try? URL(string: base)?.appendingPathComponent(resource.path) else {
+    
+    private class func buildURLRequest<A>(_ base: String, resource: Resource<A>) -> URLRequest? {
+        guard let url = BasePath.buildURL(base: base, path: resource.path) else {
             return nil
         }
-
-        guard let urlUnwrapped = url else {
-            return nil
-        }
-
-        let request = NSMutableURLRequest(url: urlUnwrapped)
+        
+        var request = URLRequest(url: url)
         request.httpMethod = resource.method.rawValue
         request.httpBody = resource.requestBody
-
+        
         for (k, v) in resource.headers {
             request.setValue(v, forHTTPHeaderField: k)
         }
