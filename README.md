@@ -7,14 +7,14 @@
 
 **Want to Contribute?**
 
-The Mixpanel library for iOS is an open source project, and we'd love to see your contributions! We'd also love for you to come and work with us! Check out http://boards.greenhouse.io/mixpanel/jobs/25226#.U_4JXEhORKU for details.
+The Mixpanel Swift library for iOS is an open source project, and we'd love to see your contributions! We'd also love for you to come and work with us! Check out http://boards.greenhouse.io/mixpanel/jobs/25226#.U_4JXEhORKU for details.
 
 # Painless Installation (CocoaPods)
 
 Mixpanel supports `CocoaPods` for easy installation.
 To Install, see our **[full documentation »](https://mixpanel.com/help/reference/ios)**
 
-`pod 'Mixpanel'`
+`pod 'Mixpanel-Swift'`
 
 # Carthage
 
