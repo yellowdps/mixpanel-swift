@@ -9,5 +9,5 @@ Pod::Spec.new do |s|
   s.source       = { :git => 'git@github.com:mixpanel/mixpanel-swift-private.git', :tag => "v#{s.version}" }
   s.ios.deployment_target = '8.0'
   s.source_files = 'Mixpanel/*.swift'
-  s.framework = 'Mixpanel'
+  s.module_name = 'Mixpanel'
 end
