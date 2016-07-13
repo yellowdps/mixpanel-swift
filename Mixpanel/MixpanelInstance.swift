@@ -132,7 +132,7 @@ public class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate {
     }
 
     private func setupListeners() {
-        let notificationCenter = NotificationCenter.default()
+        let notificationCenter = NotificationCenter.default
 
         setCurrentRadio()
         notificationCenter.addObserver(self,
@@ -161,12 +161,12 @@ public class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate {
                                        object: nil)
         notificationCenter.addObserver(self,
                                        selector: #selector(appLinksNotificationRaised(_:)),
-                                       name: "com.parse.bolts.measurement_event",
+                                       name: NSNotification.Name("com.parse.bolts.measurement_event"),
                                        object: nil)
     }
     
     deinit {
-        NotificationCenter.default().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
     @objc private func applicationDidBecomeActive(_ notification: Notification) {

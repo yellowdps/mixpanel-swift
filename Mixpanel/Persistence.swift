@@ -30,7 +30,7 @@ class Persistence {
 
     class private func filePathFor(_ archiveType: String, token: String) -> String? {
         let filename = "mixpanel-\(token)-\(archiveType)"
-        let manager = FileManager.default()
+        let manager = FileManager.default
         let url = manager.urlsForDirectory(.libraryDirectory, inDomains: .userDomainMask).last
 
         guard let urlUnwrapped = try? url?.appendingPathComponent(filename).path else {
@@ -109,7 +109,7 @@ class Persistence {
         let unarchivedData: AnyObject? = NSKeyedUnarchiver.unarchiveObject(withFile: filePath)
         if unarchivedData == nil {
             do {
-                try FileManager.default().removeItem(atPath: filePath)
+                try FileManager.default.removeItem(atPath: filePath)
             } catch {
                 print("unable to remove file")
             }

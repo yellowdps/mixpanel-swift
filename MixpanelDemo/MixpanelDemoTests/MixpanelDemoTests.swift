@@ -440,7 +440,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
         XCTAssertTrue(mixpanel.people.peopleQueue.count == 1, "pending people queue archive failed")
         XCTAssertEqual(mixpanel.timedEvents["e2"] as? Double, 5.0,
                        "timedEvents archive failed")
-        let fileManager = FileManager.default()
+        let fileManager = FileManager.default
         XCTAssertTrue(fileManager.fileExists(
             atPath: Persistence.filePathWithType(.Events, token: kTestToken)!),
                       "events archive file not removed")

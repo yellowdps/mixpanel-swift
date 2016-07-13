@@ -56,7 +56,7 @@ class Network {
             return
         }
         
-        let session = URLSession.shared()
+        let session = URLSession.shared
         session.dataTask(with: request) { (data, response, error) -> Void in
             guard let httpResponse = response as? HTTPURLResponse else {
                 failure(Reason.Other(error!), data, response)

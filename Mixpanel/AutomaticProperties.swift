@@ -16,7 +16,7 @@ class AutomaticProperties {
     static var properties: Properties = {
         var p = Properties()
         let size = UIScreen.main().bounds.size
-        let infoDict = Bundle.main().infoDictionary
+        let infoDict = Bundle.main.infoDictionary
         if let infoDict = infoDict {
             p["$app_version"]          = infoDict["CFBundleVersion"]
             p["$app_release"]          = infoDict["CFBundleShortVersionString"]
@@ -38,7 +38,7 @@ class AutomaticProperties {
     
     static var peopleProperties: Properties = {
         var p = Properties()
-        let infoDict = Bundle.main().infoDictionary
+        let infoDict = Bundle.main.infoDictionary
         if let infoDict = infoDict {
             p["$ios_app_version"] = infoDict["CFBundleVersion"]
             p["$ios_app_release"] = infoDict["CFBundleShortVersionString"]

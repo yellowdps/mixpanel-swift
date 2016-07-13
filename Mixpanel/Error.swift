@@ -35,7 +35,7 @@ class ErrorHandler {
     }
 
     class func logError(_ error: ErrorProtocol) {
-        let stackSymbols = Thread.callStackSymbols()
+        let stackSymbols = Thread.callStackSymbols
         print("Error: \(error) \n Stack Symbols: \(stackSymbols)")
     }
 
