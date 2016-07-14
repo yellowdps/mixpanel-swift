@@ -62,7 +62,7 @@ class FlushRequest: Network {
                             self.networkConsecutiveFailures = 0
                             self.updateRetryDelay(response)
                             if result == 0 {
-                                Log.info(message: "\(base) api rejected some items")
+                                Logger.info(message: "\(base) api rejected some items")
                             }
                             completion(true)
             }
