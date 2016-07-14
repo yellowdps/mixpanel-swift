@@ -91,7 +91,6 @@ public class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate {
             return BasePath.MixpanelAPI
         }
     }
-    
     public var debugDescription: String {
         return "Mixpanel(\n"
         + "    Token: \(apiToken),\n"
@@ -100,6 +99,30 @@ public class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate {
         + "    Distinct Id: \(distinctId)\n"
         + ")"
     }
+    
+    /// This allows enabling or disabling of all Mixpanel logs at run time.
+    /// - Note: All logging is disabled by default. Usually, this is only required
+    ///         if you are running in to issues with the SDK and you need support.
+    public var loggingEnabled: Bool = false {
+        didSet {
+            if loggingEnabled {
+                Logger.enableLevel(.Debug)
+                Logger.enableLevel(.Info)
+                Logger.enableLevel(.Warning)
+                Logger.enableLevel(.Error)
+                
+                Logger.info(message: "Logging Enabled")
+            } else {
+                Logger.info(message: "Logging Disabled")
+                
+                Logger.disableLevel(.Debug)
+                Logger.disableLevel(.Info)
+                Logger.disableLevel(.Warning)
+                Logger.disableLevel(.Error)
+            }
+        }
+    }
+    
     var apiToken = ""
     var superProperties = Properties()
     var eventsQueue = Queue()
@@ -113,6 +136,7 @@ public class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate {
         if let apiToken = apiToken where apiToken.characters.count > 0 {
             self.apiToken = apiToken
         }
+
         trackInstance = Track(apiToken: self.apiToken)
         flushInstance.delegate = self
         let label = "com.mixpanel.\(self.apiToken)"
@@ -284,7 +308,7 @@ extension MixpanelInstance {
      */
     public func identify(distinctId: String) {
         if distinctId.characters.count == 0 {
-            print("\(self) cannot identify blank distinct id")
+            Logger.error(message: "\(self) cannot identify blank distinct id")
             return
         }
 
@@ -326,12 +350,12 @@ extension MixpanelInstance {
      */
     public func createAlias(_ alias: String, distinctId: String) {
         if distinctId.characters.count == 0 {
-            print("\(self) cannot identify blank distinct id")
+            Logger.error(message: "\(self) cannot identify blank distinct id")
             return
         }
 
         if alias.characters.count == 0 {
-            print("\(self) create alias called with empty alias")
+            Logger.error(message: "\(self) create alias called with empty alias")
             return
         }
 
@@ -487,7 +511,7 @@ extension MixpanelInstance {
                 self.track(event: event,
                            properties: properties)
             } else {
-                print("malformed mixpanel push payload")
+                Logger.info(message: "malformed mixpanel push payload")
             }
         }
     }

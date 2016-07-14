@@ -70,12 +70,12 @@ class Persistence {
     class private func archiveToFile(_ type: ArchiveType, object: AnyObject, token: String) {
         let filePath = filePathWithType(type, token: token)
         guard let path = filePath else {
-            print("bad file path, cant fetch file")
+            Logger.error(message: "bad file path, cant fetch file")
             return
         }
 
         if !NSKeyedArchiver.archiveRootObject(object, toFile: path) {
-            print("failed to archive \(type.rawValue)")
+            Logger.error(message: "failed to archive \(type.rawValue)")
         }
 
     }
@@ -111,7 +111,7 @@ class Persistence {
             do {
                 try FileManager.default.removeItem(atPath: filePath)
             } catch {
-                print("unable to remove file")
+                Logger.info(message: "Unable to remove file at path: \(filePath)")
             }
         }
 
@@ -149,12 +149,12 @@ class Persistence {
     class private func unarchiveWithType(_ type: ArchiveType, token: String) -> AnyObject? {
         let filePath = filePathWithType(type, token: token)
         guard let path = filePath else {
-            print("bad file path, cant fetch file")
+            Logger.info(message: "bad file path, cant fetch file")
             return nil
         }
 
         guard let unarchivedData = unarchiveWithFilePath(path) else {
-            print("can't unarchive file")
+            Logger.info(message: "can't unarchive file")
             return nil
         }
 
