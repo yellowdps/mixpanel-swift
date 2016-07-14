@@ -151,14 +151,6 @@ class MixpanelPeopleTests: MixpanelBaseTests {
         XCTAssertNotNil(prop2)
     }
 
-    func testPeopleTrackChargeNil() {
-        mixpanel.identify(distinctId: "d1")
-        XCTExpectAssert("can't have nil as trackCharge") {
-            mixpanel.people.trackCharge(amount: nil)
-        }
-        XCTAssertTrue(mixpanel.people.peopleQueue.count == 0)
-    }
-
     func testPeopleTrackChargeZero() {
         mixpanel.identify(distinctId: "d1")
         mixpanel.people.trackCharge(amount: 0)

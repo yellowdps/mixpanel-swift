@@ -228,6 +228,8 @@
 				TargetAttributes = {
 					E15FF7D21D0461130076CDE3 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = E8FVX7QLET;
+						DevelopmentTeamName = "Mixpanel, Inc.";
 						LastSwiftMigration = 0800;
 					};
 					E15FF7E61D0461130076CDE3 = {
@@ -491,6 +493,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = MixpanelDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../Mixpanel";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mixpanel.MixpanelDemo;
@@ -506,6 +509,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = MixpanelDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../Mixpanel";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mixpanel.MixpanelDemo;

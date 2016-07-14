@@ -89,18 +89,20 @@ class Flush: AppLifecycle {
             if let requestData = requestData {
                 let semaphore = DispatchSemaphore(value: 0)
                 delegate?.updateNetworkActivityIndicator(true)
+                var shadowQueue = queue
                 flushRequest.sendRequest(requestData,
                                          type: type,
                                          useIP: useIPAddressForGeoLocation,
                                          completion: { success in
                                             self.delegate?.updateNetworkActivityIndicator(false)
                                             if success {
-                                                queue.removeSubrange(range)
+                                                shadowQueue.removeSubrange(range)
                                             }
                                             shouldContinue = success
                                             semaphore.signal()
                 })
                 _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+                queue = shadowQueue
             }
             
             if !shouldContinue {

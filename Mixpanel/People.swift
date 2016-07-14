@@ -8,8 +8,15 @@
 
 import Foundation
 
+/// Access to the Mixpanel People API, available as an accessible variable from
+/// the main Mixpanel instance.
 public class People {
 
+    /// controls the $ignore_time property in any subsequent MixpanelPeople operation.
+    /// If the $ignore_time property is present and true in your request,
+    /// Mixpanel will not automatically update the "Last Seen" property of the profile.
+    /// Otherwise, Mixpanel will add a "Last Seen" property associated with the
+    /// current time for all $set, $append, and $add operations
     public var ignoreTime = false
 
     let apiToken: String
@@ -17,12 +24,10 @@ public class People {
     var peopleQueue = Queue()
     var unidentifiedQueue = Queue()
     var distinctId: String? = nil
-    let automaticProperties: AutomaticProperties
 
-    init(apiToken: String, serialQueue: DispatchQueue, automaticProperties: AutomaticProperties) {
+    init(apiToken: String, serialQueue: DispatchQueue) {
         self.apiToken = apiToken
         self.serialQueue = serialQueue
-        self.automaticProperties = automaticProperties
     }
 
     func addPeopleRecordToQueueWithAction(_ action: String, properties: Properties) {
@@ -43,7 +48,7 @@ public class People {
                 r[action] = properties["$properties"]
             } else {
                 if action == "$set" || action == "$set_once" {
-                    p += self.automaticProperties.peopleProperties
+                    p += AutomaticProperties.peopleProperties
                 }
                 p += properties
                 r[action] = p
@@ -69,8 +74,24 @@ public class People {
         }
     }
 
-
+    func merge(properties: Properties) {
+        addPeopleRecordToQueueWithAction("$merge", properties: properties)
+    }
+    
     // MARK: - People Public API
+    
+    /**
+     Register the given device to receive push notifications.
+     
+     This will associate the device token with the current user in Mixpanel People,
+     which will allow you to send push notifications to the user from the Mixpanel
+     People web interface. You should call this method with the `Data`
+     token passed to
+     `application:didRegisterForRemoteNotificationsWithDeviceToken:`.
+     
+     - parameter deviceToken: device token as returned from
+     `application:didRegisterForRemoteNotificationsWithDeviceToken:`
+     */
     public func addPushDeviceToken(_ deviceToken: Data) {
         let tokenChars = UnsafePointer<CChar>((deviceToken as NSData).bytes)
         var tokenString = ""
@@ -83,46 +104,78 @@ public class People {
         addPeopleRecordToQueueWithAction("$union", properties: properties)
     }
 
-    public func set(properties: Properties?) {
-        MPAssert(properties != nil, "properties must not be nil")
+    /**
+     Set properties on the current user in Mixpanel People.
+     
+     The properties will be set on the current user. The property keys must be String
+     objects and the supported property value types are:
+     String, Int, UInt, Double, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
+     You can override the current project token and distinct Id by
+     including the special properties: $token and $distinct_id. If the existing
+     user record on the server already has a value for a given property, the old
+     value is overwritten. Other existing properties will not be affected.
+     
+     - precondition: You must identify for the set information to be linked to that user
+     
+     - parameter properties: properties dictionary
+     */
+    public func set(properties: Properties) {
         Track.assertPropertyTypes(properties)
-        guard let properties = properties else {
-            return
-        }
         addPeopleRecordToQueueWithAction("$set", properties: properties)
     }
 
-    public func set(property: String?, to: AnyObject?) {
-        MPAssert(property != nil, "property must not be nil")
-        MPAssert(to != nil, "to must not be nil")
-        guard let property = property, to = to else {
-            return
-        }
+    /**
+     Convenience method for setting a single property in Mixpanel People.
+     
+     The property keys must be String objects and the supported property value types are:
+     String, Int, UInt, Double, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
+     
+     - parameter property: property name
+     - parameter to:       property value
+     */
+    public func set(property: String, to: AnyObject) {
         set(properties: [property: to])
     }
 
-    public func setOnce(properties: Properties?) {
-        MPAssert(properties != nil, "properties must not be nil")
+    /**
+     Set properties on the current user in Mixpanel People, but doesn't overwrite if
+     there is an existing value.
+     
+     This method is identical to `set:` except it will only set
+     properties that are not already set. It is particularly useful for collecting
+     data about the user's initial experience and source, as well as dates
+     representing the first time something happened.
+     
+     - parameter properties: properties dictionary
+     */
+    public func setOnce(properties: Properties) {
         Track.assertPropertyTypes(properties)
-        guard let properties = properties else {
-            return
-        }
         addPeopleRecordToQueueWithAction("$set_once", properties: properties)
     }
 
-    public func unset(properties: [String]?) {
-        MPAssert(properties != nil, "properties must not be nil")
-        guard let properties = properties else {
-            return
-        }
+    /**
+     Remove a list of properties and their values from the current user's profile
+     in Mixpanel People.
+     
+     The properties array must ony contain String names of properties. For properties
+     that don't exist there will be no effect.
+     
+     - parameter properties: properties array
+     */
+    public func unset(properties: [String]) {
         addPeopleRecordToQueueWithAction("$unset", properties: ["$properties":properties])
     }
 
-    public func increment(properties: Properties?) {
-        MPAssert(properties != nil, "properties must not be nil")
-        guard let properties = properties else {
-            return
-        }
+    /**
+     Increment the given numeric properties by the given values.
+     
+     Property keys must be String names of numeric properties. A property is
+     numeric if its current value is a number. If a property does not exist, it
+     will be set to the increment amount. Property values must be number objects.
+     
+     - parameter properties: properties array
+     */
+    public func increment(properties: Properties) {
         let filtered = properties.values.filter() {
             !($0 is Int || $0 is UInt || $0 is Double || $0 is Float) }
         if filtered.count > 0 {
@@ -132,29 +185,38 @@ public class People {
         addPeopleRecordToQueueWithAction("$add", properties: properties)
     }
 
-    public func increment(property: String?, by: Int?) {
-        MPAssert(property != nil, "property must not be nil")
-        MPAssert(by != nil, "amount must not be nil")
-        guard let property = property, by = by else {
-            return
-        }
+    /**
+     Convenience method for incrementing a single numeric property by the specified
+     amount.
+     
+     - parameter property: property name
+     - parameter by:       amount to increment by
+     */
+    public func increment(property: String, by: Int) {
         increment(properties: [property: by])
     }
 
-    public func append(properties: Properties?) {
-        MPAssert(properties != nil, "properties must not be nil")
+    /**
+     Append values to list properties.
+     
+     The property keys must be String objects and the supported property value types are:
+     String, Int, UInt, Double, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
+     
+     - parameter properties: mapping of list property names to values to append
+     */
+    public func append(properties: Properties) {
         Track.assertPropertyTypes(properties)
-        guard let properties = properties else {
-            return
-        }
         addPeopleRecordToQueueWithAction("$append", properties: properties)
     }
 
-    public func union(properties: Properties?) {
-        MPAssert(properties != nil, "properties must not be nil")
-        guard let properties = properties else {
-            return
-        }
+    /**
+     Union list properties.
+     
+     Property keys must be array objects.
+     
+     - parameter properties: mapping of list property names to lists to union
+     */
+    public func union(properties: Properties) {
         let filtered = properties.values.filter() {
             !($0 is [Any]) }
         if filtered.count > 0 {
@@ -164,19 +226,18 @@ public class People {
         addPeopleRecordToQueueWithAction("$union", properties: properties)
     }
 
-    public func merge(properties: Properties?) {
-        MPAssert(properties != nil, "properties must not be nil")
-        guard let properties = properties else {
-            return
-        }
-        addPeopleRecordToQueueWithAction("$merge", properties: properties)
-    }
-
-    public func trackCharge(amount: Double?, properties: Properties? = nil) {
-        MPAssert(amount != nil, "amount must not be nil")
-        guard let amount = amount else {
-            return
-        }
+    /**
+     Track money spent by the current user for revenue analytics and associate
+     properties with the charge. Properties is optional.
+     
+     Charge properties allow you to segment on types of revenue. For instance, you
+     could record a product ID with each charge so that you could segement on it in
+     revenue analytics to see which products are generating the most revenue.
+     
+     - parameter amount:     amount of revenue received
+     - parameter properties: Optional. properties dictionary
+     */
+    public func trackCharge(amount: Double, properties: Properties? = nil) {
         var transaction: Properties = ["$amount": amount, "$time": Date()]
         if let properties = properties {
             transaction += properties
@@ -184,10 +245,16 @@ public class People {
         append(properties: ["$transactions": transaction])
     }
 
+    /**
+     Delete current user's revenue history.
+     */
     public func clearCharges() {
         set(properties: ["$transactions": []])
     }
 
+    /**
+     Delete current user's record from Mixpanel People.
+     */
     public func deleteUser() {
         addPeopleRecordToQueueWithAction("$delete", properties: [:])
     }

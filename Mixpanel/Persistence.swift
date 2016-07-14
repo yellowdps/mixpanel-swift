@@ -11,7 +11,7 @@ import Foundation
 struct ArchivedProperties {
     let superProperties: Properties
     let timedEvents: Properties
-    let distinctId: String?
+    let distinctId: String
     let peopleDistinctId: String?
     let peopleUnidentifiedQueue: Queue
 }
@@ -28,9 +28,9 @@ class Persistence {
         return filePathFor(type.rawValue, token: token)
     }
 
-    class private func filePathFor(_ data: String, token: String) -> String? {
-        let filename = "mixpanel-\(token)-\(data)"
-        let manager = FileManager.default()
+    class private func filePathFor(_ archiveType: String, token: String) -> String? {
+        let filename = "mixpanel-\(token)-\(archiveType)"
+        let manager = FileManager.default
         let url = manager.urlsForDirectory(.libraryDirectory, inDomains: .userDomainMask).last
 
         guard let urlUnwrapped = try? url?.appendingPathComponent(filename).path else {
@@ -84,7 +84,7 @@ class Persistence {
         peopleQueue: Queue,
         superProperties: Properties,
         timedEvents: Properties,
-        distinctId: String?,
+        distinctId: String,
         peopleDistinctId: String?,
         peopleUnidentifiedQueue: Queue) {
         let eventsQueue = unarchiveEvents(token: token)
@@ -109,7 +109,7 @@ class Persistence {
         let unarchivedData: AnyObject? = NSKeyedUnarchiver.unarchiveObject(withFile: filePath)
         if unarchivedData == nil {
             do {
-                try FileManager.default().removeItem(atPath: filePath)
+                try FileManager.default.removeItem(atPath: filePath)
             } catch {
                 Logger.info(message: "Unable to remove file at path: \(filePath)")
             }
@@ -126,14 +126,14 @@ class Persistence {
         return unarchiveWithType(.People, token: token) as? Queue ?? []
     }
 
-    class private func unarchiveProperties(token: String) -> (Properties, Properties, String?, String?, Queue) {
+    class private func unarchiveProperties(token: String) -> (Properties, Properties, String, String?, Queue) {
         let properties = unarchiveWithType(.Properties, token: token) as? Properties
         let superProperties =
             properties?["superProperties"] as? Properties ?? Properties()
         let timedEvents =
             properties?["timedEvents"] as? Properties ?? Properties()
         let distinctId =
-            properties?["distinctId"] as? String ?? nil
+            properties?["distinctId"] as? String ?? ""
         let peopleDistinctId =
             properties?["peopleDistinctId"] as? String ?? nil
         let peopleUnidentifiedQueue =

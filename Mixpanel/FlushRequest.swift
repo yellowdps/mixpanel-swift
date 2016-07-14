@@ -70,8 +70,11 @@ class FlushRequest: Network {
     }
     
     private func updateRetryDelay(_ response: URLResponse?) {
-        let retryTimeStr = (response as? HTTPURLResponse)?.allHeaderFields["Retry-After"] as? String
-        var retryTime: Double = retryTimeStr != nil ? Double(retryTimeStr!)! : 0
+        var retryTime = 0.0
+        let retryHeader = (response as? HTTPURLResponse)?.allHeaderFields["Retry-After"] as? String
+        if let retryHeader = retryHeader, retryHeaderParsed = (Double(retryHeader)) {
+            retryTime = retryHeaderParsed
+        }
         
         if networkConsecutiveFailures >= APIConstants.failuresTillBackoff {
             retryTime = max(retryTime,
@@ -91,6 +94,5 @@ class FlushRequest: Network {
     func requestNotAllowed() -> Bool {
         return Date().timeIntervalSince1970 < networkRequestsAllowedAfterTime
     }
-    
     
 }

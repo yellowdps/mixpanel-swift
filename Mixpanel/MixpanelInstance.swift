@@ -8,11 +8,21 @@
 
 import Foundation
 
+/**
+ *  Delegate protocol for controlling the Mixpanel API's network behavior.
+ */
 public protocol MixpanelDelegate {
+    /**
+     Asks the delegate if data should be uploaded to the server.
+     
+     - parameter mixpanel: The mixpanel instance
+     
+     - returns: return true to upload now or false to defer until later
+     */
     func mixpanelWillFlush(_ mixpanel: MixpanelInstance) -> Bool
 }
 
-public typealias Properties = [String:AnyObject]
+public typealias Properties = [String: AnyObject]
 public typealias Queue = [Properties]
 
 protocol AppLifecycle {
@@ -20,12 +30,24 @@ protocol AppLifecycle {
     func applicationWillResignActive()
 }
 
-public class MixpanelInstance: FlushDelegate {
+/// The class that represents the Mixpanel Instance
+public class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate {
 
+    /// The a MixpanelDelegate object that gives control over Mixpanel network activity.
     public var delegate: MixpanelDelegate?
-    public var distinctId: String?
+    
+    /// distinctId string that uniquely identifies the current user.
+    public var distinctId = ""
+    
+    /// Accessor to the Mixpanel People API object.
     public var people: People!
+    
+    /// Controls whether to show spinning network activity indicator when flushing
+    /// data to the Mixpanel servers. Defaults to true.
     public var showNetworkActivityIndicator = true
+    
+    /// Flush timer's interval.
+    /// Setting a flush interval of 0 will turn off the flush timer.
     public var flushInterval: Double {
         set {
             flushInstance.flushInterval = newValue
@@ -34,6 +56,9 @@ public class MixpanelInstance: FlushDelegate {
             return flushInstance.flushInterval
         }
     }
+    
+    /// Control whether the library should flush data to Mixpanel when the app
+    /// enters the background. Defaults to true.
     public var flushOnBackground: Bool {
         set {
             flushInstance.flushOnBackground = newValue
@@ -42,6 +67,10 @@ public class MixpanelInstance: FlushDelegate {
             return flushInstance.flushOnBackground
         }
     }
+    
+    /// Controls whether to automatically send the client IP Address as part of
+    /// event tracking. With an IP address, the Mixpanel Dashboard will show you the users' city.
+    /// Defaults to true.
     public var useIPAddressForGeoLocation: Bool {
         set {
             flushInstance.useIPAddressForGeoLocation = newValue
@@ -50,6 +79,10 @@ public class MixpanelInstance: FlushDelegate {
             return flushInstance.useIPAddressForGeoLocation
         }
     }
+    
+    /// The base URL used for Mixpanel API requests.
+    /// Useful if you need to proxy Mixpanel requests. Defaults to
+    /// https://api.mixpanel.com.
     public var serverURL: String {
         set {
             BasePath.MixpanelAPI = newValue
@@ -57,6 +90,14 @@ public class MixpanelInstance: FlushDelegate {
         get {
             return BasePath.MixpanelAPI
         }
+    }
+    public var debugDescription: String {
+        return "Mixpanel(\n"
+        + "    Token: \(apiToken),\n"
+        + "    Events Queue Count: \(eventsQueue.count),\n"
+        + "    People Queue Count: \(people.peopleQueue.count),\n"
+        + "    Distinct Id: \(distinctId)\n"
+        + ")"
     }
     
     /// This allows enabling or disabling of all Mixpanel logs at run time.
@@ -88,7 +129,6 @@ public class MixpanelInstance: FlushDelegate {
     var timedEvents = Properties()
     var serialQueue: DispatchQueue!
     var taskId = UIBackgroundTaskInvalid
-    let automaticProperties: AutomaticProperties
     let flushInstance = Flush()
     let trackInstance: Track
     
@@ -96,16 +136,14 @@ public class MixpanelInstance: FlushDelegate {
         if let apiToken = apiToken where apiToken.characters.count > 0 {
             self.apiToken = apiToken
         }
-        
+
         trackInstance = Track(apiToken: self.apiToken)
-        automaticProperties = AutomaticProperties(apiToken: self.apiToken)
         flushInstance.delegate = self
-        let label = "com.mixpanel.\(apiToken).\(self)"
+        let label = "com.mixpanel.\(self.apiToken)"
         serialQueue = DispatchQueue(label: label, attributes: DispatchQueueAttributes.serial)
-        people = People(apiToken: self.apiToken,
-                        serialQueue: serialQueue,
-                        automaticProperties: automaticProperties)
         distinctId = defaultDistinctId()
+        people = People(apiToken: self.apiToken,
+                        serialQueue: serialQueue)
         flushInstance._flushInterval = flushInterval
 
         setupListeners()
@@ -118,7 +156,7 @@ public class MixpanelInstance: FlushDelegate {
     }
 
     private func setupListeners() {
-        let notificationCenter = NotificationCenter.default()
+        let notificationCenter = NotificationCenter.default
 
         setCurrentRadio()
         notificationCenter.addObserver(self,
@@ -147,12 +185,12 @@ public class MixpanelInstance: FlushDelegate {
                                        object: nil)
         notificationCenter.addObserver(self,
                                        selector: #selector(appLinksNotificationRaised(_:)),
-                                       name: "com.parse.bolts.measurement_event",
+                                       name: NSNotification.Name("com.parse.bolts.measurement_event"),
                                        object: nil)
     }
     
     deinit {
-        NotificationCenter.default().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
     @objc private func applicationDidBecomeActive(_ notification: Notification) {
@@ -233,14 +271,10 @@ public class MixpanelInstance: FlushDelegate {
         }
     }
 
-    func description() -> String {
-        return "<Mixpanel: \(self), Token: \(apiToken), Events Queue Count: \(eventsQueue.count), People Queue Count: \(people.peopleQueue.count), Distinct Id: \(distinctId)>"
-    }
-
     @objc func setCurrentRadio() {
-        let currentRadio = automaticProperties.getCurrentRadio()
+        let currentRadio = AutomaticProperties.getCurrentRadio()
         serialQueue.async() {
-            self.automaticProperties.properties["$radio"] = currentRadio
+            AutomaticProperties.properties["$radio"] = currentRadio
         }
     }
 
@@ -249,8 +283,31 @@ public class MixpanelInstance: FlushDelegate {
 // MARK: - Identity
 extension MixpanelInstance {
 
-    public func identify(distinctId: String?) {
-        guard let distinctId = distinctId where distinctId.characters.count > 0 else {
+    /**
+     Sets the distinct ID of the current user.
+     
+     Mixpanel uses the IFV String (`UIDevice.current().identifierForVendor`)
+     as the default distinct ID. This ID will identify a user across all apps by the same
+     vendor, but cannot be used to link the same user across apps from different
+     vendors. If we are unable to get the IFV, we will fall back to generating a
+     random persistent UUID
+     
+     For tracking events, you do not need to call `identify:` if you
+     want to use the default. However,
+     **Mixpanel People always requires an explicit call to `identify:`.**
+     If calls are made to
+     `set:`, `increment` or other `People`
+     methods prior to calling `identify:`, then they are queued up and
+     flushed once `identify:` is called.
+     
+     If you'd like to use the default distinct ID for Mixpanel People as well
+     (recommended), call `identify:` using the current distinct ID:
+     `mixpanelInstance.identify(mixpanelInstance.distinctId)`.
+     
+     - parameter distinctId: string that uniquely identifies the current user
+     */
+    public func identify(distinctId: String) {
+        if distinctId.characters.count == 0 {
             Logger.error(message: "\(self) cannot identify blank distinct id")
             return
         }
@@ -270,14 +327,34 @@ extension MixpanelInstance {
             self.archiveProperties()
         }
     }
-
-    public func createAlias(_ alias: String?, distinctId: String?) {
-        guard let distinctId = distinctId where distinctId.characters.count > 0 else {
+    
+    /**
+     Creates a distinctId alias from alias to the current id.
+     
+     This method is used to map an identifier called an alias to the existing Mixpanel
+     distinct id. This causes all events and people requests sent with the alias to be
+     mapped back to the original distinct id. The recommended usage pattern is to call
+     both createAlias: and identify: when the user signs up, and only identify: (with
+     their new user ID) when they log in. This will keep your signup funnels working
+     correctly.
+     
+     This makes the current id and 'Alias' interchangeable distinct ids.
+     Mixpanel.
+     mixpanelInstance.createAlias("Alias", mixpanelInstance.distinctId)
+     
+     - precondition: You must call identify if you haven't already
+     (e.g. when your app launches)
+     
+     - parameter alias:      the new distinct id that should represent the original
+     - parameter distinctId: the old distinct id that alias will be mapped to
+     */
+    public func createAlias(_ alias: String, distinctId: String) {
+        if distinctId.characters.count == 0 {
             Logger.error(message: "\(self) cannot identify blank distinct id")
             return
         }
 
-        guard let alias = alias where alias.characters.count > 0 else {
+        if alias.characters.count == 0 {
             Logger.error(message: "\(self) create alias called with empty alias")
             return
         }
@@ -288,6 +365,10 @@ extension MixpanelInstance {
         flush()
     }
 
+    /**
+     Clears all stored properties including the distinct Id.
+     Useful if your app's user logs out.
+     */
     public func reset() {
         serialQueue.async() {
             self.distinctId = self.defaultDistinctId()
@@ -305,6 +386,16 @@ extension MixpanelInstance {
 // MARK: - Persistence
 extension MixpanelInstance {
 
+    /**
+     Writes current project info including the distinct Id, super properties,
+     and pending event and People record queues to disk.
+     
+     This state will be recovered when the app is launched again if the Mixpanel
+     library is initialized with the same project token.
+     **You do not need to call this method.**
+     The library listens for app state changes and handles
+     persisting data as needed.
+     */
     public func archive() {
         let properties = ArchivedProperties(superProperties: superProperties,
                                             timedEvents: timedEvents,
@@ -326,7 +417,7 @@ extension MixpanelInstance {
          people.distinctId,
          people.unidentifiedQueue) = Persistence.unarchive(token: self.apiToken)
 
-        if distinctId == nil {
+        if distinctId == "" {
             distinctId = defaultDistinctId()
         }
     }
@@ -344,6 +435,16 @@ extension MixpanelInstance {
 // MARK: - Flush
 extension MixpanelInstance {
 
+    /**
+     Uploads queued data to the Mixpanel server.
+     
+     By default, queued data is flushed to the Mixpanel servers every minute (the
+     default for `flushInterval`), and on background (since
+     `flushOnBackground` is on by default). You only need to call this
+     method manually if you want to force a flush at a particular moment.
+     
+     - parameter completion: an optional completion handler for when the flush has completed.
+     */
     public func flush(completion: (() -> Void)? = nil) {
         serialQueue.async() {
             if let shouldFlush = self.delegate?.mixpanelWillFlush(self) where !shouldFlush {
@@ -364,13 +465,24 @@ extension MixpanelInstance {
 // MARK: - Track
 extension MixpanelInstance {
 
+    /**
+     Tracks an event with properties.
+     Properties are optional and can be added only if needed.
+     
+     Properties will allow you to segment your events in your Mixpanel reports.
+     Property keys must be String objects and the supported value types are:
+     String, Int, UInt, Double, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
+     If the event is being timed, the timer will stop and be added as a property.
+     
+     - parameter event:      event name
+     - parameter properties: properties dictionary
+     */
     public func track(event: String?, properties: Properties? = nil) {
         serialQueue.async() {
             self.trackInstance.track(event: event,
                                      properties: properties,
                                      eventsQueue: &self.eventsQueue,
                                      timedEvents: &self.timedEvents,
-                                     automaticProperties: self.automaticProperties.properties,
                                      superProperties: self.superProperties,
                                      distinctId: self.distinctId)
             
@@ -378,6 +490,17 @@ extension MixpanelInstance {
         }
     }
 
+    /**
+     Track a push notification using its payload sent from Mixpanel.
+     
+     To simplify user interaction tracking, Mixpanel
+     automatically sends IDs for the relevant notification of each push.
+     This method parses the standard payload and queues a track call using this information.
+     
+     - parameter userInfo: remote notification payload dictionary
+     - parameter event:    optional, and usually shouldn't be used,
+     unless the results is needed to be tracked elsewhere.
+     */
     public func trackPushNotification(_ userInfo: Properties?,
                                       event: String = "$campaign_received") {
         if let mpPayload = userInfo?["mp"] as? [String: AnyObject] {
@@ -393,45 +516,91 @@ extension MixpanelInstance {
         }
     }
 
-    public func time(event: String?) {
+    /**
+     Starts a timer that will be stopped and added as a property when a
+     corresponding event is tracked.
+     
+     This method is intended to be used in advance of events that have
+     a duration. For example, if a developer were to track an "Image Upload" event
+     she might want to also know how long the upload took. Calling this method
+     before the upload code would implicitly cause the `track`
+     call to record its duration.
+     
+     - precondition:
+     // begin timing the image upload:
+     mixpanelInstance.time(event:"Image Upload")
+     // upload the image:
+     self.uploadImageWithSuccessHandler() { _ in
+     // track the event
+     mixpanelInstance.track("Image Upload")
+     }
+     
+     - parameter event: the event name to be timed
+     
+     */
+    public func time(event: String) {
         serialQueue.async() {
             self.trackInstance.time(event: event, timedEvents: &self.timedEvents)
         }
     }
 
+    /**
+     Clears all current event timers.
+     */
     public func clearTimedEvents() {
         serialQueue.async() {
             self.trackInstance.clearTimedEvents(&self.timedEvents)
         }
     }
 
+    /**
+     Returns the currently set super properties.
+     
+     - returns: the current super properties
+     */
     public func currentSuperProperties() -> Properties {
         return superProperties
     }
 
+    /**
+     Clears all currently set super properties.
+     */
     public func clearSuperProperties() {
         dispatchAndTrack() {
             self.trackInstance.clearSuperProperties(&self.superProperties)
         }
     }
 
-    public func registerSuperProperties(_ properties: Properties?) {
-        guard let properties = properties else {
-            return
-        }
-        
+    /**
+     Registers super properties, overwriting ones that have already been set.
+     
+     Super properties, once registered, are automatically sent as properties for
+     all event tracking calls. They save you having to maintain and add a common
+     set of properties to your events.
+     Property keys must be String objects and the supported value types are:
+     String, Int, UInt, Double, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
+     
+     - parameter properties: properties dictionary
+     */
+    public func registerSuperProperties(_ properties: Properties) {
         dispatchAndTrack() {
             self.trackInstance.registerSuperProperties(properties,
                                                        superProperties: &self.superProperties)
         }
     }
 
-    public func registerSuperPropertiesOnce(_ properties: Properties?,
+    /**
+     Registers super properties without overwriting ones that have already been set,
+     unless the existing value is equal to defaultValue. defaultValue is optional.
+     
+     Property keys must be String objects and the supported value types are:
+     String, Int, UInt, Double, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
+     
+     - parameter properties:   properties dictionary
+     - parameter defaultValue: Optional. overwrite existing properties that have this value
+     */
+    public func registerSuperPropertiesOnce(_ properties: Properties,
                                             defaultValue: AnyObject? = nil) {
-        guard let properties = properties else {
-            return
-        }
-        
         dispatchAndTrack() {
             self.trackInstance.registerSuperPropertiesOnce(properties,
                                                            superProperties: &self.superProperties,
@@ -440,6 +609,19 @@ extension MixpanelInstance {
 
     }
 
+    /**
+     Removes a previously registered super property.
+     
+     As an alternative to clearing all properties, unregistering specific super
+     properties prevents them from being recorded on future events. This operation
+     does not affect the value of other super properties. Any property name that is
+     not registered is ignored.
+     Note that after removing a super property, events will show the attribute as
+     having the value `undefined` in Mixpanel until a new value is
+     registered.
+     
+     - parameter propertyName: array of property name strings to remove
+     */
     public func unregisterSuperProperty(_ propertyName: String) {
         dispatchAndTrack() {
             self.trackInstance.unregisterSuperProperty(propertyName,

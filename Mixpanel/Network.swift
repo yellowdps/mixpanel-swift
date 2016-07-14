@@ -12,12 +12,18 @@ import Foundation
 struct BasePath {
     static var MixpanelAPI = "https://api.mixpanel.com"
     
-    static func getURL(str: String) -> URL? {
-        if let url = URL(string:str) {
-            return url
+    static func buildURL(base: String, path: String) -> URL? {
+        guard let url = try? URL(string: base)?.appendingPathComponent(path) else {
+            return nil
         }
-        return nil
+        
+        guard let urlUnwrapped = url else {
+            return nil
+        }
+        
+        return urlUnwrapped
     }
+    
 }
 
 enum Method: String {
@@ -46,11 +52,11 @@ class Network {
                           resource: Resource<A>,
                           failure: (Reason, Data?, URLResponse?) -> (),
                           success: (A, URLResponse?) -> ()) {
-        guard let request = createRequest(base, resource: resource) else {
+        guard let request = buildURLRequest(base, resource: resource) else {
             return
         }
         
-        let session = URLSession.shared()
+        let session = URLSession.shared
         session.dataTask(with: request) { (data, response, error) -> Void in
             guard let httpResponse = response as? HTTPURLResponse else {
                 failure(Reason.Other(error!), data, response)
@@ -73,16 +79,12 @@ class Network {
         }.resume()
     }
     
-    private class func createRequest<A>(_ base: String, resource: Resource<A>) -> URLRequest? {
-        guard let url = try? URL(string: base)?.appendingPathComponent(resource.path) else {
+    private class func buildURLRequest<A>(_ base: String, resource: Resource<A>) -> URLRequest? {
+        guard let url = BasePath.buildURL(base: base, path: resource.path) else {
             return nil
         }
         
-        guard let urlUnwrapped = url else {
-            return nil
-        }
-        
-        var request = URLRequest(url: urlUnwrapped)
+        var request = URLRequest(url: url)
         request.httpMethod = resource.method.rawValue
         request.httpBody = resource.requestBody
         

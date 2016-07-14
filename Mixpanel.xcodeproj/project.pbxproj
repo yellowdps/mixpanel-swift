@@ -184,6 +184,8 @@
 				TargetAttributes = {
 					E115947C1CFF1491007F8B4F = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = E8FVX7QLET;
+						DevelopmentTeamName = "Mixpanel, Inc.";
 						LastSwiftMigration = 0800;
 					};
 				};
@@ -344,6 +346,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Mixpanel/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mixpanel.Mixpanel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -363,6 +366,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Mixpanel/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mixpanel.Mixpanel;
 				PRODUCT_NAME = "$(TARGET_NAME)";

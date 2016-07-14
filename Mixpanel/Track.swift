@@ -40,12 +40,11 @@ class Track {
     }
 
     func track(event: String?,
-               properties: [String:AnyObject]? = nil,
+               properties: [String: AnyObject]? = nil,
                eventsQueue: inout Queue,
                timedEvents: inout Properties,
-               automaticProperties: Properties,
                superProperties: Properties,
-               distinctId: String?) {
+               distinctId: String) {
         var ev = event
         if ev == nil || ev!.characters.count == 0 {
             Logger.info(message: "mixpanel track called with empty event parameter. using 'mp_event'")
@@ -56,17 +55,15 @@ class Track {
         let epochInterval = Date().timeIntervalSince1970
         let epochSeconds = Int(round(epochInterval))
         let eventStartTime = timedEvents[ev!] as? Int
-        var p = [String : AnyObject]()
-        p += automaticProperties
+        var p = [String: AnyObject]()
+        p += AutomaticProperties.properties
         p["token"] = apiToken
         p["time"] = epochSeconds
         if let eventStartTime = eventStartTime {
             timedEvents.removeValue(forKey: ev!)
             p["$duration"] = Double(String(format: "%.3f", epochInterval - Double(eventStartTime)))
         }
-        if let distinctId = distinctId {
-            p["distinct_id"] = distinctId
-        }
+        p["distinct_id"] = distinctId
         p += superProperties
         if let properties = properties {
             p += properties

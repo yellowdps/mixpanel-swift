@@ -20,7 +20,7 @@ class JSONHandler {
             return nil
         }
 
-        let base64Encoded = d.base64EncodedString(.encoding64CharacterLineLength)
+        let base64Encoded = d.base64EncodedString(options: .lineLength64Characters)
 
         guard let b64 = base64Encoded
             .addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else {
