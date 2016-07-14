@@ -12,58 +12,57 @@ import XCTest
 
 class LoggerTests: XCTestCase {
     var counter: CounterLogging!
-    var testLog: Logger!
     
     override func setUp() {
         super.setUp()
         
         counter = CounterLogging()
-        testLog = Logger(logging: counter)
+        Logger.addLogging(counter)
     }
     
     func testEnableDebug() {
-        testLog.enableLevel(level: .Debug)
+        Logger.enableLevel(.Debug)
         
-        testLog.debug(message: "logged")
+        Logger.debug(message: "logged")
         XCTAssertEqual(1, counter.count)
     }
     
     func testEnableInfo() {
-        testLog.enableLevel(level: .Info)
+        Logger.enableLevel(.Info)
         
-        testLog.info(message: "logged")
+        Logger.info(message: "logged")
         XCTAssertEqual(1, counter.count)
     }
     
     func testEnableWarning() {
-        testLog.enableLevel(level: .Warning)
+        Logger.enableLevel(.Warning)
         
-        testLog.warn(message: "logged")
+        Logger.warn(message: "logged")
         XCTAssertEqual(1, counter.count)
     }
     
     func testEnableError() {
-        testLog.enableLevel(level: .Error)
+        Logger.enableLevel(.Error)
         
-        testLog.error(message: "logged")
+        Logger.error(message: "logged")
         XCTAssertEqual(1, counter.count)
     }
     
     func testDisabledLogging() {
-        testLog.disableLevel(level: .Debug)
-        testLog.debug(message: "not logged")
+        Logger.disableLevel(.Debug)
+        Logger.debug(message: "not logged")
         XCTAssertEqual(0, counter.count)
         
-        testLog.disableLevel(level: .Error)
-        testLog.error(message: "not logged")
+        Logger.disableLevel(.Error)
+        Logger.error(message: "not logged")
         XCTAssertEqual(0, counter.count)
         
-        testLog.disableLevel(level: .Info)
-        testLog.info(message: "not logged")
+        Logger.disableLevel(.Info)
+        Logger.info(message: "not logged")
         XCTAssertEqual(0, counter.count)
         
-        testLog.disableLevel(level: .Warning)
-        testLog.warn(message: "not logged")
+        Logger.disableLevel(.Warning)
+        Logger.warn(message: "not logged")
         XCTAssertEqual(0, counter.count)
     }
 }

@@ -65,19 +65,19 @@ public class MixpanelInstance: FlushDelegate {
     public var loggingEnabled: Bool = false {
         didSet {
             if loggingEnabled {
-                Log.enableLevel(level: .Debug)
-                Log.enableLevel(level: .Info)
-                Log.enableLevel(level: .Warning)
-                Log.enableLevel(level: .Error)
+                Logger.enableLevel(.Debug)
+                Logger.enableLevel(.Info)
+                Logger.enableLevel(.Warning)
+                Logger.enableLevel(.Error)
                 
-                Log.info(message: "Logging Enabled")
+                Logger.info(message: "Logging Enabled")
             } else {
-                Log.info(message: "Logging Disabled")
+                Logger.info(message: "Logging Disabled")
                 
-                Log.disableLevel(level: .Debug)
-                Log.disableLevel(level: .Info)
-                Log.disableLevel(level: .Warning)
-                Log.disableLevel(level: .Error)
+                Logger.disableLevel(.Debug)
+                Logger.disableLevel(.Info)
+                Logger.disableLevel(.Warning)
+                Logger.disableLevel(.Error)
             }
         }
     }
@@ -251,7 +251,7 @@ extension MixpanelInstance {
 
     public func identify(distinctId: String?) {
         guard let distinctId = distinctId where distinctId.characters.count > 0 else {
-            Log.error(message: "\(self) cannot identify blank distinct id")
+            Logger.error(message: "\(self) cannot identify blank distinct id")
             return
         }
 
@@ -273,12 +273,12 @@ extension MixpanelInstance {
 
     public func createAlias(_ alias: String?, distinctId: String?) {
         guard let distinctId = distinctId where distinctId.characters.count > 0 else {
-            Log.error(message: "\(self) cannot identify blank distinct id")
+            Logger.error(message: "\(self) cannot identify blank distinct id")
             return
         }
 
         guard let alias = alias where alias.characters.count > 0 else {
-            Log.error(message: "\(self) create alias called with empty alias")
+            Logger.error(message: "\(self) create alias called with empty alias")
             return
         }
 
@@ -388,7 +388,7 @@ extension MixpanelInstance {
                 self.track(event: event,
                            properties: properties)
             } else {
-                Log.info(message: "malformed mixpanel push payload")
+                Logger.info(message: "malformed mixpanel push payload")
             }
         }
     }
