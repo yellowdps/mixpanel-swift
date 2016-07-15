@@ -16,7 +16,7 @@ class JSONHandler {
         let data: Data? = serializeJSONObject(obj)
 
         guard let d = data else {
-            print("couldn't serialize object")
+            Logger.warn(message: "couldn't serialize object")
             return nil
         }
 
@@ -24,7 +24,7 @@ class JSONHandler {
 
         guard let b64 = base64Encoded
             .addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else {
-            print("couldn't replace characters to allowed URL character set")
+            Logger.warn(message: "couldn't replace characters to allowed URL character set")
             return nil
         }
 
@@ -35,7 +35,7 @@ class JSONHandler {
         let serializableJSONObject = makeObjectSerializable(obj)
 
         guard JSONSerialization.isValidJSONObject(serializableJSONObject) else {
-            print("object isn't valid and can't be serialzed to JSON")
+            Logger.warn(message: "object isn't valid and can't be serialzed to JSON")
             return nil
         }
         var serializedObject: Data? = nil
@@ -43,7 +43,7 @@ class JSONHandler {
             serializedObject = try JSONSerialization
                 .data(withJSONObject: serializableJSONObject, options: [])
         } catch {
-            print("exception encoding api data")
+            Logger.warn(message: "exception encoding api data")
         }
         return serializedObject
     }
@@ -74,7 +74,7 @@ class JSONHandler {
             return obj.absoluteString!
 
         default:
-            print("enforcing string on object")
+            Logger.info(message: "enforcing string on object")
             return obj.description
         }
     }

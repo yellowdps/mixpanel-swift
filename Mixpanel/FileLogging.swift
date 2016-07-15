@@ -16,7 +16,7 @@ class FileLogging: Logging {
         if let handle = FileHandle(forWritingAtPath: path) {
             fileHandle = handle
         } else {
-            fileHandle = FileHandle.standardError()
+            fileHandle = FileHandle.withStandardError
         }
         
         // Move to the end of the file so we can append messages
