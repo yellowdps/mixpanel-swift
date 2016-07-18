@@ -20,8 +20,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Mixpanel.initialize(token: "3d5965256713f8dbf078fbe27605eb76")
         Mixpanel.mainInstance().loggingEnabled = true
         Mixpanel.mainInstance().flushInterval = 20
-        Mixpanel.mainInstance().registerSuperProperties(["Plan": "Premium"])
-        Mixpanel.removeInstance(name: "lol")
         return true
     }
 

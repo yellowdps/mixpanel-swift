@@ -192,7 +192,7 @@ public class People {
      - parameter property: property name
      - parameter by:       amount to increment by
      */
-    public func increment(property: String, by: Int) {
+    public func increment(property: String, by: Double) {
         increment(properties: [property: by])
     }
 
@@ -218,7 +218,8 @@ public class People {
      */
     public func union(properties: Properties) {
         let filtered = properties.values.filter() {
-            !($0 is [Any]) }
+            !($0 is [AnyObject])
+        }
         if filtered.count > 0 {
             MPAssert(true, "union property values should be an array")
             return
