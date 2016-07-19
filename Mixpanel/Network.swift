@@ -97,4 +97,42 @@ class Network {
     class func buildResource<A>(path: String, method: Method, requestBody: Data?, headers: [String: String], parse: (Data) -> A?) -> Resource<A> {
         return Resource(path: path, method: method, requestBody: requestBody, headers: headers, parse: parse)
     }
+    
+    class func trackIntegration(apiToken: String, completion: (Bool) -> ()) {
+        let requestData = JSONHandler.encodeAPIData([["event": "Integration",
+                                                      "properties": ["token": "85053bf24bba75239b16a601d9387e17",
+                                                                     "mp_lib": "swift",
+                                                                     "distinct_id": apiToken]]])
+        
+        let responseParser: (Data) -> Int? = { data in
+            let response = String(data: data, encoding: String.Encoding.utf8)
+            if let response = response {
+                return Int(response) ?? 0
+            }
+            return nil
+        }
+        
+        if let requestData = requestData {
+            let requestBody = "ip=1&data=\(requestData)"
+                .data(using: String.Encoding.utf8)
+            
+            let resource = Network.buildResource(path: FlushType.Events.rawValue,
+                                                 method: Method.POST,
+                                                 requestBody: requestBody,
+                                                 headers: ["Accept-Encoding": "gzip"],
+                                                 parse: responseParser)
+            
+            Network.apiRequest(base: BasePath.MixpanelAPI,
+                               resource: resource,
+                               failure: { (reason, data, response) in
+                                Logger.debug(message: "failed to track integration")
+                                completion(false)
+                },
+                               success: { (result, response) in
+                                Logger.debug(message: "integration tracked")
+                                completion(true)
+                }
+            )
+        }
+    }
 }

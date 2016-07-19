@@ -158,6 +158,7 @@ public class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate {
     private func setupListeners() {
         let notificationCenter = NotificationCenter.default
 
+        trackIntegration()
         setCurrentRadio()
         notificationCenter.addObserver(self,
                                        selector: #selector(setCurrentRadio),
@@ -187,6 +188,7 @@ public class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate {
                                        selector: #selector(appLinksNotificationRaised(_:)),
                                        name: NSNotification.Name("com.parse.bolts.measurement_event"),
                                        object: nil)
+        
     }
     
     deinit {
@@ -392,9 +394,10 @@ extension MixpanelInstance {
      
      This state will be recovered when the app is launched again if the Mixpanel
      library is initialized with the same project token.
-     **You do not need to call this method.**
      The library listens for app state changes and handles
      persisting data as needed.
+     
+     - important: You do not need to call this method.**
      */
     public func archive() {
         let properties = ArchivedProperties(superProperties: superProperties,
@@ -429,6 +432,21 @@ extension MixpanelInstance {
                                             peopleDistinctId: people.distinctId,
                                             peopleUnidentifiedQueue: people.unidentifiedQueue)
         Persistence.archiveProperties(properties, token: self.apiToken)
+    }
+    
+    func trackIntegration() {
+        let defaultsKey = "trackedKey"
+        if (!UserDefaults.standard.bool(forKey: defaultsKey)) {
+            serialQueue.async() {
+                Network.trackIntegration(apiToken: self.apiToken) {
+                    (success) in
+                    if(success) {
+                        UserDefaults.standard.set(true, forKey: defaultsKey)
+                        UserDefaults.standard.synchronize()
+                    }
+                }
+            }
+        }
     }
 }
 

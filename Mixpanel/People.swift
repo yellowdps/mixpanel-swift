@@ -40,7 +40,7 @@ public class People {
             r["$token"] = self.apiToken
             r["$time"] = epochMilliseconds
             if ignoreTimeCopy {
-                r["$ignore_time"] = ignoreTimeCopy
+                r["$ignore_time"] = Int(ignoreTimeCopy)
             }
             if action == "$unset" {
                 // $unset takes an array of property names which is supplied to this method

@@ -23,6 +23,9 @@ public class Mixpanel {
      - parameter flushInterval: Optional. Interval to run background flushing
      - parameter instanceName:  Optional. The name you want to call this instance
      
+     - important: If you have more than one Mixpanel instance, it is beneficial to initialize
+     the instances with an instanceName. Then they can be reached by calling getInstance with name.
+     
      - returns: returns a mixpanel instance if needed to keep throughout the project.
      You can always get the instance by calling getInstance(name)
      */
@@ -44,8 +47,8 @@ public class Mixpanel {
      
      - returns: returns the mixpanel instance
      */
-    public class func getInstance(name instanceName: String) -> MixpanelInstance? {
-        return MixpanelManager.sharedInstance.getInstance(name: instanceName)
+    public class func getInstance(name: String) -> MixpanelInstance? {
+        return MixpanelManager.sharedInstance.getInstance(name: name)
     }
     
     /**
@@ -64,8 +67,8 @@ public class Mixpanel {
      
      - parameter name: the instance name
      */
-    public class func setMainInstance(name instanceName: String) {
-        MixpanelManager.sharedInstance.setMainInstance(name: instanceName)
+    public class func setMainInstance(name: String) {
+        MixpanelManager.sharedInstance.setMainInstance(name: name)
     }
     
     /**
@@ -73,8 +76,8 @@ public class Mixpanel {
      
      - parameter name: the instance name
      */
-    public class func removeInstance(name instanceName: String) {
-        MixpanelManager.sharedInstance.removeInstance(name: instanceName)
+    public class func removeInstance(name: String) {
+        MixpanelManager.sharedInstance.removeInstance(name: name)
     }
     
 }

@@ -149,7 +149,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
         for _ in 0..<2 {
             // run this twice to test reset works correctly wrt to distinct ids
             let distinctId: String = "d1"
-            // try this for IFA, ODIN and nil
+            // try this for ODIN and nil
             XCTAssertEqual(mixpanel.distinctId,
                            mixpanel.defaultDistinctId(),
                            "mixpanel identify failed to set default distinct id")
@@ -556,5 +556,31 @@ class MixpanelDemoTests: MixpanelBaseTests {
 
     func testTelephonyInfoInitialized() {
         XCTAssertNotNil(AutomaticProperties.telephonyInfo, "telephonyInfo wasn't initialized")
+    }
+    
+    func testNestedUnsupportedTypes() {
+        stubTrack()
+        stubEngage()
+        let p = ["property": ["p": [Data()]]]
+        mixpanel.track(event: "test", properties: p)
+        mixpanel.identify(distinctId: "1234")
+        mixpanel.people.set(properties: p)
+        flushAndWaitForSerialQueue()
+    }
+    
+    func testUnexpectedBeahviours() {
+        stubEngage()
+        mixpanel.identify(distinctId: "1234")
+        mixpanel.people.set(properties: ["p1": "string type"])
+        flushAndWaitForSerialQueue()
+        
+        mixpanel.people.increment(property: "p1", by: 2.3)
+        flushAndWaitForSerialQueue()
+        
+        mixpanel.people.union(properties: ["p1": "unioned item"])
+        flushAndWaitForSerialQueue()
+        
+        mixpanel.people.append(properties: ["p1": "appended item"])
+        flushAndWaitForSerialQueue()
     }
 }
