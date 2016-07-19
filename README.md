@@ -50,7 +50,7 @@ IMAGE
 ## Step 4: Integrate!
 
 Import Mixpanel into AppDelegate.swift, and initialize Mixpanel within `application:didFinishLaunchingWithOptions:`
-![alt text](images.mxpnl.com/docs/2016-07-19 23:27:03.724972-Screen Shot 2016-07-18 at 7.16.51 PM.png)
+![alt text](http://images.mxpnl.com/docs/2016-07-19%2023:27:03.724972-Screen%20Shot%202016-07-18%20at%207.16.51%20PM.png)
 
 ```
 func application(_ application: UIApplication,
