@@ -39,13 +39,13 @@ Now the Mixpanel project and its files should be in your project folder!
 
 Drag the Mixpanel.xcodeproj inside your sample project under the main sample project file:
 
-IMAGE
+![alt text](http://images.mxpnl.com/docs/2016-07-19%2023:34:02.724663-Screen%20Shot%202016-07-19%20at%204.33.34%20PM.png)
 
 ##Step 3: Embed the framework
 
 Select your app .xcodeproj file. Under "General", add the Mixpanel framework as an embedded binary:
 
-IMAGE
+![alt text](http://images.mxpnl.com/docs/2016-07-19%2023:31:29.237158-add_framework.png)
 
 ## Step 4: Integrate!
 
