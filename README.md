@@ -27,15 +27,25 @@ To help users stay up to date with the latests version of our iOS SDK, we always
 
 ##Step 1: Add as a Submodule
 
-...
+Add Mixpanel as a submodule to your local git repo like so:
+
+```
+git submodule add git@github.com:mixpanel/mixpanel-swift-private.git
+```
+
+Now the Mixpanel project and its files should be in your project folder! 
 
 ##Step 2: Drag Mixpanel to your project
 
-...
+Drag the Mixpanel.xcodeproj inside your sample project under the main sample project file:
+
+IMAGE
 
 ##Step 3: Embed the framework
 
-...
+Select your app .xcodeproj file. Under "General", add the Mixpanel framework as an embedded binary:
+
+IMAGE
 
 ## Step 4: Integrate!
 
