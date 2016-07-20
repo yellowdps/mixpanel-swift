@@ -83,6 +83,7 @@
 		E15FF7EB1D0461130076CDE3 /* MixpanelDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixpanelDemoTests.swift; sourceTree = "<group>"; };
 		E15FF7ED1D0461130076CDE3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E15FF7F61D0461BC0076CDE3 /* Mixpanel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Mixpanel.xcodeproj; path = ../Mixpanel.xcodeproj; sourceTree = "<group>"; };
+		E16BAEB41D3DB4FC00C442CE /* MixpanelDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = MixpanelDemo.entitlements; sourceTree = "<group>"; };
 		E1C61EB91D22F6470056C56C /* MixpanelPeopleTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MixpanelPeopleTests.swift; sourceTree = "<group>"; };
 		E1C61EBD1D22F9F60056C56C /* TestConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestConstants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -158,6 +159,7 @@
 		E15FF7D51D0461130076CDE3 /* MixpanelDemo */ = {
 			isa = PBXGroup;
 			children = (
+				E16BAEB41D3DB4FC00C442CE /* MixpanelDemo.entitlements */,
 				E15FF7DA1D0461130076CDE3 /* Main.storyboard */,
 				E15FF7D61D0461130076CDE3 /* AppDelegate.swift */,
 				E146F1931D398D0A00D75B49 /* TrackingViewController.swift */,
@@ -248,6 +250,12 @@
 						DevelopmentTeam = E8FVX7QLET;
 						DevelopmentTeamName = "Mixpanel, Inc.";
 						LastSwiftMigration = 0800;
+						ProvisioningStyle = Manual;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					E15FF7E61D0461130076CDE3 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -511,13 +519,17 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MixpanelDemo/MixpanelDemo.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = MixpanelDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../Mixpanel";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mixpanel.MixpanelDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mixpanel.swiftdemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "88d41d51-9b2f-4efc-aa57-83fb1297bb4b";
+				PROVISIONING_PROFILE_SPECIFIER = "E8FVX7QLET/Swift SDK Demo";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -527,13 +539,17 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MixpanelDemo/MixpanelDemo.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = MixpanelDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../Mixpanel";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mixpanel.MixpanelDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mixpanel.swiftdemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "88d41d51-9b2f-4efc-aa57-83fb1297bb4b";
+				PROVISIONING_PROFILE_SPECIFIER = "E8FVX7QLET/Swift SDK Demo";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
 			};

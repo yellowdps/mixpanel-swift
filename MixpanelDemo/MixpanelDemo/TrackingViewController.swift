@@ -26,8 +26,6 @@ class TrackingViewController: UIViewController, UITableViewDelegate, UITableView
     override func viewDidLoad() {
         tableView.delegate = self
         tableView.dataSource = self
-        Mixpanel.mainInstance().identify(
-            distinctId: Mixpanel.mainInstance().distinctId)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -81,12 +79,12 @@ class TrackingViewController: UIViewController, UITableViewDelegate, UITableView
             Mixpanel.mainInstance().registerSuperProperties(p)
             descStr = "Properties: \(p)"
         case 7:
-            let p = ["Super Property Once": 2.3]
+            let p = ["Super Property 1": 2.3]
             Mixpanel.mainInstance().registerSuperPropertiesOnce(p)
             descStr = "Properties: \(p)"
         case 8:
-            let p = ["Super Property Once": 1.2]
-            Mixpanel.mainInstance().registerSuperPropertiesOnce(["Super Property Once": 1.2], defaultValue: 2.3)
+            let p = ["Super Property 1": 1.2]
+            Mixpanel.mainInstance().registerSuperPropertiesOnce(p, defaultValue: 2.3)
             descStr = "Properties: \(p) with Default Value: 2.3"
         case 9:
             let p = "Super Property 2"

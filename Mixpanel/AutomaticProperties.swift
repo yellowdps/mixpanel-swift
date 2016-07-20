@@ -60,7 +60,7 @@ class AutomaticProperties {
         }
         return radio
     }
-
+    
     class func deviceModel() -> String {
         var systemInfo = utsname()
         uname(&systemInfo)

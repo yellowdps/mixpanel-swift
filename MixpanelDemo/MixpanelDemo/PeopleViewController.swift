@@ -46,11 +46,11 @@ class PeopleViewController: UIViewController, UITableViewDelegate, UITableViewDa
         switch indexPath.item {
         case 0:
             let p: Properties = ["a": 1,
-                                          "b": 2.3,
-                                          "c": ["4", 5,],
-                                          "d": ["6": Date()],
-                                          "e": URL(string:"https://mixpanel.com")!,
-                                          "f": NSNull()]
+                                 "b": 2.3,
+                                 "c": ["4", 5,],
+                                 "d": URL(string:"https://mixpanel.com")!,
+                                 "e": NSNull(),
+                                 "f": Date()]
             Mixpanel.mainInstance().people.set(properties: p)
             descStr = "Properties: \(p)"
         case 1:
@@ -76,7 +76,7 @@ class PeopleViewController: UIViewController, UITableViewDelegate, UITableViewDa
             Mixpanel.mainInstance().people.append(properties: p)
             descStr = "Properties: \(p)"
         case 7:
-            let p = ["c": "hello", "c": "goodbye"]
+            let p = ["c": ["goodbye", "hi"], "d": ["hello"]]
             Mixpanel.mainInstance().people.union(properties: p)
             descStr = "Properties: \(p)"
         case 8:
