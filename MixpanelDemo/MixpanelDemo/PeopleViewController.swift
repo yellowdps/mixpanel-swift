@@ -30,15 +30,15 @@ class PeopleViewController: UIViewController, UITableViewDelegate, UITableViewDa
         tableView.dataSource = self
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = self.tableView.dequeueReusableCell(withIdentifier: "cell")! as UITableViewCell
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = self.tableView.dequeueReusableCellWithIdentifier("cell")! as UITableViewCell
         cell.textLabel?.text = tableViewItems[indexPath.item]
-        cell.textLabel?.textColor = #colorLiteral(red: 0.200000003, green: 0.200000003, blue: 0.200000003, alpha: 1)
+        cell.textLabel?.textColor = UIColor(red: 0.200000003, green: 0.200000003, blue: 0.200000003, alpha: 1)
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
         
         let actionStr = tableViewItems[indexPath.item]
         var descStr = ""
@@ -48,9 +48,9 @@ class PeopleViewController: UIViewController, UITableViewDelegate, UITableViewDa
             let p: Properties = ["a": 1,
                                  "b": 2.3,
                                  "c": ["4", 5,],
-                                 "d": URL(string:"https://mixpanel.com")!,
+                                 "d": NSURL(string:"https://mixpanel.com")!,
                                  "e": NSNull(),
-                                 "f": Date()]
+                                 "f": NSDate()]
             Mixpanel.mainInstance().people.set(properties: p)
             descStr = "Properties: \(p)"
         case 1:
@@ -96,16 +96,15 @@ class PeopleViewController: UIViewController, UITableViewDelegate, UITableViewDa
             break
         }
         
-        let vc = self.storyboard!.instantiateViewController(withIdentifier: "ActionCompleteViewController") as! ActionCompleteViewController
+        let vc = self.storyboard!.instantiateViewControllerWithIdentifier("ActionCompleteViewController") as! ActionCompleteViewController
         vc.actionStr = actionStr
         vc.descStr = descStr
-        vc.modalTransitionStyle = UIModalTransitionStyle.crossDissolve
-        vc.modalPresentationStyle = UIModalPresentationStyle.overFullScreen
-        self.present(vc, animated: true, completion: nil)
-
+        vc.modalTransitionStyle = UIModalTransitionStyle.CrossDissolve
+        vc.modalPresentationStyle = UIModalPresentationStyle.OverFullScreen
+        self.presentViewController(vc, animated: true, completion: nil)
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tableViewItems.count
     }
     

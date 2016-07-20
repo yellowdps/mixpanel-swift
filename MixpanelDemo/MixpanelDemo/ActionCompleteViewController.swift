@@ -28,14 +28,15 @@ class ActionCompleteViewController: UIViewController {
         descLabel.text = descStr
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        DispatchQueue.main.after(when: .now() + 5) {
-            self.dismiss(animated: true, completion: nil)
+    override func viewDidAppear(animated: Bool) {
+        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(5 * Double(NSEC_PER_SEC)))
+        dispatch_after(delayTime, dispatch_get_main_queue()) {
+            self.dismissViewControllerAnimated(true, completion: nil)
         }
     }
     
     func handleTap(gesture: UITapGestureRecognizer) {
-        self.dismiss(animated: true, completion: nil)
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
 }

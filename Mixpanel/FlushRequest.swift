@@ -18,13 +18,13 @@ class FlushRequest: Network {
     var networkRequestsAllowedAfterTime = 0.0
     var networkConsecutiveFailures = 0
     
-    func sendRequest(_ requestData: String,
+    func sendRequest(requestData: String,
                      type: FlushType,
                      useIP: Bool,
                      completion: (Bool) -> Void) {
         
-        let responseParser: (Data) -> Int? = { data in
-            let response = String(data: data, encoding: String.Encoding.utf8)
+        let responseParser: (NSData) -> Int? = { data in
+            let response = String(data: data, encoding: NSUTF8StringEncoding)
             if let response = response {
                 return Int(response) ?? 0
             }
@@ -32,7 +32,7 @@ class FlushRequest: Network {
         }
         
         let requestBody = "ip=\(Int(useIP))&data=\(requestData)"
-            .data(using: String.Encoding.utf8)
+            .dataUsingEncoding(NSUTF8StringEncoding)
         
         let resource = Network.buildResource(path: type.rawValue,
                                              method: Method.POST,
@@ -47,7 +47,7 @@ class FlushRequest: Network {
         })
     }
     
-    private func flushRequestHandler(_ base: String,
+    private func flushRequestHandler(base: String,
                                      resource: Resource<Int>,
                                      completion: (Bool) -> Void) {
         
@@ -69,9 +69,9 @@ class FlushRequest: Network {
         )
     }
     
-    private func updateRetryDelay(_ response: URLResponse?) {
+    private func updateRetryDelay(response: NSURLResponse?) {
         var retryTime = 0.0
-        let retryHeader = (response as? HTTPURLResponse)?.allHeaderFields["Retry-After"] as? String
+        let retryHeader = (response as? NSHTTPURLResponse)?.allHeaderFields["Retry-After"] as? String
         if let retryHeader = retryHeader, retryHeaderParsed = (Double(retryHeader)) {
             retryTime = retryHeaderParsed
         }
@@ -81,18 +81,18 @@ class FlushRequest: Network {
                             retryBackOffTimeWithConsecutiveFailures(
                                 self.networkConsecutiveFailures))
         }
-        let retryDate = Date(timeIntervalSinceNow: retryTime)
+        let retryDate = NSDate(timeIntervalSinceNow: retryTime)
         networkRequestsAllowedAfterTime = retryDate.timeIntervalSince1970
     }
     
-    private func retryBackOffTimeWithConsecutiveFailures(_ failureCount: Int) -> TimeInterval {
+    private func retryBackOffTimeWithConsecutiveFailures(failureCount: Int) -> NSTimeInterval {
         let time = pow(2.0, Double(failureCount) - 1) * 60 + Double(arc4random_uniform(30))
         return min(max(APIConstants.minRetryBackoff, time),
                    APIConstants.maxRetryBackoff)
     }
     
     func requestNotAllowed() -> Bool {
-        return Date().timeIntervalSince1970 < networkRequestsAllowedAfterTime
+        return NSDate().timeIntervalSince1970 < networkRequestsAllowedAfterTime
     }
     
 }

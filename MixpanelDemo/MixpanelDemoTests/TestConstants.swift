@@ -16,19 +16,19 @@ let kDefaultServerString = "https://api.mixpanel.com"
 let kDefaultServerTrackString = "https://api.mixpanel.com/track/"
 let kDefaultServerEngageString = "https://api.mixpanel.com/engage/"
 
-@discardableResult func stubEngage() -> LSStubRequestDSL {
+func stubEngage() -> LSStubRequestDSL {
     return stubRequest("POST", kDefaultServerEngageString).withHeader("Accept-Encoding", "gzip")!
 }
 
-@discardableResult func stubTrack() -> LSStubRequestDSL {
+func stubTrack() -> LSStubRequestDSL {
     return stubRequest("POST", kDefaultServerTrackString).withHeader("Accept-Encoding", "gzip")!
 }
 
 
 extension XCTestCase {
     
-    func XCTExpectAssert(_ expectedMessage: String, file: StaticString = #file, line: UInt = #line, block: @noescape() -> ()) {
-        let exp = expectation(withDescription: expectedMessage)
+    func XCTExpectAssert(expectedMessage: String, file: StaticString = #file, line: UInt = #line, block: () -> ()) {
+        let exp = expectationWithDescription(expectedMessage)
         
         Assertions.assertClosure = {
             (condition, message, file, line) in
@@ -39,7 +39,7 @@ extension XCTestCase {
 
         // Call code.
         block();
-        waitForExpectations(withTimeout: 0.5, handler: nil)
+        waitForExpectationsWithTimeout(0.5, handler: nil)
         Assertions.assertClosure = Assertions.swiftAssertClosure
     }
         

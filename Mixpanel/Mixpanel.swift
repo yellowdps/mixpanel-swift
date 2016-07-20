@@ -29,11 +29,10 @@ public class Mixpanel {
      - returns: returns a mixpanel instance if needed to keep throughout the project.
      You can always get the instance by calling getInstance(name)
      */
-    @discardableResult
     public class func initialize(token apiToken: String,
                                                     launchOptions: [NSObject: AnyObject]? = nil,
                                                     flushInterval: Double = 60,
-                                                    instanceName: String = UUID().uuidString) -> MixpanelInstance {
+                                                    instanceName: String = NSUUID().UUIDString) -> MixpanelInstance {
         return MixpanelManager.sharedInstance.initialize(token:         apiToken,
                                                          launchOptions: launchOptions,
                                                          flushInterval: flushInterval,
@@ -47,7 +46,7 @@ public class Mixpanel {
      
      - returns: returns the mixpanel instance
      */
-    public class func getInstance(name: String) -> MixpanelInstance? {
+    public class func getInstance(name name: String) -> MixpanelInstance? {
         return MixpanelManager.sharedInstance.getInstance(name: name)
     }
     
@@ -67,7 +66,7 @@ public class Mixpanel {
      
      - parameter name: the instance name
      */
-    public class func setMainInstance(name: String) {
+    public class func setMainInstance(name name: String) {
         MixpanelManager.sharedInstance.setMainInstance(name: name)
     }
     
@@ -76,7 +75,7 @@ public class Mixpanel {
      
      - parameter name: the instance name
      */
-    public class func removeInstance(name: String) {
+    public class func removeInstance(name name: String) {
         MixpanelManager.sharedInstance.removeInstance(name: name)
     }
     

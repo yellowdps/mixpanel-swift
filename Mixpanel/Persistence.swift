@@ -24,23 +24,23 @@ class Persistence {
         case Properties
     }
 
-    class func filePathWithType(_ type: ArchiveType, token: String) -> String? {
+    class func filePathWithType(type: ArchiveType, token: String) -> String? {
         return filePathFor(type.rawValue, token: token)
     }
 
-    class private func filePathFor(_ archiveType: String, token: String) -> String? {
+    class private func filePathFor(archiveType: String, token: String) -> String? {
         let filename = "mixpanel-\(token)-\(archiveType)"
-        let manager = FileManager.default
-        let url = manager.urlsForDirectory(.libraryDirectory, inDomains: .userDomainMask).last
+        let manager = NSFileManager.defaultManager()
+        let url = manager.URLsForDirectory(NSSearchPathDirectory.LibraryDirectory, inDomains: NSSearchPathDomainMask.UserDomainMask).last
 
-        guard let urlUnwrapped = try? url?.appendingPathComponent(filename).path else {
+        guard let urlUnwrapped = url?.URLByAppendingPathComponent(filename).path else {
             return nil
         }
 
         return urlUnwrapped
     }
 
-    class func archive(_ eventsQueue: Queue,
+    class func archive(eventsQueue: Queue,
                        peopleQueue: Queue,
                        properties: ArchivedProperties,
                        token: String) {
@@ -49,15 +49,15 @@ class Persistence {
         archiveProperties(properties, token: token)
     }
 
-    class func archiveEvents(_ eventsQueue: Queue, token: String) {
+    class func archiveEvents(eventsQueue: Queue, token: String) {
         archiveToFile(.Events, object: eventsQueue, token: token)
     }
 
-    class func archivePeople(_ peopleQueue: Queue, token: String) {
+    class func archivePeople(peopleQueue: Queue, token: String) {
         archiveToFile(.People, object: peopleQueue, token: token)
     }
 
-    class func archiveProperties(_ properties: ArchivedProperties, token: String) {
+    class func archiveProperties(properties: ArchivedProperties, token: String) {
         var p: Properties = Properties()
         p["distinctId"] = properties.distinctId
         p["superProperties"] = properties.superProperties
@@ -67,7 +67,7 @@ class Persistence {
         archiveToFile(.Properties, object: p, token: token)
     }
 
-    class private func archiveToFile(_ type: ArchiveType, object: AnyObject, token: String) {
+    class private func archiveToFile(type: ArchiveType, object: AnyObject, token: String) {
         let filePath = filePathWithType(type, token: token)
         guard let path = filePath else {
             Logger.error(message: "bad file path, cant fetch file")
@@ -80,7 +80,7 @@ class Persistence {
 
     }
 
-    class func unarchive(token: String) -> (eventsQueue: Queue,
+    class func unarchive(token token: String) -> (eventsQueue: Queue,
         peopleQueue: Queue,
         superProperties: Properties,
         timedEvents: Properties,
@@ -105,28 +105,28 @@ class Persistence {
                 peopleUnidentifiedQueue)
     }
     
-    class private func unarchiveWithFilePath(_ filePath: String) -> AnyObject? {
-        let unarchivedData: AnyObject? = NSKeyedUnarchiver.unarchiveObject(withFile: filePath)
+    class private func unarchiveWithFilePath(filePath: String) -> AnyObject? {
+        let unarchivedData: AnyObject? = NSKeyedUnarchiver.unarchiveObjectWithFile(filePath)
         if unarchivedData == nil {
             do {
-                try FileManager.default.removeItem(atPath: filePath)
+                try NSFileManager.defaultManager().removeItemAtPath(filePath)
             } catch {
-                Logger.info(message: "Unable to remove file at path: \(filePath)")
+                Logger.info(message: "unable to remove file")
             }
         }
 
         return unarchivedData
     }
 
-    class private func unarchiveEvents(token: String) -> Queue {
+    class private func unarchiveEvents(token token: String) -> Queue {
         return unarchiveWithType(.Events, token: token) as? Queue ?? []
     }
 
-    class private func unarchivePeople(token: String) -> Queue {
+    class private func unarchivePeople(token token: String) -> Queue {
         return unarchiveWithType(.People, token: token) as? Queue ?? []
     }
 
-    class private func unarchiveProperties(token: String) -> (Properties, Properties, String, String?, Queue) {
+    class private func unarchiveProperties(token token: String) -> (Properties, Properties, String, String?, Queue) {
         let properties = unarchiveWithType(.Properties, token: token) as? Properties
         let superProperties =
             properties?["superProperties"] as? Properties ?? Properties()
@@ -146,7 +146,7 @@ class Persistence {
                 peopleUnidentifiedQueue)
     }
 
-    class private func unarchiveWithType(_ type: ArchiveType, token: String) -> AnyObject? {
+    class private func unarchiveWithType(type: ArchiveType, token: String) -> AnyObject? {
         let filePath = filePathWithType(type, token: token)
         guard let path = filePath else {
             Logger.info(message: "bad file path, cant fetch file")

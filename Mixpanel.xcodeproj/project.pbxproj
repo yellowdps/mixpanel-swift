@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		51DD567C1D306B740045D3DB /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DD56791D306B740045D3DB /* Logger.swift */; };
-		51DD56831D306B7B0045D3DB /* PrintLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DD56801D306B7B0045D3DB /* PrintLogging.swift */; };
-		51DD56841D306B7B0045D3DB /* FileLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DD56811D306B7B0045D3DB /* FileLogging.swift */; };
+		E11070441D385097008532ED /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11070431D385097008532ED /* Logger.swift */; };
+		E11070471D38509F008532ED /* FileLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11070451D38509F008532ED /* FileLogging.swift */; };
+		E11070481D38509F008532ED /* PrintLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11070461D38509F008532ED /* PrintLogging.swift */; };
 		E11594811CFF1491007F8B4F /* Mixpanel.h in Headers */ = {isa = PBXBuildFile; fileRef = E11594801CFF1491007F8B4F /* Mixpanel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E115948B1CFF1538007F8B4F /* Mixpanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E115948A1CFF1538007F8B4F /* Mixpanel.swift */; };
 		E115948E1D000709007F8B4F /* MixpanelInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E115948D1D000709007F8B4F /* MixpanelInstance.swift */; };
@@ -27,9 +27,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		51DD56791D306B740045D3DB /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
-		51DD56801D306B7B0045D3DB /* PrintLogging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrintLogging.swift; sourceTree = "<group>"; };
-		51DD56811D306B7B0045D3DB /* FileLogging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileLogging.swift; sourceTree = "<group>"; };
+		E11070431D385097008532ED /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		E11070451D38509F008532ED /* FileLogging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileLogging.swift; sourceTree = "<group>"; };
+		E11070461D38509F008532ED /* PrintLogging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrintLogging.swift; sourceTree = "<group>"; };
 		E115947D1CFF1491007F8B4F /* Mixpanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Mixpanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E11594801CFF1491007F8B4F /* Mixpanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Mixpanel.h; sourceTree = "<group>"; };
 		E11594821CFF1491007F8B4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -60,22 +60,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		51DD56771D306B620045D3DB /* Log */ = {
+		E11070411D38507F008532ED /* Log */ = {
 			isa = PBXGroup;
 			children = (
-				51DD56781D306B6B0045D3DB /* Logging */,
-				51DD56791D306B740045D3DB /* Logger.swift */,
+				E11070431D385097008532ED /* Logger.swift */,
+				E11070421D385084008532ED /* Logger */,
 			);
 			name = Log;
 			sourceTree = "<group>";
 		};
-		51DD56781D306B6B0045D3DB /* Logging */ = {
+		E11070421D385084008532ED /* Logger */ = {
 			isa = PBXGroup;
 			children = (
-				51DD56801D306B7B0045D3DB /* PrintLogging.swift */,
-				51DD56811D306B7B0045D3DB /* FileLogging.swift */,
+				E11070451D38509F008532ED /* FileLogging.swift */,
+				E11070461D38509F008532ED /* PrintLogging.swift */,
 			);
-			name = Logging;
+			name = Logger;
 			sourceTree = "<group>";
 		};
 		E11594731CFF1491007F8B4F = {
@@ -107,7 +107,7 @@
 		E11594881CFF14D3007F8B4F /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				51DD56771D306B620045D3DB /* Log */,
+				E11070411D38507F008532ED /* Log */,
 				E115948A1CFF1538007F8B4F /* Mixpanel.swift */,
 				E115948D1D000709007F8B4F /* MixpanelInstance.swift */,
 				E11594921D0036E1007F8B4F /* Persistence.swift */,
@@ -222,19 +222,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51DD56831D306B7B0045D3DB /* PrintLogging.swift in Sources */,
 				E115948E1D000709007F8B4F /* MixpanelInstance.swift in Sources */,
 				E1D335CE1D30578E00E68E12 /* Constants.swift in Sources */,
 				E115949F1D01BE14007F8B4F /* Flush.swift in Sources */,
 				E11594931D0036E1007F8B4F /* Persistence.swift in Sources */,
+				E11070481D38509F008532ED /* PrintLogging.swift in Sources */,
 				E11594971D006022007F8B4F /* Network.swift in Sources */,
+				E11070471D38509F008532ED /* FileLogging.swift in Sources */,
 				E15FF7C81D0435670076CDE3 /* People.swift in Sources */,
 				E11594A11D01C597007F8B4F /* Track.swift in Sources */,
 				E11594991D01689F007F8B4F /* JSONHandler.swift in Sources */,
 				E1D335D01D3059A800E68E12 /* AutomaticProperties.swift in Sources */,
-				51DD567C1D306B740045D3DB /* Logger.swift in Sources */,
+				E11070441D385097008532ED /* Logger.swift in Sources */,
 				E1982BFF1D0AC2E2006B7330 /* Error.swift in Sources */,
-				51DD56841D306B7B0045D3DB /* FileLogging.swift in Sources */,
 				E1D335CC1D303A0D00E68E12 /* FlushRequest.swift in Sources */,
 				E115948B1CFF1538007F8B4F /* Mixpanel.swift in Sources */,
 			);

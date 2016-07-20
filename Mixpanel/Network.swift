@@ -12,16 +12,12 @@ import Foundation
 struct BasePath {
     static var MixpanelAPI = "https://api.mixpanel.com"
     
-    static func buildURL(base: String, path: String) -> URL? {
-        guard let url = try? URL(string: base)?.appendingPathComponent(path) else {
+    static func buildURL(base base: String, path: String) -> NSURL? {
+        guard let url = NSURL(string: base)?.URLByAppendingPathComponent(path) else {
             return nil
         }
         
-        guard let urlUnwrapped = url else {
-            return nil
-        }
-        
-        return urlUnwrapped
+        return url
     }
     
 }
@@ -34,9 +30,9 @@ enum Method: String {
 struct Resource<A> {
     let path: String
     let method: Method
-    let requestBody: Data?
+    let requestBody: NSData?
     let headers: [String:String]
-    let parse: (Data) -> A?
+    let parse: (NSData) -> A?
 }
 
 enum Reason {
@@ -48,17 +44,17 @@ enum Reason {
 
 class Network {
     
-    class func apiRequest<A>(base: String,
+    class func apiRequest<A>(base base: String,
                           resource: Resource<A>,
-                          failure: (Reason, Data?, URLResponse?) -> (),
-                          success: (A, URLResponse?) -> ()) {
+                          failure: (Reason, NSData?, NSURLResponse?) -> (),
+                          success: (A, NSURLResponse?) -> ()) {
         guard let request = buildURLRequest(base, resource: resource) else {
             return
         }
         
-        let session = URLSession.shared
-        session.dataTask(with: request) { (data, response, error) -> Void in
-            guard let httpResponse = response as? HTTPURLResponse else {
+        let session = NSURLSession.sharedSession()
+        session.dataTaskWithRequest(request) { (data, response, error) -> Void in
+            guard let httpResponse = response as? NSHTTPURLResponse else {
                 failure(Reason.Other(error!), data, response)
                 return
             }
@@ -79,33 +75,33 @@ class Network {
         }.resume()
     }
     
-    private class func buildURLRequest<A>(_ base: String, resource: Resource<A>) -> URLRequest? {
+    private class func buildURLRequest<A>(base: String, resource: Resource<A>) -> NSURLRequest? {
         guard let url = BasePath.buildURL(base: base, path: resource.path) else {
             return nil
         }
         
-        var request = URLRequest(url: url)
-        request.httpMethod = resource.method.rawValue
-        request.httpBody = resource.requestBody
+        let request = NSMutableURLRequest(URL: url)
+        request.HTTPMethod = resource.method.rawValue
+        request.HTTPBody = resource.requestBody
         
         for (k, v) in resource.headers {
             request.setValue(v, forHTTPHeaderField: k)
         }
-        return request as URLRequest
+        return request as NSURLRequest
     }
     
-    class func buildResource<A>(path: String, method: Method, requestBody: Data?, headers: [String: String], parse: (Data) -> A?) -> Resource<A> {
+    class func buildResource<A>(path path: String, method: Method, requestBody: NSData?, headers: [String: String], parse: (NSData) -> A?) -> Resource<A> {
         return Resource(path: path, method: method, requestBody: requestBody, headers: headers, parse: parse)
     }
     
-    class func trackIntegration(apiToken: String, completion: (Bool) -> ()) {
+    class func trackIntegration(apiToken apiToken: String, completion: (Bool) -> ()) {
         let requestData = JSONHandler.encodeAPIData([["event": "Integration",
-                                                      "properties": ["token": "85053bf24bba75239b16a601d9387e17",
-                                                                     "mp_lib": "swift",
-                                                                     "distinct_id": apiToken]]])
+            "properties": ["token": "85053bf24bba75239b16a601d9387e17",
+                "mp_lib": "swift",
+                "distinct_id": apiToken]]])
         
-        let responseParser: (Data) -> Int? = { data in
-            let response = String(data: data, encoding: String.Encoding.utf8)
+        let responseParser: (NSData) -> Int? = { data in
+            let response = String(data: data, encoding: NSUTF8StringEncoding)
             if let response = response {
                 return Int(response) ?? 0
             }
@@ -114,7 +110,7 @@ class Network {
         
         if let requestData = requestData {
             let requestBody = "ip=1&data=\(requestData)"
-                .data(using: String.Encoding.utf8)
+                .dataUsingEncoding(NSUTF8StringEncoding)
             
             let resource = Network.buildResource(path: FlushType.Events.rawValue,
                                                  method: Method.POST,

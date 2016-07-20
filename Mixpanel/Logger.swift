@@ -40,7 +40,7 @@ struct LogMessage {
     let level: LogLevel
     
     init(path: String, function: String, text: String, level: LogLevel) {
-        if let file = path.components(separatedBy: "/").last {
+        if let file = path.componentsSeparatedByString("/").last {
             self.file = file
         } else {
             self.file = path
@@ -53,7 +53,7 @@ struct LogMessage {
 
 /// Any object that conforms to this protocol may log messages
 protocol Logging {
-    func addMessage(message: LogMessage)
+    func addMessage(message message: LogMessage)
 }
 
 class Logger {
@@ -61,54 +61,51 @@ class Logger {
     private static var enabledLevels = Set<LogLevel>()
     
     /// Add a `Logging` object to receive all log messages
-    class func addLogging(_ logging: Logging) {
+    class func addLogging(logging: Logging) {
         loggers.append(logging)
     }
     
     /// Enable log messages of a specific `LogLevel` to be added to the log
-    class func enableLevel(_ level: LogLevel) {
+    class func enableLevel(level: LogLevel) {
         enabledLevels.insert(level)
     }
     
     /// Disable log messages of a specific `LogLevel` to prevent them from being logged
-    class func disableLevel(_ level: LogLevel) {
+    class func disableLevel(level: LogLevel) {
         enabledLevels.remove(level)
     }
     
-    /// debug: Adds a debug message to the Mixpanel log
-    /// - Parameter message: The message to be added to the log
-    class func debug(message: @autoclosure() -> Any, _ path: String = #file, _ function: String = #function) {
+    
+    /// The lowest priority, and normally not logged except for code based messages.
+    class func debug(@autoclosure message message: () -> Any, _ path: String = #file, _ function: String = #function) {
         guard enabledLevels.contains(.Debug) else { return }
         forwardLogMessage(LogMessage(path: path, function: function, text: "\(message())",
                                               level: .Debug))
     }
 
-    /// info: Adds an informational message to the Mixpanel log
-    /// - Parameter message: The message to be added to the log
-    class func info(message: @autoclosure() -> Any, _ path: String = #file, _ function: String = #function) {
+    /// The lowest priority that you would normally log, and purely informational in nature.
+    class func info(@autoclosure message message: () -> Any, _ path: String = #file, _ function: String = #function) {
         guard enabledLevels.contains(.Info) else { return }
         forwardLogMessage(LogMessage(path: path, function: function, text: "\(message())",
                                               level: .Info))
     }
     
-    /// warn: Adds a warning message to the Mixpanel log
-    /// - Parameter message: The message to be added to the log
-    class func warn(message: @autoclosure() -> Any, _ path: String = #file, _ function: String = #function) {
+    /// Something is amiss and might fail if not corrected.
+    class func warn(@autoclosure message message: () -> Any, _ path: String = #file, _ function: String = #function) {
         guard enabledLevels.contains(.Warning) else { return }
         forwardLogMessage(LogMessage(path: path, function: function, text: "\(message())",
                                               level: .Warning))
     }
     
-    /// error: Adds an error message to the Mixpanel log
-    /// - Parameter message: The message to be added to the log
-    class func error(message: @autoclosure() -> Any, _ path: String = #file, _ function: String = #function) {
+    /// Something has failed.
+    class func error(@autoclosure message message: () -> Any, _ path: String = #file, _ function: String = #function) {
         guard enabledLevels.contains(.Error) else { return }
         forwardLogMessage(LogMessage(path: path, function: function, text: "\(message())",
                                                level: .Error))
     }
     
     /// This forwards a `LogMessage` to each logger that has been added
-    class private func forwardLogMessage(_ message: LogMessage) {
+    class private func forwardLogMessage(message: LogMessage) {
         // Forward the log message to every registered Logging instance
         loggers.forEach() { $0.addMessage(message: message) }
     }

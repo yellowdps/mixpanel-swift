@@ -20,21 +20,21 @@ public class People {
     public var ignoreTime = false
 
     let apiToken: String
-    let serialQueue: DispatchQueue
+    let serialQueue: dispatch_queue_t
     var peopleQueue = Queue()
     var unidentifiedQueue = Queue()
     var distinctId: String? = nil
 
-    init(apiToken: String, serialQueue: DispatchQueue) {
+    init(apiToken: String, serialQueue: dispatch_queue_t) {
         self.apiToken = apiToken
         self.serialQueue = serialQueue
     }
 
-    func addPeopleRecordToQueueWithAction(_ action: String, properties: Properties) {
-        let epochMilliseconds = round(Date().timeIntervalSince1970 * 1000)
+    func addPeopleRecordToQueueWithAction(action: String, properties: Properties) {
+        let epochMilliseconds = round(NSDate().timeIntervalSince1970 * 1000)
         let ignoreTimeCopy = ignoreTime
 
-        serialQueue.async() {
+        dispatch_async(serialQueue) {
             var r = Properties()
             var p = Properties()
             r["$token"] = self.apiToken
@@ -60,21 +60,21 @@ public class People {
             } else {
                 self.unidentifiedQueue.append(r)
                 if self.unidentifiedQueue.count > QueueConstants.queueSize {
-                    self.unidentifiedQueue.remove(at: 0)
+                    self.unidentifiedQueue.removeAtIndex(0)
                 }
             }
             Persistence.archivePeople(self.peopleQueue, token: self.apiToken)
         }
     }
     
-    func addPeopleObject(_ r: Properties) {
+    func addPeopleObject(r: Properties) {
         peopleQueue.append(r)
         if peopleQueue.count > QueueConstants.queueSize {
-            peopleQueue.remove(at: 0)
+            peopleQueue.removeAtIndex(0)
         }
     }
 
-    func merge(properties: Properties) {
+    func merge(properties properties: Properties) {
         addPeopleRecordToQueueWithAction("$merge", properties: properties)
     }
     
@@ -92,11 +92,11 @@ public class People {
      - parameter deviceToken: device token as returned from
      `application:didRegisterForRemoteNotificationsWithDeviceToken:`
      */
-    public func addPushDeviceToken(_ deviceToken: Data) {
+    public func addPushDeviceToken(deviceToken: NSData) {
         let tokenChars = UnsafePointer<CChar>((deviceToken as NSData).bytes)
         var tokenString = ""
 
-        for i in 0..<deviceToken.count {
+        for i in 0..<deviceToken.length {
             tokenString += String(format: "%02.2hhx", arguments: [tokenChars[i]])
         }
         let tokens = [tokenString]
@@ -119,7 +119,7 @@ public class People {
      
      - parameter properties: properties dictionary
      */
-    public func set(properties: Properties) {
+    public func set(properties properties: Properties) {
         Track.assertPropertyTypes(properties)
         addPeopleRecordToQueueWithAction("$set", properties: properties)
     }
@@ -133,7 +133,7 @@ public class People {
      - parameter property: property name
      - parameter to:       property value
      */
-    public func set(property: String, to: AnyObject) {
+    public func set(property property: String, to: AnyObject) {
         set(properties: [property: to])
     }
 
@@ -148,7 +148,7 @@ public class People {
      
      - parameter properties: properties dictionary
      */
-    public func setOnce(properties: Properties) {
+    public func setOnce(properties properties: Properties) {
         Track.assertPropertyTypes(properties)
         addPeopleRecordToQueueWithAction("$set_once", properties: properties)
     }
@@ -162,7 +162,7 @@ public class People {
      
      - parameter properties: properties array
      */
-    public func unset(properties: [String]) {
+    public func unset(properties properties: [String]) {
         addPeopleRecordToQueueWithAction("$unset", properties: ["$properties":properties])
     }
 
@@ -175,11 +175,12 @@ public class People {
      
      - parameter properties: properties array
      */
-    public func increment(properties: Properties) {
+    public func increment(properties properties: Properties) {
         let filtered = properties.values.filter() {
             !($0 is Int || $0 is UInt || $0 is Double || $0 is Float) }
         if filtered.count > 0 {
-            MPAssert(false, "increment property values should be numbers")
+            MPAssert(false, message: "increment property values should be numbers")
+            return
         }
         addPeopleRecordToQueueWithAction("$add", properties: properties)
     }
@@ -191,7 +192,7 @@ public class People {
      - parameter property: property name
      - parameter by:       amount to increment by
      */
-    public func increment(property: String, by: Double) {
+    public func increment(property property: String, by: Double) {
         increment(properties: [property: by])
     }
 
@@ -203,7 +204,7 @@ public class People {
      
      - parameter properties: mapping of list property names to values to append
      */
-    public func append(properties: Properties) {
+    public func append(properties properties: Properties) {
         Track.assertPropertyTypes(properties)
         addPeopleRecordToQueueWithAction("$append", properties: properties)
     }
@@ -215,12 +216,12 @@ public class People {
      
      - parameter properties: mapping of list property names to lists to union
      */
-    public func union(properties: Properties) {
+    public func union(properties properties: Properties) {
         let filtered = properties.values.filter() {
-            !($0 is [AnyObject])
-        }
+            !($0 is [AnyObject]) }
         if filtered.count > 0 {
-            MPAssert(false, "union property values should be an array")
+            MPAssert(false, message: "union property values should be an array")
+            return
         }
         addPeopleRecordToQueueWithAction("$union", properties: properties)
     }
@@ -236,8 +237,8 @@ public class People {
      - parameter amount:     amount of revenue received
      - parameter properties: Optional. properties dictionary
      */
-    public func trackCharge(amount: Double, properties: Properties? = nil) {
-        var transaction: Properties = ["$amount": amount, "$time": Date()]
+    public func trackCharge(amount amount: Double, properties: Properties? = nil) {
+        var transaction: Properties = ["$amount": amount, "$time": NSDate()]
         if let properties = properties {
             transaction += properties
         }

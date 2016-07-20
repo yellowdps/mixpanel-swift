@@ -14,7 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    func application(_ application: UIApplication,
+
+    func application(application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 
         var ADD_YOUR_MIXPANEL_TOKEN_BELOW_🛠🛠🛠🛠🛠🛠: String
@@ -22,9 +23,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Mixpanel.mainInstance().loggingEnabled = true
         Mixpanel.mainInstance().flushInterval = 5
         
-        let settings = UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
-        UIApplication.shared().registerUserNotificationSettings(settings)
-        UIApplication.shared().registerForRemoteNotifications()
+        let settings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
+        UIApplication.sharedApplication().registerUserNotificationSettings(settings)
+        UIApplication.sharedApplication().registerForRemoteNotifications()
         
         Mixpanel.mainInstance().identify(
             distinctId: Mixpanel.mainInstance().distinctId)
@@ -33,29 +34,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func applicationDidBecomeActive(_ application: UIApplication) {
+    func applicationDidBecomeActive(application: UIApplication) {
         Mixpanel.mainInstance().time(event: "session length")
     }
 
-    func applicationWillTerminate(_ application: UIApplication) {
+    func applicationWillTerminate(application: UIApplication) {
         Mixpanel.mainInstance().track(event: "session length")
     }
     
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
         debugPrint("did register for remote notification with token")
         Mixpanel.mainInstance().people.addPushDeviceToken(deviceToken)
     }
     
-    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
+
+    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
         debugPrint(error)
     }
     
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
         debugPrint("did receive remote notificaiton")
         if let message = userInfo["aps"]?["alert"] as? String {
-            let alert = UIAlertController(title: "", message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
-            window?.rootViewController?.present(alert, animated: true, completion: nil)
+            let alert = UIAlertController(title: "", message: message, preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Okay", style: .Default, handler: nil))
+            window?.rootViewController?.presentViewController(alert, animated: true, completion: nil)
         }
         
         Mixpanel.mainInstance().trackPushNotification(userInfo)

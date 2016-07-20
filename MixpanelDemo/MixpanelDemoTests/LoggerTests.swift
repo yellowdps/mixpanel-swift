@@ -71,7 +71,7 @@ class LoggerTests: XCTestCase {
 class CounterLogging: Logging {
     var count = 0
     
-    func addMessage(message: LogMessage) {
+    func addMessage(message message: LogMessage) {
         count = count + 1
     }
 }

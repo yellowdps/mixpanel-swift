@@ -83,23 +83,23 @@ class MixpanelPeopleTests: MixpanelBaseTests {
     }
 
     func testPeopleAssertPropertyTypes() {
-        var p: Properties = ["URL": Data()]
+        var p: Properties = ["URL": NSData()]
         XCTExpectAssert("unsupported property type was allowed") {
-            mixpanel.people.set(properties: p)
+            self.mixpanel.people.set(properties: p)
         }
         XCTExpectAssert("unsupported property type was allowed") {
-            mixpanel.people.set(property: "p1", to: Data())
+            self.mixpanel.people.set(property: "p1", to: NSData())
         }
         p = ["p1": "a"]
         // increment should require a number
         XCTExpectAssert("unsupported property type was allowed") {
-            mixpanel.people.increment(properties: p)
+            self.mixpanel.people.increment(properties: p)
         }
     }
 
     func testPeopleAddPushDeviceToken() {
         mixpanel.identify(distinctId: "d1")
-        let token: Data = "0123456789abcdef".data(using: String.Encoding.utf8)!
+        let token: NSData = "0123456789abcdef".dataUsingEncoding(NSUTF8StringEncoding)!
         mixpanel.people.addPushDeviceToken(token)
         waitForSerialQueue()
         XCTAssertTrue(mixpanel.people.peopleQueue.count == 1, "people records not queued")
@@ -170,7 +170,7 @@ class MixpanelPeopleTests: MixpanelBaseTests {
         let prop = ((r["$append"] as? Properties)?["$transactions"] as? Properties)?["$amount"] as? Double
         let prop2 = ((r["$append"] as? Properties)?["$transactions"] as? Properties)?["$time"]
         XCTAssertEqual(prop, 25)
-        XCTAssertEqual(prop2 as? Date, p["date"] as? Date)
+        XCTAssertEqual(prop2 as? NSDate, p["date"] as? NSDate)
     }
 
     func testPeopleTrackChargeWithProperties() {

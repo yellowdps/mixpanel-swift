@@ -27,7 +27,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
 
         // Failure count should be 3
         let waitTime =
-            mixpanel.flushInstance.flushRequest.networkRequestsAllowedAfterTime - Date().timeIntervalSince1970
+            mixpanel.flushInstance.flushRequest.networkRequestsAllowedAfterTime - NSDate().timeIntervalSince1970
         print("Delta wait time is \(waitTime)")
         XCTAssert(waitTime >= 120, "Network backoff time is less than 2 minutes.")
         XCTAssert(mixpanel.flushInstance.flushRequest.networkConsecutiveFailures == 2,
@@ -49,7 +49,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
 
         // Failure count should be 3
         let waitTime =
-            mixpanel.flushInstance.flushRequest.networkRequestsAllowedAfterTime - Date().timeIntervalSince1970
+            mixpanel.flushInstance.flushRequest.networkRequestsAllowedAfterTime - NSDate().timeIntervalSince1970
         print("Delta wait time is \(waitTime)")
         XCTAssert(fabs(60 - waitTime) < 5, "Mixpanel did not respect 'Retry-After' HTTP header")
         XCTAssert(mixpanel.flushInstance.flushRequest.networkConsecutiveFailures == 0,
@@ -226,7 +226,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
     }
 
     func testTrackWithCustomProperties() {
-        let now = Date()
+        let now = NSDate()
         let p: Properties = ["string": "yello",
                              "number": 3,
                              "date": now,
@@ -236,7 +236,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
         var props: Properties = mixpanel.eventsQueue.last?["properties"] as! Properties
         XCTAssertEqual(props["string"] as? String, "yello")
         XCTAssertEqual(props["number"] as? Int, 3)
-        XCTAssertEqual(props["date"] as? Date, now)
+        XCTAssertEqual(props["date"] as? NSDate, now)
         XCTAssertEqual(props["$app_version"] as? String, "override",
                        "reserved property override failed")
     }
@@ -252,7 +252,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
     }
 
     func testRegisterSuperProperties() {
-        var p: Properties = ["p1": "a", "p2": 3, "p3": Date()]
+        var p: Properties = ["p1": "a", "p2": 3, "p3": NSDate()]
         mixpanel.registerSuperProperties(p)
         waitForSerialQueue()
         XCTAssertEqual(NSDictionary(dictionary: mixpanel.currentSuperProperties()),
@@ -295,22 +295,22 @@ class MixpanelDemoTests: MixpanelBaseTests {
     }
 
     func testInvalidPropertiesTrack() {
-        let p: Properties = ["data": Data()]
+        let p: Properties = ["data": NSData()]
         XCTExpectAssert("property type should not be allowed") {
-            mixpanel.track(event: "e1", properties: p)
+            self.mixpanel.track(event: "e1", properties: p)
         }
     }
 
     func testInvalidSuperProperties() {
-        let p: Properties = ["data": Data()]
+        let p: Properties = ["data": NSData()]
         XCTExpectAssert("property type should not be allowed") {
-            mixpanel.registerSuperProperties(p)
+            self.mixpanel.registerSuperProperties(p)
         }
         XCTExpectAssert("property type should not be allowed") {
-            mixpanel.registerSuperPropertiesOnce(p)
+            self.mixpanel.registerSuperPropertiesOnce(p)
         }
         XCTExpectAssert("property type should not be allowed") {
-            mixpanel.registerSuperPropertiesOnce(p, defaultValue: "v")
+            self.mixpanel.registerSuperPropertiesOnce(p, defaultValue: "v")
         }
     }
 
@@ -436,15 +436,15 @@ class MixpanelDemoTests: MixpanelBaseTests {
         XCTAssertTrue(mixpanel.people.peopleQueue.count == 1, "pending people queue archive failed")
         XCTAssertEqual(mixpanel.timedEvents["e2"] as? Double, 5.0,
                        "timedEvents archive failed")
-        let fileManager = FileManager.default
-        XCTAssertTrue(fileManager.fileExists(
-            atPath: Persistence.filePathWithType(.Events, token: kTestToken)!),
+        let fileManager = NSFileManager.defaultManager()
+        XCTAssertTrue(fileManager.fileExistsAtPath(
+            Persistence.filePathWithType(.Events, token: kTestToken)!),
                       "events archive file not removed")
-        XCTAssertTrue(fileManager.fileExists(
-            atPath: Persistence.filePathWithType(.People, token: kTestToken)!),
+        XCTAssertTrue(fileManager.fileExistsAtPath(
+            Persistence.filePathWithType(.People, token: kTestToken)!),
                       "people archive file not removed")
-        XCTAssertTrue(fileManager.fileExists(
-            atPath: Persistence.filePathWithType(.Properties, token: kTestToken)!),
+        XCTAssertTrue(fileManager.fileExistsAtPath(
+            Persistence.filePathWithType(.Properties, token: kTestToken)!),
                       "properties archive file not removed")
         mixpanel = Mixpanel.initialize(token: kTestToken, launchOptions: nil, flushInterval: 60)
         XCTAssertEqual(mixpanel.distinctId, "d1", "expecting d1 as distinct id as initialised")
@@ -458,28 +458,28 @@ class MixpanelDemoTests: MixpanelBaseTests {
         XCTAssertTrue(mixpanel.people.peopleQueue.count == 1, "default people queue expecting 1 item")
         XCTAssertTrue(mixpanel.timedEvents.count == 1, "timedEvents expecting 1 item")
         // corrupt file
-        let garbage = "garbage".data(using: String.Encoding.utf8)!
+        let garbage = "garbage".dataUsingEncoding(NSUTF8StringEncoding)!
         do {
-            try garbage.write(to: URL(
+            try garbage.writeToURL(NSURL(
                 fileURLWithPath: Persistence.filePathWithType(.Events, token: kTestToken)!),
                               options: [])
-            try garbage.write(to: URL(
+            try garbage.writeToURL(NSURL(
                 fileURLWithPath: Persistence.filePathWithType(.People, token: kTestToken)!),
                               options: [])
-            try garbage.write(to: URL(
+            try garbage.writeToURL(NSURL(
                 fileURLWithPath: Persistence.filePathWithType(.Properties, token: kTestToken)!),
                               options: [])
         } catch {
             print("couldn't write data")
         }
-        XCTAssertTrue(fileManager.fileExists(
-            atPath: Persistence.filePathWithType(.Events, token: kTestToken)!),
+        XCTAssertTrue(fileManager.fileExistsAtPath(
+            Persistence.filePathWithType(.Events, token: kTestToken)!),
                       "events archive file not removed")
-        XCTAssertTrue(fileManager.fileExists(
-            atPath: Persistence.filePathWithType(.People, token: kTestToken)!),
+        XCTAssertTrue(fileManager.fileExistsAtPath(
+            Persistence.filePathWithType(.People, token: kTestToken)!),
                       "people archive file not removed")
-        XCTAssertTrue(fileManager.fileExists(
-            atPath: Persistence.filePathWithType(.Properties, token: kTestToken)!),
+        XCTAssertTrue(fileManager.fileExistsAtPath(
+            Persistence.filePathWithType(.Properties, token: kTestToken)!),
                       "properties archive file not removed")
         mixpanel = Mixpanel.initialize(token: kTestToken, launchOptions: nil, flushInterval: 60)
         waitForSerialQueue()
@@ -557,7 +557,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
     func testNestedUnsupportedTypes() {
         stubTrack()
         stubEngage()
-        let p = ["property": ["p": [Data()]]]
+        let p = ["property": ["p": [NSData()]]]
         mixpanel.track(event: "test", properties: p)
         mixpanel.identify(distinctId: "1234")
         mixpanel.people.set(properties: p)

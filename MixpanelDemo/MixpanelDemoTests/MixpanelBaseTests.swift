@@ -39,12 +39,12 @@ class MixpanelBaseTests: XCTestCase, MixpanelDelegate {
         mixpanel = nil
     }
     
-    func mixpanelWillFlush(_ mixpanel: MixpanelInstance) -> Bool {
+    func mixpanelWillFlush(mixpanel: MixpanelInstance) -> Bool {
         return mixpanelWillFlush
     }
     
     func waitForSerialQueue() {
-        mixpanel.serialQueue.sync() {
+        dispatch_sync(mixpanel.serialQueue) {
             return
         }
     }
@@ -54,7 +54,7 @@ class MixpanelBaseTests: XCTestCase, MixpanelDelegate {
         waitForSerialQueue()
     }
     
-    func assertDefaultPeopleProperties(_ properties: [String: AnyObject]) {
+    func assertDefaultPeopleProperties(properties: [String: AnyObject]) {
         XCTAssertNotNil(properties["$ios_device_model"], "missing $ios_device_model property")
         XCTAssertNotNil(properties["$ios_lib_version"], "missing $ios_lib_version property")
         XCTAssertNotNil(properties["$ios_version"], "missing $ios_version property")
@@ -63,9 +63,9 @@ class MixpanelBaseTests: XCTestCase, MixpanelDelegate {
     }
     
     func allPropertyTypes() -> [String: AnyObject] {
-        let dateFormatter = DateFormatter()
+        let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss zzz"
-        let date = dateFormatter.date(from: "2012-09-28 19:14:36 PDT")
+        let date = dateFormatter.dateFromString("2012-09-28 19:14:36 PDT")
         let nested = ["p1": ["p2": ["p3": ["bottom"]]]]
         return ["string": "yello",
                 "number": 3,
@@ -74,7 +74,7 @@ class MixpanelBaseTests: XCTestCase, MixpanelDelegate {
                 "array": ["1"],
                 "null": NSNull(),
                 "nested": nested,
-                "url": URL(string: "https://mixpanel.com/")!,
+                "url": NSURL(string: "https://mixpanel.com/")!,
                 "float": 1.3]
     }
 

@@ -12,43 +12,43 @@ class JSONHandler {
 
     typealias MPObjectToParse = AnyObject
 
-    class func encodeAPIData(_ obj: MPObjectToParse) -> String? {
-        let data: Data? = serializeJSONObject(obj)
+    class func encodeAPIData(obj: MPObjectToParse) -> String? {
+        let data: NSData? = serializeJSONObject(obj)
 
         guard let d = data else {
             Logger.warn(message: "couldn't serialize object")
             return nil
         }
 
-        let base64Encoded = d.base64EncodedString(options: .lineLength64Characters)
+        let base64Encoded = d.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
 
         guard let b64 = base64Encoded
-            .addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else {
-            Logger.warn(message: "couldn't replace characters to allowed URL character set")
-            return nil
+            .stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()) else {
+                Logger.warn(message: "couldn't replace characters to allowed URL character set")
+                return nil
         }
 
         return b64
     }
 
-     class func serializeJSONObject(_ obj: MPObjectToParse) -> Data? {
+     class func serializeJSONObject(obj: MPObjectToParse) -> NSData? {
         let serializableJSONObject = makeObjectSerializable(obj)
 
-        guard JSONSerialization.isValidJSONObject(serializableJSONObject) else {
+        guard NSJSONSerialization.isValidJSONObject(serializableJSONObject) else {
             Logger.warn(message: "object isn't valid and can't be serialzed to JSON")
             return nil
         }
-        var serializedObject: Data? = nil
+        var serializedObject: NSData? = nil
         do {
-            serializedObject = try JSONSerialization
-                .data(withJSONObject: serializableJSONObject, options: [])
+            serializedObject = try NSJSONSerialization
+                .dataWithJSONObject(serializableJSONObject, options: [])
         } catch {
             Logger.warn(message: "exception encoding api data")
         }
         return serializedObject
     }
 
-    private class func makeObjectSerializable(_ obj: MPObjectToParse) -> MPObjectToParse {
+    private class func makeObjectSerializable(obj: MPObjectToParse) -> MPObjectToParse {
         switch obj {
         case is String, is Int, is UInt, is Double, is Float:
             return obj
@@ -63,15 +63,15 @@ class JSONHandler {
                     makeObjectSerializable(v) }
             return serializedDict
 
-        case let obj as Date:
-            let dateFormatter = DateFormatter()
+        case let obj as NSDate:
+            let dateFormatter = NSDateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-            dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
-            dateFormatter.locale = Locale(localeIdentifier: "en_US_POSIX")
-            return dateFormatter.string(from: obj)
+            dateFormatter.timeZone = NSTimeZone(abbreviation: "UTC")
+            dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+            return dateFormatter.stringFromDate(obj)
 
-        case let obj as URL:
-            return obj.absoluteString!
+        case let obj as NSURL:
+            return obj.absoluteString
 
         default:
             Logger.info(message: "enforcing string on object")
