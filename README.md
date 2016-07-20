@@ -76,6 +76,7 @@ By calling:
 
 You initialize your mixpanel instance with the token provided to you on mixpanel.com.
 To interact with the instance and start tracking, you can either use the mixpanel instance given when initializing:
+
 `mixpanel.track(event: "Tracked Event!")`
 
 or you can directly fetch the instance and use it from the Mixpanel object:
@@ -83,7 +84,7 @@ or you can directly fetch the instance and use it from the Mixpanel object:
 
 ## Multiple Instances:
 
-If you want to use multiple Mixpanel projects in your app, you can initialize mulitple times using different tokens and interact with each instance like above (`let mixpanel = Mixpanel.initialize(token: "YOUR_TOKEN")`). Or you can give each instance a different name:
+If you want to use multiple Mixpanel projects in your app, you can initialize mulitple times using different tokens and interact with each instance like above (`let mixpanel1 = Mixpanel.initialize(token: "YOUR_TOKEN1")`). Or you can give each instance a different name:
 
 ```
 Mixpanel.initialize(token: "YOUR_TOKEN1", launchOptions: nil, flushInterval: 60, instanceName: "Project1")
