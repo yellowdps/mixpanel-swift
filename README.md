@@ -18,8 +18,10 @@ To Install, see our **[full documentation »](https://mixpanel.com/help/referenc
 
 # Carthage
 
-Mixpanel also supports `Carthage` to package your dependencies as a framework.
-Check out the **[Carthage docs »](https://github.com/Carthage/Carthage#if-youre-building-for-ios-tvos-or-watchos)** for more info.
+Mixpanel also supports `Carthage` to package your dependencies as a framework. Include the following dependency in your Cartfile:
+`github "mixpanel/mixpanel-iphone"`
+
+Check out the **[Carthage docs »](https://github.com/Carthage/Carthage#if-youre-building-for-ios-tvos-or-watchos)** for more info. 
 
 # Manual Installation
 
