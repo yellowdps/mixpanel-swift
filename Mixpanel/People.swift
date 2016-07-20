@@ -179,7 +179,7 @@ public class People {
         let filtered = properties.values.filter() {
             !($0 is Int || $0 is UInt || $0 is Double || $0 is Float) }
         if filtered.count > 0 {
-//            MPAssert(false, "increment property values should be numbers")
+            MPAssert(false, "increment property values should be numbers")
         }
         addPeopleRecordToQueueWithAction("$add", properties: properties)
     }
@@ -220,7 +220,7 @@ public class People {
             !($0 is [AnyObject])
         }
         if filtered.count > 0 {
-//            MPAssert(false, "union property values should be an array")
+            MPAssert(false, "union property values should be an array")
         }
         addPeopleRecordToQueueWithAction("$union", properties: properties)
     }

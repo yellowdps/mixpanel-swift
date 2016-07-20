@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SystemConfiguration
 
 /**
  *  Delegate protocol for controlling the Mixpanel API's network behavior.
@@ -498,7 +497,6 @@ extension MixpanelInstance {
      */
     public func track(event: String?, properties: Properties? = nil) {
         let epochInterval = Date().timeIntervalSince1970
-        print(epochInterval)
         serialQueue.async() {
             self.trackInstance.track(event: event,
                                      properties: properties,
@@ -562,7 +560,6 @@ extension MixpanelInstance {
      */
     public func time(event: String) {
         let startTime = Date().timeIntervalSince1970
-        print(startTime)
         serialQueue.async() {
             self.trackInstance.time(event: event, timedEvents: &self.timedEvents, startTime: startTime)
         }

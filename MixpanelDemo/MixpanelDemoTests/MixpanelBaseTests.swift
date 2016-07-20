@@ -22,10 +22,12 @@ class MixpanelBaseTests: XCTestCase, MixpanelDelegate {
         super.setUp()
         
         LSNocilla.sharedInstance().start()
+        stubTrack()
         mixpanelWillFlush = false
         mixpanel = Mixpanel.initialize(token: kTestToken, launchOptions: nil, flushInterval: 0)
         mixpanel.reset()
         waitForSerialQueue()
+        LSNocilla.sharedInstance().clearStubs()
         NSLog("finished test setup")
     }
     

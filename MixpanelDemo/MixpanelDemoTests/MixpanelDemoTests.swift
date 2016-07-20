@@ -362,10 +362,6 @@ class MixpanelDemoTests: MixpanelBaseTests {
         waitForSerialQueue()
         XCTAssertTrue(mixpanel.eventsQueue.count == 0,
                       "Invalid push notification was incorrectly queued.")
-        mixpanel.trackPushNotification(nil)
-        waitForSerialQueue()
-        XCTAssertTrue(mixpanel.eventsQueue.count == 0,
-                      "Invalid push notification was incorrectly queued.")
         mixpanel.trackPushNotification([:])
         waitForSerialQueue()
         XCTAssertTrue(mixpanel.eventsQueue.count == 0,
@@ -577,7 +573,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
         mixpanel.people.increment(property: "p1", by: 2.3)
         flushAndWaitForSerialQueue()
         
-        mixpanel.people.union(properties: ["p1": "unioned item"])
+        mixpanel.people.union(properties: ["p1": ["unioned item"]])
         flushAndWaitForSerialQueue()
         
         mixpanel.people.append(properties: ["p1": "appended item"])
