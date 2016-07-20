@@ -22,7 +22,7 @@ Mixpanel also supports `Carthage` to package your dependencies as a framework. I
 
 `github "mixpanel/mixpanel-swift"`
 
-##(For this private repo please use this for integration):
+(For this private repo please use this for integration):
 `git "git@github.com:mixpanel/mixpanel-swift-private.git" "v1.0.3"`
 
 
