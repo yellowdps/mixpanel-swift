@@ -74,7 +74,9 @@ func application(_ application: UIApplication,
 # Initializing and Usage
 
 By calling:
-`let mixpanel = Mixpanel.initialize(token: "YOUR_TOKEN")`
+```
+let mixpanel = Mixpanel.initialize(token: "YOUR_TOKEN")
+```
 
 You initialize your mixpanel instance with the token provided to you on mixpanel.com.
 To interact with the instance and start tracking, you can either use the mixpanel instance given when initializing:
