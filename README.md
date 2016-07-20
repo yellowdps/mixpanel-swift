@@ -16,6 +16,9 @@ To Install, see our **[full documentation »](https://mixpanel.com/help/referenc
 
 `pod 'Mixpanel-swift'`
 
+(For this private repo please add this to the top of your pods file for integration):
+`source 'git@github.com:mixpanel/PrivatePodSpecs.git'`
+
 # Carthage
 
 Mixpanel also supports `Carthage` to package your dependencies as a framework. Include the following dependency in your Cartfile:
