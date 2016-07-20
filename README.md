@@ -76,9 +76,9 @@ By calling:
 
 You initialize your mixpanel instance with the token provided to you on mixpanel.com.
 To interact with the instance and start tracking, you can either use the mixpanel instance given when initializing:
-
-```mixpanel.track(event: "Tracked Event!")```
-
+```
+mixpanel.track(event: "Tracked Event!")
+```
 or you can directly fetch the instance and use it from the Mixpanel object:
 ```Mixpanel.mainInstance().track(event: "Tracked Event!")```
 
@@ -92,7 +92,9 @@ Mixpanel.initialize(token: "YOUR_TOKEN2", launchOptions: nil, flushInterval: 60,
 ```
 
 Then interact with each Mixpanel instance by its name:
-```Mixpanel.getInstance(name: "Project1").track(event: "Tracked Event!")```
+```
+Mixpanel.getInstance(name: "Project1").track(event: "Tracked Event!")
+```
 
 (The `mainInstance()` is always the last instance that is initialized, and can be configured using the `setMainInstance(name)` api call)
 
