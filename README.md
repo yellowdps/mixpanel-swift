@@ -82,7 +82,9 @@ To interact with the instance and start tracking, you can either use the mixpane
 mixpanel.track(event: "Tracked Event!")
 ```
 or you can directly fetch the instance and use it from the Mixpanel object:
-```Mixpanel.mainInstance().track(event: "Tracked Event!")```
+```
+Mixpanel.mainInstance().track(event: "Tracked Event!")
+```
 
 ## Multiple Instances:
 
