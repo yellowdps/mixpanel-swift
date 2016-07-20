@@ -69,6 +69,32 @@ func application(_ application: UIApplication,
 }
 ```
 
+# Initializing and Tracking Events
+
+By calling:
+`let mixpanel = Mixpanel.initialize(token: "YOUR_TOKEN")`
+
+You initialize your mixpanel instance with the token provided to you on mixpanel.com.
+To interact with the instance and start tracking, you can either use the mixpanel instance given when initializing:
+`mixpanel.track(event: "Tracked Event!")`
+
+or you can directly fetch the instance and use it from the Mixpanel object:
+`Mixpanel.mainInstance().track(event: "Tracked Event!")`
+
+## Multiple Instances:
+
+If you want to use multiple Mixpanel projects in your app, you can initialize mulitple times using different tokens and interact with each instance like above (`let mixpanel = Mixpanel.initialize(token: "YOUR_TOKEN")`). Or you can give each instance a different name:
+
+```
+Mixpanel.initialize(token: "YOUR_TOKEN1", launchOptions: nil, flushInterval: 60, instanceName: "Project1")
+Mixpanel.initialize(token: "YOUR_TOKEN2", launchOptions: nil, flushInterval: 60, instanceName: "Project2")
+```
+
+Then interact with each Mixpanel instance by its name:
+`Mixpanel.getInstance(name: "Project1").track(event: "Tracked Event!")`
+
+(The `mainInstance()` is always the last instance that is initialized, and can be configured using the `setMainInstance(name)` api call)
+
 ## Start tracking
 
 You're done! You've successfully integrated the Mixpanel SDK into your app. To stay up to speed on important SDK releases and updates, star or watch our repository on [Github](https://github.com/mixpanel/mixpanel-swift-private).
