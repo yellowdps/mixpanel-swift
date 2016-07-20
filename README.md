@@ -86,7 +86,7 @@ or you can directly fetch the instance and use it from the Mixpanel object:
 Mixpanel.mainInstance().track(event: "Tracked Event!")
 ```
 
-## Multiple Instances:
+## Multiple Instances
 
 If you want to use multiple Mixpanel projects in your app, you can initialize mulitple times using different tokens and interact with each instance like above (`let mixpanel1 = Mixpanel.initialize(token: "YOUR_TOKEN1")`). Or you can give each instance a different name:
 
