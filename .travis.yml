@@ -1,6 +1,7 @@
 language: objective-c
 osx_image: xcode7.3
 before_script: cd MixpanelDemo
+podfile: MixpanelDemo/Podfile
 env:
   global:
   - WORKSPACE=MixpanelDemo.xcworkspace
@@ -42,7 +43,7 @@ script:
 
   # Run `pod lib lint` if specified
   - if [ $POD_LINT == "YES" ]; then
-      cd..
+      cd..;
       pod lib lint --allow-warnings;
-      cd MixpanelDemo
+      cd MixpanelDemo;
     fi
