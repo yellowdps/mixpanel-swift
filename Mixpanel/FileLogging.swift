@@ -11,23 +11,23 @@ import Foundation
 /// Logs all messages to a file
 class FileLogging: Logging {
     private let fileHandle: NSFileHandle
-    
+
     init(path: String) {
         if let handle = NSFileHandle(forWritingAtPath: path) {
             fileHandle = handle
         } else {
             fileHandle = .fileHandleWithStandardError()
         }
-        
+
         // Move to the end of the file so we can append messages
         fileHandle.seekToEndOfFile()
     }
-    
+
     deinit {
         // Ensure we close the file handle to clear the resources
         fileHandle.closeFile()
     }
-    
+
     func addMessage(message message: LogMessage) {
         let string = "File: \(message.file) - Func: \(message.function) - " +
                      "Level: \(message.level.rawValue) - Message: \(message.text)"

@@ -47,7 +47,7 @@ class Track {
                distinctId: String,
                epochInterval: Double) {
         var ev = event
-        if ev == nil || ev!.characters.count == 0 {
+        if ev == nil || ev!.isEmpty {
             Logger.info(message: "mixpanel track called with empty event parameter. using 'mp_event'")
             ev = "mp_event"
         }
@@ -104,7 +104,7 @@ class Track {
     }
 
     func time(event event: String?, inout timedEvents: Properties, startTime: Double) {
-        guard let event = event where event.characters.count > 0 else {
+        guard let event = event where !event.isEmpty else {
             Logger.error(message: "mixpanel cannot time an empty event")
             return
         }

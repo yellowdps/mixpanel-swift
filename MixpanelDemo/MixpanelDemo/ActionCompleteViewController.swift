@@ -20,10 +20,10 @@ class ActionCompleteViewController: UIViewController {
 
         popupView.clipsToBounds = true
         popupView.layer.cornerRadius = 6
-        
+
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         view.addGestureRecognizer(tap)
-        
+
         actionLabel.text = actionStr
         descLabel.text = descStr
     }
@@ -34,9 +34,9 @@ class ActionCompleteViewController: UIViewController {
             self.dismissViewControllerAnimated(true, completion: nil)
         }
     }
-    
+
     func handleTap(gesture: UITapGestureRecognizer) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
-    
+
 }

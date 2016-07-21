@@ -136,7 +136,7 @@ class MixpanelPeopleTests: MixpanelBaseTests {
         mixpanel.people.deleteUser()
         waitForSerialQueue()
         let p: Properties = mixpanel.people.peopleQueue.last!["$delete"] as! Properties
-        XCTAssertTrue(p.count == 0, "incorrect people properties: \(p)")
+        XCTAssertTrue(p.isEmpty, "incorrect people properties: \(p)")
     }
 
 

@@ -11,15 +11,15 @@ import Foundation
 
 struct BasePath {
     static var MixpanelAPI = "https://api.mixpanel.com"
-    
+
     static func buildURL(base base: String, path: String) -> NSURL? {
         guard let url = NSURL(string: base)?.URLByAppendingPathComponent(path) else {
             return nil
         }
-        
+
         return url
     }
-    
+
 }
 
 enum Method: String {
@@ -43,7 +43,7 @@ enum Reason {
 }
 
 class Network {
-    
+
     class func apiRequest<A>(base base: String,
                           resource: Resource<A>,
                           failure: (Reason, NSData?, NSURLResponse?) -> (),
@@ -51,7 +51,7 @@ class Network {
         guard let request = buildURLRequest(base, resource: resource) else {
             return
         }
-        
+
         let session = NSURLSession.sharedSession()
         session.dataTaskWithRequest(request) { (data, response, error) -> Void in
             guard let httpResponse = response as? NSHTTPURLResponse else {
@@ -70,36 +70,40 @@ class Network {
                 failure(Reason.ParseError, data, response)
                 return
             }
-            
+
             success(result, response)
         }.resume()
     }
-    
+
     private class func buildURLRequest<A>(base: String, resource: Resource<A>) -> NSURLRequest? {
         guard let url = BasePath.buildURL(base: base, path: resource.path) else {
             return nil
         }
-        
+
         let request = NSMutableURLRequest(URL: url)
         request.HTTPMethod = resource.method.rawValue
         request.HTTPBody = resource.requestBody
-        
+
         for (k, v) in resource.headers {
             request.setValue(v, forHTTPHeaderField: k)
         }
         return request as NSURLRequest
     }
-    
-    class func buildResource<A>(path path: String, method: Method, requestBody: NSData?, headers: [String: String], parse: (NSData) -> A?) -> Resource<A> {
+
+    class func buildResource<A>(path path: String,
+                             method: Method,
+                             requestBody: NSData?,
+                             headers: [String: String],
+                             parse: (NSData) -> A?) -> Resource<A> {
         return Resource(path: path, method: method, requestBody: requestBody, headers: headers, parse: parse)
     }
-    
+
     class func trackIntegration(apiToken apiToken: String, completion: (Bool) -> ()) {
         let requestData = JSONHandler.encodeAPIData([["event": "Integration",
             "properties": ["token": "85053bf24bba75239b16a601d9387e17",
                 "mp_lib": "swift",
                 "distinct_id": apiToken]]])
-        
+
         let responseParser: (NSData) -> Int? = { data in
             let response = String(data: data, encoding: NSUTF8StringEncoding)
             if let response = response {
@@ -107,17 +111,17 @@ class Network {
             }
             return nil
         }
-        
+
         if let requestData = requestData {
             let requestBody = "ip=1&data=\(requestData)"
                 .dataUsingEncoding(NSUTF8StringEncoding)
-            
+
             let resource = Network.buildResource(path: FlushType.Events.rawValue,
                                                  method: Method.POST,
                                                  requestBody: requestBody,
                                                  headers: ["Accept-Encoding": "gzip"],
                                                  parse: responseParser)
-            
+
             Network.apiRequest(base: BasePath.MixpanelAPI,
                                resource: resource,
                                failure: { (reason, data, response) in

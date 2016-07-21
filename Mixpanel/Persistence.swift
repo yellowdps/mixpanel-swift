@@ -89,7 +89,7 @@ class Persistence {
         peopleUnidentifiedQueue: Queue) {
         let eventsQueue = unarchiveEvents(token: token)
         let peopleQueue = unarchivePeople(token: token)
-            
+
         let (superProperties,
             timedEvents,
             distinctId,
@@ -104,7 +104,7 @@ class Persistence {
                 peopleDistinctId,
                 peopleUnidentifiedQueue)
     }
-    
+
     class private func unarchiveWithFilePath(filePath: String) -> AnyObject? {
         let unarchivedData: AnyObject? = NSKeyedUnarchiver.unarchiveObjectWithFile(filePath)
         if unarchivedData == nil {
@@ -160,5 +160,5 @@ class Persistence {
 
         return unarchivedData
     }
-    
+
 }

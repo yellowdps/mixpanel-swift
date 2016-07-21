@@ -14,7 +14,7 @@ protocol FlushDelegate {
 }
 
 class Flush: AppLifecycle {
-    
+
     var timer: NSTimer?
     var delegate: FlushDelegate?
     var useIPAddressForGeoLocation = true
@@ -26,33 +26,33 @@ class Flush: AppLifecycle {
             objc_sync_enter(self)
             _flushInterval = newValue
             objc_sync_exit(self)
-            
+
             delegate?.flush(completion: nil)
             startFlushTimer()
         }
         get {
             objc_sync_enter(self)
             defer { objc_sync_exit(self) }
-            
+
             return _flushInterval
         }
     }
-    
+
     func flushEventsQueue(inout eventsQueue: Queue) {
         flushQueue(type: .Events, queue: &eventsQueue)
     }
-    
+
     func flushPeopleQueue(inout peopleQueue: Queue) {
         flushQueue(type: .People, queue: &peopleQueue)
     }
-    
+
     func flushQueue(type type: FlushType, inout queue: Queue) {
         if flushRequest.requestNotAllowed() {
             return
         }
         flushQueueInBatches(&queue, type: type)
     }
-    
+
     func startFlushTimer() {
         stopFlushTimer()
         if self.flushInterval > 0 {
@@ -65,11 +65,11 @@ class Flush: AppLifecycle {
             }
         }
     }
-    
+
     @objc func flushSelector() {
         delegate?.flush(completion: nil)
     }
-    
+
     func stopFlushTimer() {
         if let timer = self.timer {
             dispatch_async(dispatch_get_main_queue()) {
@@ -78,9 +78,9 @@ class Flush: AppLifecycle {
             }
         }
     }
-    
+
     func flushQueueInBatches(inout queue: Queue, type: FlushType) {
-        while queue.count > 0 {
+        while !queue.isEmpty {
             var shouldContinue = false
             let batchSize = min(queue.count, APIConstants.batchSize)
             let range = 0..<batchSize
@@ -104,20 +104,20 @@ class Flush: AppLifecycle {
                 dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
                 queue = shadowQueue
             }
-            
+
             if !shouldContinue {
                 break
             }
         }
     }
-    
+
     // MARK: - Lifecycle
     func applicationDidBecomeActive() {
         startFlushTimer()
     }
-    
+
     func applicationWillResignActive() {
         stopFlushTimer()
     }
-    
+
 }

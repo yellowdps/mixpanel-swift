@@ -16,7 +16,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
 
     func test5XXResponse() {
         _ = stubTrack().andReturn(503)
-        
+
         mixpanel.track(event: "Fake Event")
 
         mixpanel.flush()
@@ -65,7 +65,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
         }
 
         flushAndWaitForSerialQueue()
-        XCTAssertTrue(mixpanel.eventsQueue.count == 0,
+        XCTAssertTrue(mixpanel.eventsQueue.isEmpty,
                       "events should have been flushed")
 
         for i in 0..<60 {
@@ -73,7 +73,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
         }
 
         flushAndWaitForSerialQueue()
-        XCTAssertTrue(mixpanel.eventsQueue.count == 0,
+        XCTAssertTrue(mixpanel.eventsQueue.isEmpty,
                       "events should have been flushed")
     }
 
@@ -87,12 +87,12 @@ class MixpanelDemoTests: MixpanelBaseTests {
         }
 
         flushAndWaitForSerialQueue()
-        XCTAssertTrue(mixpanel.people.peopleQueue.count == 0, "people should have been flushed")
+        XCTAssertTrue(mixpanel.people.peopleQueue.isEmpty, "people should have been flushed")
         for i in 0..<60 {
             mixpanel.people.set(property: "p1", to: "\(i)")
         }
         flushAndWaitForSerialQueue()
-        XCTAssertTrue(mixpanel.people.peopleQueue.count == 0, "people should have been flushed")
+        XCTAssertTrue(mixpanel.people.peopleQueue.isEmpty, "people should have been flushed")
     }
 
     func testFlushNetworkFailure() {
@@ -124,7 +124,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
         waitForSerialQueue()
         XCTAssertTrue(mixpanel.eventsQueue.count == 5, "5 more events should be queued up")
         flushAndWaitForSerialQueue()
-        XCTAssertTrue(mixpanel.eventsQueue.count == 0, "events should have been flushed")
+        XCTAssertTrue(mixpanel.eventsQueue.isEmpty, "events should have been flushed")
     }
 
     func testDropEvents() {
@@ -164,7 +164,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
                            "events should use default distinct id if none set")
             mixpanel.people.set(property: "p1", to: "a")
             waitForSerialQueue()
-            XCTAssertTrue(mixpanel.people.peopleQueue.count == 0,
+            XCTAssertTrue(mixpanel.people.peopleQueue.isEmpty,
                           "people records should go to unidentified queue before identify:")
             XCTAssertTrue(mixpanel.people.unidentifiedQueue.count == 1,
                           "unidentified people records not queued")
@@ -177,7 +177,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
                            "mixpanel identify failed to set distinct id")
             XCTAssertEqual(mixpanel.people.distinctId, distinctId,
                            "mixpanel identify failed to set people distinct id")
-            XCTAssertTrue(mixpanel.people.unidentifiedQueue.count == 0,
+            XCTAssertTrue(mixpanel.people.unidentifiedQueue.isEmpty,
                           "identify: should move records from unidentified queue")
             XCTAssertTrue(mixpanel.people.peopleQueue.count == 1,
                           "identify: should move records to main people queue")
@@ -190,7 +190,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
             assertDefaultPeopleProperties(p)
             mixpanel.people.set(property: "p1", to: "a")
             waitForSerialQueue()
-            XCTAssertTrue(mixpanel.people.unidentifiedQueue.count == 0,
+            XCTAssertTrue(mixpanel.people.unidentifiedQueue.isEmpty,
                           "once idenitfy: is called, unidentified queue should be skipped")
             XCTAssertTrue(mixpanel.people.peopleQueue.count == 2,
                           "once identify: is called, records should go straight to main queue")
@@ -290,7 +290,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
         mixpanel.unregisterSuperProperty("a")
         mixpanel.clearSuperProperties()
         waitForSerialQueue()
-        XCTAssertTrue(mixpanel.currentSuperProperties().count == 0,
+        XCTAssertTrue(mixpanel.currentSuperProperties().isEmpty,
                       "clear super properties failed")
     }
 
@@ -356,22 +356,22 @@ class MixpanelDemoTests: MixpanelBaseTests {
         mixpanel.trackPushNotification(["mp":
             ["m": "the_message_id", "cid": "the_campaign_id"]])
         waitForSerialQueue()
-        XCTAssertTrue(mixpanel.eventsQueue.count == 0,
+        XCTAssertTrue(mixpanel.eventsQueue.isEmpty,
                       "Invalid push notification was incorrectly queued.")
         mixpanel.trackPushNotification(["mp": 1])
         waitForSerialQueue()
-        XCTAssertTrue(mixpanel.eventsQueue.count == 0,
+        XCTAssertTrue(mixpanel.eventsQueue.isEmpty,
                       "Invalid push notification was incorrectly queued.")
         mixpanel.trackPushNotification([:])
         waitForSerialQueue()
-        XCTAssertTrue(mixpanel.eventsQueue.count == 0,
+        XCTAssertTrue(mixpanel.eventsQueue.isEmpty,
                       "Invalid push notification was incorrectly queued.")
         mixpanel.trackPushNotification(["mp": "bad value"])
         waitForSerialQueue()
-        XCTAssertTrue(mixpanel.eventsQueue.count == 0,
+        XCTAssertTrue(mixpanel.eventsQueue.isEmpty,
                       "Invalid push notification was incorrectly queued.")
         waitForSerialQueue()
-        XCTAssertTrue(mixpanel.eventsQueue.count == 0,
+        XCTAssertTrue(mixpanel.eventsQueue.isEmpty,
                       "Invalid push notification was incorrectly queued.")
     }
 
@@ -388,21 +388,21 @@ class MixpanelDemoTests: MixpanelBaseTests {
                        mixpanel.defaultDistinctId(),
                        "distinct id failed to reset")
         XCTAssertNil(mixpanel.people.distinctId, "people distinct id failed to reset")
-        XCTAssertTrue(mixpanel.currentSuperProperties().count == 0,
+        XCTAssertTrue(mixpanel.currentSuperProperties().isEmpty,
                       "super properties failed to reset")
-        XCTAssertTrue(mixpanel.eventsQueue.count == 0, "events queue failed to reset")
-        XCTAssertTrue(mixpanel.people.peopleQueue.count == 0, "people queue failed to reset")
+        XCTAssertTrue(mixpanel.eventsQueue.isEmpty, "events queue failed to reset")
+        XCTAssertTrue(mixpanel.people.peopleQueue.isEmpty, "people queue failed to reset")
         mixpanel = Mixpanel.initialize(token: kTestToken, launchOptions: nil, flushInterval: 60)
         waitForSerialQueue()
         XCTAssertEqual(mixpanel.distinctId, mixpanel.defaultDistinctId(),
                        "distinct id failed to reset after archive")
         XCTAssertNil(mixpanel.people.distinctId,
                      "people distinct id failed to reset after archive")
-        XCTAssertTrue(mixpanel.currentSuperProperties().count == 0,
+        XCTAssertTrue(mixpanel.currentSuperProperties().isEmpty,
                       "super properties failed to reset after archive")
-        XCTAssertTrue(mixpanel.eventsQueue.count == 0,
+        XCTAssertTrue(mixpanel.eventsQueue.isEmpty,
                       "events queue failed to reset after archive")
-        XCTAssertTrue(mixpanel.people.peopleQueue.count == 0,
+        XCTAssertTrue(mixpanel.people.peopleQueue.isEmpty,
                       "people queue failed to reset after archive")
     }
 
@@ -411,11 +411,11 @@ class MixpanelDemoTests: MixpanelBaseTests {
         mixpanel = Mixpanel.initialize(token: kTestToken, launchOptions: nil, flushInterval: 60)
         XCTAssertEqual(mixpanel.distinctId, mixpanel.defaultDistinctId(),
                        "default distinct id archive failed")
-        XCTAssertTrue(mixpanel.currentSuperProperties().count == 0,
+        XCTAssertTrue(mixpanel.currentSuperProperties().isEmpty,
                       "default super properties archive failed")
-        XCTAssertTrue(mixpanel.eventsQueue.count == 0, "default events queue archive failed")
+        XCTAssertTrue(mixpanel.eventsQueue.isEmpty, "default events queue archive failed")
         XCTAssertNil(mixpanel.people.distinctId, "default people distinct id archive failed")
-        XCTAssertTrue(mixpanel.people.peopleQueue.count == 0, "default people queue archive failed")
+        XCTAssertTrue(mixpanel.people.peopleQueue.isEmpty, "default people queue archive failed")
         let p: Properties = ["p1": "a"]
         mixpanel.identify(distinctId: "d1")
         mixpanel.registerSuperProperties(p)
@@ -485,18 +485,18 @@ class MixpanelDemoTests: MixpanelBaseTests {
         waitForSerialQueue()
         XCTAssertEqual(mixpanel.distinctId, mixpanel.defaultDistinctId(),
                        "default distinct id from garbage failed")
-        XCTAssertTrue(mixpanel.currentSuperProperties().count == 0,
+        XCTAssertTrue(mixpanel.currentSuperProperties().isEmpty,
                       "default super properties from garbage failed")
         XCTAssertNotNil(mixpanel.eventsQueue, "default events queue from garbage is nil")
-        XCTAssertTrue(mixpanel.eventsQueue.count == 0,
+        XCTAssertTrue(mixpanel.eventsQueue.isEmpty,
                       "default events queue from garbage not empty")
         XCTAssertNil(mixpanel.people.distinctId,
                      "default people distinct id from garbage failed")
         XCTAssertNotNil(mixpanel.people.peopleQueue,
                         "default people queue from garbage is nil")
-        XCTAssertTrue(mixpanel.people.peopleQueue.count == 0,
+        XCTAssertTrue(mixpanel.people.peopleQueue.isEmpty,
                       "default people queue from garbage not empty")
-        XCTAssertTrue(mixpanel.timedEvents.count == 0,
+        XCTAssertTrue(mixpanel.timedEvents.isEmpty,
                       "timedEvents is not empty")
     }
 
@@ -547,13 +547,13 @@ class MixpanelDemoTests: MixpanelBaseTests {
         _ = stubTrack().andReturn(200)
         mixpanel.flushInstance.flushRequest.networkRequestsAllowedAfterTime = 0
         flushAndWaitForSerialQueue()
-        XCTAssertTrue(mixpanel.eventsQueue.count == 0, "supposed to all be flushed")
+        XCTAssertTrue(mixpanel.eventsQueue.isEmpty, "supposed to all be flushed")
     }
 
     func testTelephonyInfoInitialized() {
         XCTAssertNotNil(AutomaticProperties.telephonyInfo, "telephonyInfo wasn't initialized")
     }
-    
+
     func testNestedUnsupportedTypes() {
         stubTrack()
         stubEngage()
@@ -563,19 +563,19 @@ class MixpanelDemoTests: MixpanelBaseTests {
         mixpanel.people.set(properties: p)
         flushAndWaitForSerialQueue()
     }
-    
+
     func testUnexpectedBeahviours() {
         stubEngage()
         mixpanel.identify(distinctId: "1234")
         mixpanel.people.set(properties: ["p1": "string type"])
         flushAndWaitForSerialQueue()
-        
+
         mixpanel.people.increment(property: "p1", by: 2.3)
         flushAndWaitForSerialQueue()
-        
+
         mixpanel.people.union(properties: ["p1": ["unioned item"]])
         flushAndWaitForSerialQueue()
-        
+
         mixpanel.people.append(properties: ["p1": "appended item"])
         flushAndWaitForSerialQueue()
     }

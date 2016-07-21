@@ -26,10 +26,10 @@ func stubTrack() -> LSStubRequestDSL {
 
 
 extension XCTestCase {
-    
+
     func XCTExpectAssert(expectedMessage: String, file: StaticString = #file, line: UInt = #line, block: () -> ()) {
         let exp = expectationWithDescription(expectedMessage)
-        
+
         Assertions.assertClosure = {
             (condition, message, file, line) in
             if !condition {
@@ -38,9 +38,9 @@ extension XCTestCase {
         }
 
         // Call code.
-        block();
+        block()
         waitForExpectationsWithTimeout(0.5, handler: nil)
         Assertions.assertClosure = Assertions.swiftAssertClosure
     }
-        
+
 }

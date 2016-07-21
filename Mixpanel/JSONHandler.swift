@@ -78,5 +78,5 @@ class JSONHandler {
             return obj.description
         }
     }
-    
+
 }

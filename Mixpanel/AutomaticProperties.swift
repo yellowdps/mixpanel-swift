@@ -10,9 +10,9 @@ import Foundation
 import CoreTelephony
 
 class AutomaticProperties {
-    
+
     static let telephonyInfo = CTTelephonyNetworkInfo()
-    
+
     static var properties: Properties = {
         var p = Properties()
         let size = UIScreen.mainScreen().bounds.size
@@ -35,7 +35,7 @@ class AutomaticProperties {
         p["$screen_width"]      = Int(size.width)
         return p
     }()
-    
+
     static var peopleProperties: Properties = {
         var p = Properties()
         let infoDict = NSBundle.mainBundle().infoDictionary
@@ -46,10 +46,10 @@ class AutomaticProperties {
         p["$ios_device_model"]  = AutomaticProperties.deviceModel()
         p["$ios_version"]       = UIDevice.currentDevice().systemVersion
         p["$ios_lib_version"]   = AutomaticProperties.libVersion()
-        
+
         return p
     }()
-    
+
     class func getCurrentRadio() -> String? {
         var radio = telephonyInfo.currentRadioAccessTechnology
         let prefix = "CTRadioAccessTechnology"
@@ -72,9 +72,9 @@ class AutomaticProperties {
         }
         return ""
     }
-    
+
     class func libVersion() -> String? {
         return NSBundle(forClass: self).infoDictionary?["CFBundleShortVersionString"] as? String
     }
-    
+
 }

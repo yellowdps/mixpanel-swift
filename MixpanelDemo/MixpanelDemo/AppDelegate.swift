@@ -22,15 +22,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Mixpanel.initialize(token: "YOUR_MIXPANEL_TOKEN")
         Mixpanel.mainInstance().loggingEnabled = true
         Mixpanel.mainInstance().flushInterval = 5
-        
+
         let settings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(settings)
         UIApplication.sharedApplication().registerForRemoteNotifications()
-        
+
         Mixpanel.mainInstance().identify(
             distinctId: Mixpanel.mainInstance().distinctId)
         Mixpanel.mainInstance().people.set(properties: ["$name": "Max Panelle"])
-        
+
         return true
     }
 
@@ -41,17 +41,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(application: UIApplication) {
         Mixpanel.mainInstance().track(event: "session length")
     }
-    
+
     func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
         debugPrint("did register for remote notification with token")
         Mixpanel.mainInstance().people.addPushDeviceToken(deviceToken)
     }
-    
+
 
     func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
         debugPrint(error)
     }
-    
+
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
         debugPrint("did receive remote notificaiton")
         if let message = userInfo["aps"]?["alert"] as? String {
@@ -59,7 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             alert.addAction(UIAlertAction(title: "Okay", style: .Default, handler: nil))
             window?.rootViewController?.presentViewController(alert, animated: true, completion: nil)
         }
-        
+
         Mixpanel.mainInstance().trackPushNotification(userInfo)
     }
 

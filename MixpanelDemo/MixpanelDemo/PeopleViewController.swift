@@ -9,7 +9,7 @@
 import UIKit
 import Mixpanel
 
-class PeopleViewController: UIViewController, UITableViewDelegate, UITableViewDataSource  {
+class PeopleViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var tableView: UITableView!
     var tableViewItems = ["Set Properties",
@@ -24,30 +24,30 @@ class PeopleViewController: UIViewController, UITableViewDelegate, UITableViewDa
                           "Track Charge w Properties",
                           "Clear Charges",
                           "Delete User"]
-    
+
     override func viewDidLoad() {
         tableView.delegate = self
         tableView.dataSource = self
     }
-    
+
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = self.tableView.dequeueReusableCellWithIdentifier("cell")! as UITableViewCell
         cell.textLabel?.text = tableViewItems[indexPath.item]
         cell.textLabel?.textColor = UIColor(red: 0.200000003, green: 0.200000003, blue: 0.200000003, alpha: 1)
         return cell
     }
-    
+
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
-        
+
         let actionStr = tableViewItems[indexPath.item]
         var descStr = ""
-        
+
         switch indexPath.item {
         case 0:
             let p: Properties = ["a": 1,
                                  "b": 2.3,
-                                 "c": ["4", 5,],
+                                 "c": ["4", 5],
                                  "d": NSURL(string:"https://mixpanel.com")!,
                                  "e": NSNull(),
                                  "f": NSDate()]
@@ -95,7 +95,7 @@ class PeopleViewController: UIViewController, UITableViewDelegate, UITableViewDa
         default:
             break
         }
-        
+
         let vc = self.storyboard!.instantiateViewControllerWithIdentifier("ActionCompleteViewController") as! ActionCompleteViewController
         vc.actionStr = actionStr
         vc.descStr = descStr
@@ -103,9 +103,9 @@ class PeopleViewController: UIViewController, UITableViewDelegate, UITableViewDa
         vc.modalPresentationStyle = UIModalPresentationStyle.OverFullScreen
         self.presentViewController(vc, animated: true, completion: nil)
     }
-    
+
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tableViewItems.count
     }
-    
+
 }

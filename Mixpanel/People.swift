@@ -66,7 +66,7 @@ public class People {
             Persistence.archivePeople(self.peopleQueue, token: self.apiToken)
         }
     }
-    
+
     func addPeopleObject(r: Properties) {
         peopleQueue.append(r)
         if peopleQueue.count > QueueConstants.queueSize {
@@ -77,18 +77,18 @@ public class People {
     func merge(properties properties: Properties) {
         addPeopleRecordToQueueWithAction("$merge", properties: properties)
     }
-    
+
     // MARK: - People Public API
-    
+
     /**
      Register the given device to receive push notifications.
-     
+
      This will associate the device token with the current user in Mixpanel People,
      which will allow you to send push notifications to the user from the Mixpanel
      People web interface. You should call this method with the `Data`
      token passed to
      `application:didRegisterForRemoteNotificationsWithDeviceToken:`.
-     
+
      - parameter deviceToken: device token as returned from
      `application:didRegisterForRemoteNotificationsWithDeviceToken:`
      */
@@ -106,7 +106,7 @@ public class People {
 
     /**
      Set properties on the current user in Mixpanel People.
-     
+
      The properties will be set on the current user. The property keys must be String
      objects and the supported property value types are:
      String, Int, UInt, Double, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
@@ -114,9 +114,9 @@ public class People {
      including the special properties: $token and $distinct_id. If the existing
      user record on the server already has a value for a given property, the old
      value is overwritten. Other existing properties will not be affected.
-     
+
      - precondition: You must identify for the set information to be linked to that user
-     
+
      - parameter properties: properties dictionary
      */
     public func set(properties properties: Properties) {
@@ -126,10 +126,10 @@ public class People {
 
     /**
      Convenience method for setting a single property in Mixpanel People.
-     
+
      The property keys must be String objects and the supported property value types are:
      String, Int, UInt, Double, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
-     
+
      - parameter property: property name
      - parameter to:       property value
      */
@@ -140,12 +140,12 @@ public class People {
     /**
      Set properties on the current user in Mixpanel People, but doesn't overwrite if
      there is an existing value.
-     
+
      This method is identical to `set:` except it will only set
      properties that are not already set. It is particularly useful for collecting
      data about the user's initial experience and source, as well as dates
      representing the first time something happened.
-     
+
      - parameter properties: properties dictionary
      */
     public func setOnce(properties properties: Properties) {
@@ -156,10 +156,10 @@ public class People {
     /**
      Remove a list of properties and their values from the current user's profile
      in Mixpanel People.
-     
+
      The properties array must ony contain String names of properties. For properties
      that don't exist there will be no effect.
-     
+
      - parameter properties: properties array
      */
     public func unset(properties properties: [String]) {
@@ -168,17 +168,17 @@ public class People {
 
     /**
      Increment the given numeric properties by the given values.
-     
+
      Property keys must be String names of numeric properties. A property is
      numeric if its current value is a number. If a property does not exist, it
      will be set to the increment amount. Property values must be number objects.
-     
+
      - parameter properties: properties array
      */
     public func increment(properties properties: Properties) {
         let filtered = properties.values.filter() {
             !($0 is Int || $0 is UInt || $0 is Double || $0 is Float) }
-        if filtered.count > 0 {
+        if !filtered.isEmpty {
             MPAssert(false, message: "increment property values should be numbers")
             return
         }
@@ -188,7 +188,7 @@ public class People {
     /**
      Convenience method for incrementing a single numeric property by the specified
      amount.
-     
+
      - parameter property: property name
      - parameter by:       amount to increment by
      */
@@ -198,10 +198,10 @@ public class People {
 
     /**
      Append values to list properties.
-     
+
      The property keys must be String objects and the supported property value types are:
      String, Int, UInt, Double, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
-     
+
      - parameter properties: mapping of list property names to values to append
      */
     public func append(properties properties: Properties) {
@@ -211,15 +211,15 @@ public class People {
 
     /**
      Union list properties.
-     
+
      Property keys must be array objects.
-     
+
      - parameter properties: mapping of list property names to lists to union
      */
     public func union(properties properties: Properties) {
         let filtered = properties.values.filter() {
             !($0 is [AnyObject]) }
-        if filtered.count > 0 {
+        if !filtered.isEmpty {
             MPAssert(false, message: "union property values should be an array")
             return
         }
@@ -229,11 +229,11 @@ public class People {
     /**
      Track money spent by the current user for revenue analytics and associate
      properties with the charge. Properties is optional.
-     
+
      Charge properties allow you to segment on types of revenue. For instance, you
      could record a product ID with each charge so that you could segement on it in
      revenue analytics to see which products are generating the most revenue.
-     
+
      - parameter amount:     amount of revenue received
      - parameter properties: Optional. properties dictionary
      */

@@ -16,11 +16,11 @@ class MixpanelBaseTests: XCTestCase, MixpanelDelegate {
     var mixpanel: MixpanelInstance!
     var mixpanelWillFlush: Bool!
     static var requestCount = 0
-    
+
     override func setUp() {
         NSLog("starting test setup...")
         super.setUp()
-        
+
         LSNocilla.sharedInstance().start()
         stubTrack()
         mixpanelWillFlush = false
@@ -30,30 +30,30 @@ class MixpanelBaseTests: XCTestCase, MixpanelDelegate {
         LSNocilla.sharedInstance().clearStubs()
         NSLog("finished test setup")
     }
-    
+
     override func tearDown() {
         super.tearDown()
         LSNocilla.sharedInstance().stop()
         LSNocilla.sharedInstance().clearStubs()
-        
+
         mixpanel = nil
     }
-    
+
     func mixpanelWillFlush(mixpanel: MixpanelInstance) -> Bool {
         return mixpanelWillFlush
     }
-    
+
     func waitForSerialQueue() {
         dispatch_sync(mixpanel.serialQueue) {
             return
         }
     }
-    
+
     func flushAndWaitForSerialQueue() {
         mixpanel.flush()
         waitForSerialQueue()
     }
-    
+
     func assertDefaultPeopleProperties(properties: [String: AnyObject]) {
         XCTAssertNotNil(properties["$ios_device_model"], "missing $ios_device_model property")
         XCTAssertNotNil(properties["$ios_lib_version"], "missing $ios_lib_version property")
@@ -61,7 +61,7 @@ class MixpanelBaseTests: XCTestCase, MixpanelDelegate {
         XCTAssertNotNil(properties["$ios_app_version"], "missing $ios_app_version property")
         XCTAssertNotNil(properties["$ios_app_release"], "missing $ios_app_release property")
     }
-    
+
     func allPropertyTypes() -> [String: AnyObject] {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss zzz"
