@@ -2,7 +2,7 @@ language: objective-c
 osx_image: xcode7.3
 env:
   global:
-  - WORKSPACE=MixpanelDemo/MixpanelDemo.xcworkspace
+  - WORKSPACE=MixpanelDemo.xcworkspace
   - SCHEME=MixpanelDemo
   - IOS_SDK=iphonesimulator9.3
   matrix:
