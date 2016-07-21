@@ -8,14 +8,14 @@ env:
   - IOS_SDK=iphonesimulator9.3
   - DEMO_SCHEME=MixpanelDemo
   matrix:
-    - DESTINATION="platform=iOS Simulator,OS=8.1,name=iPhone 4S"          SCHEME="$SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="YES"
-#    - DESTINATION="platform=iOS Simulator,OS=8.2,name=iPhone 5"           SCHEME="$SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
-#    - DESTINATION="platform=iOS Simulator,OS=8.3,name=iPhone 5S"          SCHEME="$SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
-#    - DESTINATION="platform=iOS Simulator,OS=8.4,name=iPhone 6"           SCHEME="$SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
-#    - DESTINATION="platform=iOS Simulator,OS=9.0,name=iPhone 6"           SCHEME="$SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
-#    - DESTINATION="platform=iOS Simulator,OS=9.1,name=iPhone 6 Plus"      SCHEME="$SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
-#    - DESTINATION="platform=iOS Simulator,OS=9.2,name=iPhone 6S"          SCHEME="$SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
-#    - DESTINATION="platform=iOS Simulator,OS=9.3,name=iPhone 6S Plus"     SCHEME="$SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
+    - DESTINATION="platform=iOS Simulator,OS=8.1,name=iPhone 4S"          SCHEME="$DEMO_SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="YES"
+#    - DESTINATION="platform=iOS Simulator,OS=8.2,name=iPhone 5"           SCHEME="$DEMO_SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
+#    - DESTINATION="platform=iOS Simulator,OS=8.3,name=iPhone 5S"          SCHEME="$DEMO_SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
+#    - DESTINATION="platform=iOS Simulator,OS=8.4,name=iPhone 6"           SCHEME="$DEMO_SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
+#    - DESTINATION="platform=iOS Simulator,OS=9.0,name=iPhone 6"           SCHEME="$DEMO_SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
+#    - DESTINATION="platform=iOS Simulator,OS=9.1,name=iPhone 6 Plus"      SCHEME="$DEMO_SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
+#    - DESTINATION="platform=iOS Simulator,OS=9.2,name=iPhone 6S"          SCHEME="$DEMO_SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
+#    - DESTINATION="platform=iOS Simulator,OS=9.3,name=iPhone 6S Plus"     SCHEME="$DEMO_SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
 script:
   - set -o pipefail
   - xcodebuild -version
@@ -23,16 +23,16 @@ script:
 
   # Build Framework in Debug and Run Tests if specified
   - if [ $RUN_TESTS == "YES" ]; then
-      xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty -c;
+      xcodebuild -workspace "$WORKSPACE" -scheme "$DEMO_SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty -c;
     else
-      xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
+      xcodebuild -workspace "$WORKSPACE" -scheme "$DEMO_SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
     fi
 
   # Build Framework in Release and Run Tests if specified
   - if [ $RUN_TESTS == "YES" ]; then
-      xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Release ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty -c;
+      xcodebuild -workspace "$WORKSPACE" -scheme "$DEMO_SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Release ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty -c;
     else
-      xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Release ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
+      xcodebuild -workspace "$WORKSPACE" -scheme "$DEMO_SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Release ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
     fi
 
 # Build Example in Debug if specified
@@ -42,5 +42,7 @@ script:
 
   # Run `pod lib lint` if specified
   - if [ $POD_LINT == "YES" ]; then
+      cd..
       pod lib lint --allow-warnings;
+      cd MixpanelDemo
     fi
