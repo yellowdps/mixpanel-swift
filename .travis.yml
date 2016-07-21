@@ -3,7 +3,7 @@ osx_image: xcode7.3
 before_script: cd MixpanelDemo
 env:
   global:
-  - WORKSPACE=Mixpanel.xcodeproj
+  - WORKSPACE=MixpanelDemo.xcworkspace
   - SCHEME=Mixpanel
   - IOS_SDK=iphonesimulator9.3
   - DEMO_SCHEME=MixpanelDemo
