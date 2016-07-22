@@ -1,5 +1,6 @@
-![Official Mixpanel Swift SDK](https://github.com/mixpanel/mixpanel-swift-private/blob/assets/mixpanelswift.png)
-
+<p align="center">
+  <img src="https://github.com/mixpanel/mixpanel-swift-private/blob/assets/mixpanelswift.png" alt="Mixpanel Swift Library"/>
+</p>
 [![Build Status](https://travis-ci.com/mixpanel/mixpanel-swift-private.svg?token=u1ndsoExx9snqasuDUsC&branch=master)](https://travis-ci.org/mixpanel/mixpanel-swift-private)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/mixpanel/mixpanel-swift-private.svg)](http://isitmaintained.com/project/mixpanel/mixpanel-swift-private "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/mixpanel/mixpanel-swift-private.svg)](http://isitmaintained.com/project/mixpanel/mixpanel-swift-private "Percentage of issues still open")
