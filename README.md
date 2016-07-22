@@ -11,17 +11,14 @@
 
 This is the official Mixpanel Swift Library
 
+The Mixpanel Swift library for iOS is an open source project, and we'd love to see your contributions! We'd also love for you to come and work with us! Check out Jobs for details.
+
 ## Current supported features
 
 * Tracking API
 * Mixpanel People API
 * Swift2.3 and latest [Swift3](https://github.com/mixpanel/mixpanel-swift-private/tree/swift3)
 * [Full Documentation](https://mixpanel.github.io/mixpanel-swift-private/)
-
-
-**Want to Contribute?**
-
-The Mixpanel Swift library for iOS is an open source project, and we'd love to see your contributions! We'd also love for you to come and work with us! Check out **[Jobs](http://boards.greenhouse.io/mixpanel/jobs/25226#.U_4JXEhORKU)** for details.
 
 # Installation
 
