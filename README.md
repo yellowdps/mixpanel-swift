@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/mixpanel/mixpanel-swift-private.svg?branch=yolo-travis-ci)](https://travis-ci.org/mixpanel/mixpanel-swift-private)
+[![Build Status](https://travis-ci.com/mixpanel/mixpanel-swift-private.svg?token=u1ndsoExx9snqasuDUsC&branch=master)](https://travis-ci.org/mixpanel/mixpanel-swift-private)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/mixpanel/mixpanel-swift-private.svg)](http://isitmaintained.com/project/mixpanel/mixpanel-swift-private "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/mixpanel/mixpanel-swift-private.svg)](http://isitmaintained.com/project/mixpanel/mixpanel-swift-private "Percentage of issues still open")
 [![CocoaPods Version](http://img.shields.io/cocoapods/v/Mixpanel.svg?style=flat)](https://mixpanel.com)
