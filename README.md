@@ -7,9 +7,16 @@
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Apache License](http://img.shields.io/cocoapods/l/Mixpanel.svg?style=flat)](https://mixpanel.com)
 
+# Introduction
+
+This is the official Mixpanel Swift Library. 
+
+Current supported features:
+
+
 **Want to Contribute?**
 
-The Mixpanel Swift library for iOS is an open source project, and we'd love to see your contributions! We'd also love for you to come and work with us! Check out http://boards.greenhouse.io/mixpanel/jobs/25226#.U_4JXEhORKU for details.
+The Mixpanel Swift library for iOS is an open source project, and we'd love to see your contributions! We'd also love for you to come and work with us! Check out **[Jobs](http://boards.greenhouse.io/mixpanel/jobs/25226#.U_4JXEhORKU)** for details.
 
 # Installation
 
