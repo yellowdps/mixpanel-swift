@@ -30,9 +30,9 @@ public class Mixpanel {
      You can always get the instance by calling getInstance(name)
      */
     public class func initialize(token apiToken: String,
-                                                    launchOptions: [NSObject: AnyObject]? = nil,
-                                                    flushInterval: Double = 60,
-                                                    instanceName: String = NSUUID().UUIDString) -> MixpanelInstance {
+                                 launchOptions: [NSObject: AnyObject]? = nil,
+                                 flushInterval: Double = 60,
+                                 instanceName: String = NSUUID().UUIDString) -> MixpanelInstance {
         return MixpanelManager.sharedInstance.initialize(token:         apiToken,
                                                          launchOptions: launchOptions,
                                                          flushInterval: flushInterval,
