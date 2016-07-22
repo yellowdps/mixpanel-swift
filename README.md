@@ -26,7 +26,7 @@ We'd also love for you to come and work with us! Check out **[Jobs](http://board
 ## Painless Installation (CocoaPods)
 
 Mixpanel supports `CocoaPods` for easy installation.
-To Install, see our **[guide »](https://mixpanel.com/help/reference/swift)**
+To Install, see our **[swift integration guide »](https://mixpanel.com/help/reference/swift)**
 
 `pod 'Mixpanel-swift'`
 
