@@ -9,9 +9,14 @@
 
 # Introduction
 
-This is the official Mixpanel Swift Library. 
+This is the official Mixpanel Swift Library
 
-Current supported features:
+**Current supported features**
+
+* Tracking API
+* Mixpanel People API
+* Swift2.3 and latest [Swift3](https://github.com/mixpanel/mixpanel-swift-private/tree/swift3)
+* [Full Documentation](https://mixpanel.github.io/mixpanel-swift-private/)
 
 
 **Want to Contribute?**
