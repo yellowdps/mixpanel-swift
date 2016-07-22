@@ -67,7 +67,7 @@ class Persistence {
         archiveToFile(.Properties, object: p, token: token)
     }
 
-    class private func archiveToFile(type: ArchiveType, object: AnyObject, token: String) {
+    class func archiveToFile(type: ArchiveType, object: AnyObject, token: String) {
         let filePath = filePathWithType(type, token: token)
         guard let path = filePath else {
             Logger.error(message: "bad file path, cant fetch file")

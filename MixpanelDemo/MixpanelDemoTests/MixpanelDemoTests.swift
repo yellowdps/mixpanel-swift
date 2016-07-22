@@ -457,21 +457,11 @@ class MixpanelDemoTests: MixpanelBaseTests {
         XCTAssertNotNil(mixpanel.people.peopleQueue, "default people queue from no file is nil")
         XCTAssertTrue(mixpanel.people.peopleQueue.count == 1, "default people queue expecting 1 item")
         XCTAssertTrue(mixpanel.timedEvents.count == 1, "timedEvents expecting 1 item")
-        // corrupt file
-        let garbage = "garbage".dataUsingEncoding(NSUTF8StringEncoding)!
-        do {
-            try garbage.writeToURL(NSURL(
-                fileURLWithPath: Persistence.filePathWithType(.Events, token: kTestToken)!),
-                              options: [])
-            try garbage.writeToURL(NSURL(
-                fileURLWithPath: Persistence.filePathWithType(.People, token: kTestToken)!),
-                              options: [])
-            try garbage.writeToURL(NSURL(
-                fileURLWithPath: Persistence.filePathWithType(.Properties, token: kTestToken)!),
-                              options: [])
-        } catch {
-            print("couldn't write data")
-        }
+
+        Persistence.archiveToFile(.Events, object: "garbage", token: kTestToken)
+        Persistence.archiveToFile(.People, object: "garbage", token: kTestToken)
+        Persistence.archiveToFile(.Properties, object: "garbage", token: kTestToken)
+
         XCTAssertTrue(fileManager.fileExistsAtPath(
             Persistence.filePathWithType(.Events, token: kTestToken)!),
                       "events archive file not removed")
