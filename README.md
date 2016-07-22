@@ -28,7 +28,7 @@ If you are using Objective-C, we recommend using our **[Objective-C Library](htt
 
 # Installation
 
-## Painless Installation (CocoaPods)
+## CocoaPods
 
 Mixpanel supports `CocoaPods` for easy installation.
 To Install, see our **[swift integration guide »](https://mixpanel.com/help/reference/swift)**
