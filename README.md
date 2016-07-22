@@ -11,7 +11,7 @@
 
 This is the official Mixpanel Swift Library
 
-**Current supported features**
+## Current supported features
 
 * Tracking API
 * Mixpanel People API
