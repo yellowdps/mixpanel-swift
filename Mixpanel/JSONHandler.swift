@@ -57,7 +57,7 @@ class JSONHandler {
             return obj.map() { makeObjectSerializable($0) }
 
         case let obj as Properties:
-            var serializedDict = [String: AnyObject]()
+            var serializedDict = Properties()
             _ = obj.map() { (k, v) in
                 serializedDict[k] =
                     makeObjectSerializable(v) }

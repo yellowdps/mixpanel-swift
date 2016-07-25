@@ -524,7 +524,7 @@ extension MixpanelInstance {
      */
     public func trackPushNotification(userInfo: [NSObject: AnyObject],
                                       event: String = "$campaign_received") {
-        if let mpPayload = userInfo["mp"] as? [String: AnyObject] {
+        if let mpPayload = userInfo["mp"] as? Properties {
             if let m = mpPayload["m"], c = mpPayload["c"] {
                 let properties = ["campaign_id": c,
                                   "message_id": m,

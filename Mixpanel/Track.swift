@@ -21,7 +21,7 @@ class Track {
         self.apiToken = apiToken
     }
 
-    class func assertPropertyTypes(properties: [String: AnyObject]?) {
+    class func assertPropertyTypes(properties: Properties?) {
         if let properties = properties {
             for (_, v) in properties {
                 MPAssert(
@@ -40,7 +40,7 @@ class Track {
     }
 
     func track(event event: String?,
-               properties: [String: AnyObject]? = nil,
+               properties: Properties? = nil,
                inout eventsQueue: Queue,
                inout timedEvents: Properties,
                superProperties: Properties,
@@ -55,7 +55,7 @@ class Track {
         Track.assertPropertyTypes(properties)
         let epochSeconds = Int(round(epochInterval))
         let eventStartTime = timedEvents[ev!] as? Double
-        var p = [String: AnyObject]()
+        var p = Properties()
         p += AutomaticProperties.properties
         p["token"] = apiToken
         p["time"] = epochSeconds
@@ -69,7 +69,7 @@ class Track {
             p += properties
         }
 
-        let trackEvent: [String: AnyObject] = ["event": ev!, "properties": p]
+        let trackEvent: Properties = ["event": ev!, "properties": p]
         eventsQueue.append(trackEvent)
 
         if eventsQueue.count > QueueConstants.queueSize {

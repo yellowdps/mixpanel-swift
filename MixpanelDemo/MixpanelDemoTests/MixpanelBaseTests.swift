@@ -54,7 +54,7 @@ class MixpanelBaseTests: XCTestCase, MixpanelDelegate {
         waitForSerialQueue()
     }
 
-    func assertDefaultPeopleProperties(properties: [String: AnyObject]) {
+    func assertDefaultPeopleProperties(properties: Properties) {
         XCTAssertNotNil(properties["$ios_device_model"], "missing $ios_device_model property")
         XCTAssertNotNil(properties["$ios_lib_version"], "missing $ios_lib_version property")
         XCTAssertNotNil(properties["$ios_version"], "missing $ios_version property")
@@ -62,7 +62,7 @@ class MixpanelBaseTests: XCTestCase, MixpanelDelegate {
         XCTAssertNotNil(properties["$ios_app_release"], "missing $ios_app_release property")
     }
 
-    func allPropertyTypes() -> [String: AnyObject] {
+    func allPropertyTypes() -> Properties {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss zzz"
         let date = dateFormatter.dateFromString("2012-09-28 19:14:36 PDT")

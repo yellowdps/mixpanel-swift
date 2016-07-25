@@ -208,7 +208,7 @@ class MixpanelDemoTests: MixpanelBaseTests {
         waitForSerialQueue()
         var e: Properties = mixpanel.eventsQueue.last!
         XCTAssertEqual(e["event"] as? String, "Something Happened", "incorrect event name")
-        var p: Properties = e["properties"] as! [String: AnyObject]
+        var p: Properties = e["properties"] as! Properties
         XCTAssertNotNil(p["$app_version"], "$app_version not set")
         XCTAssertNotNil(p["$app_release"], "$app_release not set")
         XCTAssertNotNil(p["$lib_version"], "$lib_version not set")
