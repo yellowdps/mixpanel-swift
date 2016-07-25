@@ -84,7 +84,7 @@ Import Mixpanel into AppDelegate.swift, and initialize Mixpanel within `applicat
 ```
 func application(_ application: UIApplication,
                  didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-    Mixpanel.initialize(token: "YOUR_TOKEN")
+    Mixpanel.initialize(token: "MIXPANEL_TOKEN")
 }
 ```
 
@@ -92,7 +92,7 @@ func application(_ application: UIApplication,
 
 By calling:
 ```
-let mixpanel = Mixpanel.initialize(token: "YOUR_TOKEN")
+let mixpanel = Mixpanel.initialize(token: "MIXPANEL_TOKEN")
 ```
 
 You initialize your mixpanel instance with the token provided to you on mixpanel.com.
