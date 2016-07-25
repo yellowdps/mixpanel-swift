@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/mixpanel/mixpanel-swift-private/blob/assets/mixpanelswift.png?raw=true" alt="Mixpanel Swift Library"/>
+  <img src="https://github.com/mixpanel/mixpanel-swift-private/blob/assets/mixpanelswift.png?raw=true" alt="Mixpanel Swift Library" height="200"/>
 </p>
 
 
