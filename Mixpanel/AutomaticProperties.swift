@@ -18,8 +18,6 @@ class AutomaticProperties {
         let size = UIScreen.mainScreen().bounds.size
         let infoDict = NSBundle.mainBundle().infoDictionary
         if let infoDict = infoDict {
-            p["$app_version"]          = infoDict["CFBundleVersion"]
-            p["$app_release"]          = infoDict["CFBundleShortVersionString"]
             p["$app_build_number"]     = infoDict["CFBundleVersion"]
             p["$app_version_string"]   = infoDict["CFBundleShortVersionString"]
         }
@@ -30,7 +28,6 @@ class AutomaticProperties {
         p["$os"]                = UIDevice.currentDevice().systemName
         p["$os_version"]        = UIDevice.currentDevice().systemVersion
         p["$model"]             = AutomaticProperties.deviceModel()
-        p["mp_device_model"]    = p["$model"] // legacy
         p["$screen_height"]     = Int(size.height)
         p["$screen_width"]      = Int(size.width)
         return p

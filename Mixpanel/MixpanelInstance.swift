@@ -490,7 +490,7 @@ extension MixpanelInstance {
 
      Properties will allow you to segment your events in your Mixpanel reports.
      Property keys must be String objects and the supported value types are:
-     String, Int, UInt, Double, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
+     String, Int, UInt, Double, Float, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
      If the event is being timed, the timer will stop and be added as a property.
 
      - parameter event:      event name
@@ -602,7 +602,7 @@ extension MixpanelInstance {
      all event tracking calls. They save you having to maintain and add a common
      set of properties to your events.
      Property keys must be String objects and the supported value types are:
-     String, Int, UInt, Double, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
+     String, Int, UInt, Double, Float, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
 
      - parameter properties: properties dictionary
      */
@@ -618,7 +618,7 @@ extension MixpanelInstance {
      unless the existing value is equal to defaultValue. defaultValue is optional.
 
      Property keys must be String objects and the supported value types are:
-     String, Int, UInt, Double, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
+     String, Int, UInt, Double, Float, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
 
      - parameter properties:   properties dictionary
      - parameter defaultValue: Optional. overwrite existing properties that have this value

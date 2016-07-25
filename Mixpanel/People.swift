@@ -78,6 +78,17 @@ public class People {
         addPeopleRecordToQueueWithAction("$merge", properties: properties)
     }
 
+    private func deviceTokenDataToString(deviceToken: NSData) -> String {
+        let tokenChars = UnsafePointer<CChar>((deviceToken as NSData).bytes)
+        var tokenString = ""
+
+        for i in 0..<deviceToken.length {
+            tokenString += String(format: "%02.2hhx", arguments: [tokenChars[i]])
+        }
+
+        return tokenString
+    }
+
     // MARK: - People Public API
 
     /**
@@ -93,15 +104,20 @@ public class People {
      `application:didRegisterForRemoteNotificationsWithDeviceToken:`
      */
     public func addPushDeviceToken(deviceToken: NSData) {
-        let tokenChars = UnsafePointer<CChar>((deviceToken as NSData).bytes)
-        var tokenString = ""
-
-        for i in 0..<deviceToken.length {
-            tokenString += String(format: "%02.2hhx", arguments: [tokenChars[i]])
-        }
-        let tokens = [tokenString]
-        let properties = ["$ios_devices": tokens]
+        let properties = ["$ios_devices": [deviceTokenDataToString(deviceToken)]]
         addPeopleRecordToQueueWithAction("$union", properties: properties)
+    }
+
+    /**
+     Unregister a specific device token from the ability to receive push notifications.
+     This will remove the provided push token saved to this people profile. This is useful
+     in conjunction with a call to `reset`, or when a user is logging out.
+     - parameter deviceToken: device token as returned from
+     `application:didRegisterForRemoteNotificationsWithDeviceToken:`
+     */
+    public func removePushDeviceToken(deviceToken: NSData) {
+        let properties = ["$ios_devices": [deviceTokenDataToString(deviceToken)]]
+        addPeopleRecordToQueueWithAction("$remove", properties: properties)
     }
 
     /**
@@ -109,7 +125,7 @@ public class People {
 
      The properties will be set on the current user. The property keys must be String
      objects and the supported property value types are:
-     String, Int, UInt, Double, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
+     String, Int, UInt, Double, Float, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
      You can override the current project token and distinct Id by
      including the special properties: $token and $distinct_id. If the existing
      user record on the server already has a value for a given property, the old
@@ -128,7 +144,7 @@ public class People {
      Convenience method for setting a single property in Mixpanel People.
 
      The property keys must be String objects and the supported property value types are:
-     String, Int, UInt, Double, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
+     String, Int, UInt, Double, Float, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
 
      - parameter property: property name
      - parameter to:       property value
@@ -200,13 +216,24 @@ public class People {
      Append values to list properties.
 
      The property keys must be String objects and the supported property value types are:
-     String, Int, UInt, Double, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
+     String, Int, UInt, Double, Float, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
 
      - parameter properties: mapping of list property names to values to append
      */
     public func append(properties properties: Properties) {
         Track.assertPropertyTypes(properties)
         addPeopleRecordToQueueWithAction("$append", properties: properties)
+    }
+
+    /**
+     Removes list properties.
+     The property keys must be String objects and the supported property value types are:
+     String, Int, UInt, Double, Float, [AnyObject], [String: AnyObject], Date, URL, and NSNull.
+     - parameter properties: mapping of list property names to values to remove
+     */
+    public func remove(properties: Properties) {
+        Track.assertPropertyTypes(properties)
+        addPeopleRecordToQueueWithAction("$remove", properties: properties)
     }
 
     /**

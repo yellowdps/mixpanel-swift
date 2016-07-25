@@ -29,6 +29,7 @@ class Track {
                     v is Int ||
                     v is UInt ||
                     v is Double ||
+                    v is Float ||
                     v is [AnyObject] ||
                     v is [String: AnyObject] ||
                     v is NSDate ||

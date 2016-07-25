@@ -209,8 +209,8 @@ class MixpanelDemoTests: MixpanelBaseTests {
         var e: Properties = mixpanel.eventsQueue.last!
         XCTAssertEqual(e["event"] as? String, "Something Happened", "incorrect event name")
         var p: Properties = e["properties"] as! Properties
-        XCTAssertNotNil(p["$app_version"], "$app_version not set")
-        XCTAssertNotNil(p["$app_release"], "$app_release not set")
+        XCTAssertNotNil(p["$app_build_number"], "$app_build_number not set")
+        XCTAssertNotNil(p["$app_version_string"], "$app_version_string not set")
         XCTAssertNotNil(p["$lib_version"], "$lib_version not set")
         XCTAssertNotNil(p["$model"], "$model not set")
         XCTAssertNotNil(p["$os"], "$os not set")
@@ -218,7 +218,6 @@ class MixpanelDemoTests: MixpanelBaseTests {
         XCTAssertNotNil(p["$screen_height"], "$screen_height not set")
         XCTAssertNotNil(p["$screen_width"], "$screen_width not set")
         XCTAssertNotNil(p["distinct_id"], "distinct_id not set")
-        XCTAssertNotNil(p["mp_device_model"], "mp_device_model not set")
         XCTAssertNotNil(p["time"], "time not set")
         XCTAssertEqual(p["$manufacturer"] as? String, "Apple", "incorrect $manufacturer")
         XCTAssertEqual(p["mp_lib"] as? String, "swift", "incorrect mp_lib")
@@ -230,14 +229,14 @@ class MixpanelDemoTests: MixpanelBaseTests {
         let p: Properties = ["string": "yello",
                              "number": 3,
                              "date": now,
-                             "$app_version": "override"]
+                             "$app_version_string": "override"]
         mixpanel.track(event: "Something Happened", properties: p)
         waitForSerialQueue()
         var props: Properties = mixpanel.eventsQueue.last?["properties"] as! Properties
         XCTAssertEqual(props["string"] as? String, "yello")
         XCTAssertEqual(props["number"] as? Int, 3)
         XCTAssertEqual(props["date"] as? NSDate, now)
-        XCTAssertEqual(props["$app_version"] as? String, "override",
+        XCTAssertEqual(props["$app_version_string"] as? String, "override",
                        "reserved property override failed")
     }
 
