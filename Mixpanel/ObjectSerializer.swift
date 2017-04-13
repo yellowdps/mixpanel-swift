@@ -129,7 +129,9 @@ class ObjectSerializer {
     func getPropertyValue(of object: inout AnyObject, propertyDescription: PropertyDescription, context: ObjectSerializerContext) -> Any {
         var values = [Any]()
         let selectorDescription = propertyDescription.getSelectorDescription
-        if propertyDescription.useKeyValueCoding {
+        if propertyDescription.useKeyValueCoding,
+            let selectorString = selectorDescription.selectorName,
+            object.responds(to: NSSelectorFromString(selectorString)) {
             // the "fast" path is to use KVC
             let valueForKey = object.value(forKey: selectorDescription.selectorName!)
             if let value = getTransformedValue(of: valueForKey,
