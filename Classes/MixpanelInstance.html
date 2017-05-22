@@ -14,7 +14,7 @@
     <a title="MixpanelInstance Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">Mixpanel Docs</a> (99% documented)</p>
+        <p><a href="../index.html">Mixpanel Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/mixpanel/mixpanel-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -39,6 +39,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/People.html">People</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes.html#/s:C8Mixpanel10TweakStore">TweakStore</a>
               </li>
             </ul>
           </li>
@@ -84,9 +87,6 @@
                 <a href="../Extensions/String.html">String</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions/TweakLibraryType.html">TweakLibraryType</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Extensions/UIColor.html">UIColor</a>
               </li>
               <li class="nav-group-task">
@@ -121,6 +121,9 @@
                 <a href="../Protocols/TweakClusterType.html">TweakClusterType</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Protocols/TweakLibraryType.html">TweakLibraryType</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Protocols/TweakableType.html">TweakableType</a>
               </li>
             </ul>
@@ -147,7 +150,7 @@
             <h1>MixpanelInstance</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight"><code><span class="n">open</span> <span class="kd">class</span> <span class="kt">MixpanelInstance</span><span class="p">:</span> <span class="kt">CustomDebugStringConvertible</span><span class="p">,</span> <span class="kt">FlushDelegate</span></code></pre>
+                  <pre class="highlight"><code><span class="n">open</span> <span class="kd">class</span> <span class="kt">MixpanelInstance</span><span class="p">:</span> <span class="kt">CustomDebugStringConvertible</span><span class="p">,</span> <span class="kt">FlushDelegate</span><span class="p">,</span> <span class="kt">AEDelegate</span></code></pre>
 
                 </div>
               </div>
@@ -205,6 +208,33 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">distinctId</span> <span class="o">=</span> <span class="s">""</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC8Mixpanel16MixpanelInstance5aliasGSqSS_"></a>
+                    <a name="//apple_ref/swift/Property/alias" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC8Mixpanel16MixpanelInstance5aliasGSqSS_">alias</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>alias string that uniquely identifies the current user.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">alias</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span></code></pre>
 
                         </div>
                       </div>
@@ -373,7 +403,7 @@ Useful if you need to proxy Mixpanel requests. Defaults to
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">serverURL</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">serverURL</span> <span class="o">=</span> <span class="kt">BasePath</span><span class="o">.</span><span class="kt">DefaultMixpanelAPI</span></code></pre>
 
                         </div>
                       </div>
@@ -393,10 +423,7 @@ Useful if you need to proxy Mixpanel requests. Defaults to
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The base URL used for Mixpanel API requests.
-Useful if you need to proxy Mixpanel requests. Defaults to
-<a href="https://api.mixpanel.com">https://api.mixpanel.com</a>.</p>
-
+                        
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -422,9 +449,13 @@ Useful if you need to proxy Mixpanel requests. Defaults to
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>This allows enabling or disabling of all Mixpanel logs at run time.
-- Note: All logging is disabled by default. Usually, this is only required
-        if you are running in to issues with the SDK and you need support.</p>
+                        <p>This allows enabling or disabling of all Mixpanel logs at run time.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    All logging is disabled by default. Usually, this is only required
+    if you are running in to issues with the SDK and you need support.
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -432,6 +463,33 @@ Useful if you need to proxy Mixpanel requests. Defaults to
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">loggingEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC8Mixpanel16MixpanelInstance4nameSS"></a>
+                    <a name="//apple_ref/swift/Property/name" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC8Mixpanel16MixpanelInstance4nameSS">name</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A unique identifier for this MixpanelInstance</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="k">let</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
@@ -583,6 +641,62 @@ Defaults to 6 (seconds).</p>
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC8Mixpanel16MixpanelInstance22minimumSessionDurationVs6UInt64"></a>
+                    <a name="//apple_ref/swift/Property/minimumSessionDuration" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC8Mixpanel16MixpanelInstance22minimumSessionDurationVs6UInt64">minimumSessionDuration</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The minimum session duration (ms) that is tracked in automatic events.
+The default value is 10000 (10 seconds).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">minimumSessionDuration</span><span class="p">:</span> <span class="kt">UInt64</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC8Mixpanel16MixpanelInstance22maximumSessionDurationVs6UInt64"></a>
+                    <a name="//apple_ref/swift/Property/maximumSessionDuration" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC8Mixpanel16MixpanelInstance22maximumSessionDurationVs6UInt64">maximumSessionDuration</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The maximum session duration (ms) that is tracked in automatic events.
+The default value is UINT64_MAX (no maximum session duration).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">maximumSessionDuration</span><span class="p">:</span> <span class="kt">UInt64</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
             <div class="task-group">
@@ -649,7 +763,6 @@ flushed once <code>identify:</code> is called.</p>
                               <td>
                                 <div>
                                   <p>string that uniquely identifies the current user</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -684,7 +797,6 @@ correctly.</p>
 <p>This makes the current id and &lsquo;Alias&rsquo; interchangeable distinct ids.
 Mixpanel.
 mixpanelInstance.createAlias(<q>Alias</q>, mixpanelInstance.distinctId)</p>
-
 <div class="aside aside-precondition">
     <p class="aside-title">Precondition</p>
     <p>You must call identify if you haven&rsquo;t already
@@ -714,7 +826,6 @@ mixpanelInstance.createAlias(<q>Alias</q>, mixpanelInstance.distinctId)</p>
                               <td>
                                 <div>
                                   <p>the new distinct id that should represent the original</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -727,7 +838,6 @@ mixpanelInstance.createAlias(<q>Alias</q>, mixpanelInstance.distinctId)</p>
                               <td>
                                 <div>
                                   <p>the old distinct id that alias will be mapped to</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -796,7 +906,6 @@ and pending event and People record queues to disk.</p>
 library is initialized with the same project token.
 The library listens for app state changes and handles
 persisting data as needed.</p>
-
 <div class="aside aside-important">
     <p class="aside-title">Important</p>
     You do not need to call this method.**
@@ -809,6 +918,33 @@ persisting data as needed.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">archive</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Method/archive()" class="dashAnchor"></a>
+                    <a class="token" href="#/">archive()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">class</span> <span class="kt">MixpanelInstance</span><span class="p">:</span> <span class="kt">CustomDebugStringConvertible</span><span class="p">,</span> <span class="kt">FlushDelegate</span><span class="p">,</span> <span class="kt">AEDelegate</span></code></pre>
 
                         </div>
                       </div>
@@ -868,7 +1004,6 @@ method manually if you want to force a flush at a particular moment.</p>
                               <td>
                                 <div>
                                   <p>an optional completion handler for when the flush has completed.</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -932,7 +1067,6 @@ If the event is being timed, the timer will stop and be added as a property.</p>
                               <td>
                                 <div>
                                   <p>event name</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -945,7 +1079,6 @@ If the event is being timed, the timer will stop and be added as a property.</p>
                               <td>
                                 <div>
                                   <p>properties dictionary</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -997,7 +1130,6 @@ This method parses the standard payload and queues a track call using this infor
                               <td>
                                 <div>
                                   <p>remote notification payload dictionary</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -1009,8 +1141,8 @@ This method parses the standard payload and queues a track call using this infor
                               </td>
                               <td>
                                 <div>
-                                  <p>optional, and usually shouldn’t be used, unless the results is needed to be tracked elsewhere.</p>
-
+                                  <p>optional, and usually shouldn&rsquo;t be used,
+unless the results is needed to be tracked elsewhere.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1041,7 +1173,6 @@ a duration. For example, if a developer were to track an <q>Image Upload</q> eve
 she might want to also know how long the upload took. Calling this method
 before the upload code would implicitly cause the <code>track</code>
 call to record its duration.</p>
-
 <div class="aside aside-precondition">
     <p class="aside-title">Precondition</p>
     <p>// begin timing the image upload:
@@ -1076,7 +1207,6 @@ mixpanelInstance.track(<q>Image Upload</q>)
                               <td>
                                 <div>
                                   <p>the event name to be timed</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -1140,7 +1270,6 @@ mixpanelInstance.track(<q>Image Upload</q>)
                       <div>
                         <h4>Return Value</h4>
                         <p>the current super properties</p>
-
                       </div>
                     </section>
                   </div>
@@ -1215,7 +1344,6 @@ MixpanelType can be either String, Int, UInt, Double, Float, Bool, [MixpanelType
                               <td>
                                 <div>
                                   <p>properties dictionary</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -1267,7 +1395,6 @@ MixpanelType can be either String, Int, UInt, Double, Float, Bool, [MixpanelType
                               <td>
                                 <div>
                                   <p>properties dictionary</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -1280,7 +1407,6 @@ MixpanelType can be either String, Int, UInt, Double, Float, Bool, [MixpanelType
                               <td>
                                 <div>
                                   <p>Optional. overwrite existing properties that have this value</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -1335,7 +1461,6 @@ registered.</p>
                               <td>
                                 <div>
                                   <p>array of property name strings to remove</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -1397,7 +1522,6 @@ and join, any experiments are newly available for the current user.</p>
                               <td>
                                 <div>
                                   <p>Optional callback for after the experiments have been loaded and applied</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -1432,7 +1556,6 @@ and join, any experiments are newly available for the current user.</p>
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Shows a notification if one is available.</p>
-
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
     You do not need to call this method on the main thread.
@@ -1465,10 +1588,9 @@ and join, any experiments are newly available for the current user.</p>
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Shows a notification with the given type if one is available.</p>
-
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
-    <p>You do not need to call this method on the main thread.</p>
+    You do not need to call this method on the main thread.
 
 </div>
 
@@ -1493,8 +1615,7 @@ and join, any experiments are newly available for the current user.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The type of notification to show, either “mini” or “takeover”</p>
-
+                                  <p>The type of notification to show, either <q>mini</q> or <q>takeover</q></p>
                                 </div>
                               </td>
                             </tr>
@@ -1518,10 +1639,9 @@ and join, any experiments are newly available for the current user.</p>
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Shows a notification with the given ID</p>
-
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
-    <p>You do not need to call this method on the main thread.</p>
+    You do not need to call this method on the main thread.
 
 </div>
 
@@ -1547,7 +1667,6 @@ and join, any experiments are newly available for the current user.</p>
                               <td>
                                 <div>
                                   <p>The notification ID you want to present</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -1557,13 +1676,45 @@ and join, any experiments are newly available for the current user.</p>
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC8Mixpanel16MixpanelInstance24fetchNotificationPayloadFT10completionFGSqGVs10DictionarySSPs9AnyObject___T__T_"></a>
+                    <a name="//apple_ref/swift/Method/fetchNotificationPayload(completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC8Mixpanel16MixpanelInstance24fetchNotificationPayloadFT10completionFGSqGVs10DictionarySSPs9AnyObject___T__T_">fetchNotificationPayload(completion:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns the payload of a notification if available</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    You do not need to call this method on the main thread.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">fetchNotificationPayload</span><span class="p">(</span><span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">([</span><span class="kt">String</span><span class="p">:</span> <span class="kt">AnyObject</span><span class="p">]?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2016 <a class="link" href="http://mixpanel.com" target="_blank" rel="external">Mixpanel</a>. All rights reserved. (Last updated: 2016-10-25)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2017 <a class="link" href="http://mixpanel.com" target="_blank" rel="external">Mixpanel</a>. All rights reserved. (Last updated: 2017-05-22)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

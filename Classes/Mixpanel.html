@@ -14,7 +14,7 @@
     <a title="Mixpanel Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">Mixpanel Docs</a> (99% documented)</p>
+        <p><a href="../index.html">Mixpanel Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/mixpanel/mixpanel-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -39,6 +39,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/People.html">People</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes.html#/s:C8Mixpanel10TweakStore">TweakStore</a>
               </li>
             </ul>
           </li>
@@ -84,9 +87,6 @@
                 <a href="../Extensions/String.html">String</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions/TweakLibraryType.html">TweakLibraryType</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Extensions/UIColor.html">UIColor</a>
               </li>
               <li class="nav-group-task">
@@ -119,6 +119,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/TweakClusterType.html">TweakClusterType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/TweakLibraryType.html">TweakLibraryType</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/TweakableType.html">TweakableType</a>
@@ -175,7 +178,6 @@
 <p>Returns a new Mixpanel instance API object. This allows you to create more than one instance
 of the API object, which is convenient if you&rsquo;d like to send data to more than
 one Mixpanel project from a single app.</p>
-
 <div class="aside aside-important">
     <p class="aside-title">Important</p>
     <p>If you have more than one Mixpanel instance, it is beneficial to initialize
@@ -189,9 +191,9 @@ the instances with an instanceName. Then they can be reached by calling getInsta
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight"><code><span class="n">open</span> <span class="kd">class</span> <span class="kd">func</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">token</span> <span class="nv">apiToken</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                                                    <span class="nv">launchOptions</span><span class="p">:</span> <span class="p">[</span><span class="kt">UIApplicationLaunchOptionsKey</span> <span class="p">:</span> <span class="kt">Any</span><span class="p">]?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                                                    <span class="nv">flushInterval</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
-                                                    <span class="nv">instanceName</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kt">UUID</span><span class="p">()</span><span class="o">.</span><span class="n">uuidString</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/MixpanelInstance.html">MixpanelInstance</a></span></code></pre>
+                               <span class="nv">launchOptions</span><span class="p">:</span> <span class="p">[</span><span class="kt">UIApplicationLaunchOptionsKey</span> <span class="p">:</span> <span class="kt">Any</span><span class="p">]?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                               <span class="nv">flushInterval</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
+                               <span class="nv">instanceName</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kt">UUID</span><span class="p">()</span><span class="o">.</span><span class="n">uuidString</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/MixpanelInstance.html">MixpanelInstance</a></span></code></pre>
 
                         </div>
                       </div>
@@ -208,7 +210,6 @@ the instances with an instanceName. Then they can be reached by calling getInsta
                               <td>
                                 <div>
                                   <p>your project token</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -221,7 +222,6 @@ the instances with an instanceName. Then they can be reached by calling getInsta
                               <td>
                                 <div>
                                   <p>Optional. App delegate launchOptions</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -234,7 +234,6 @@ the instances with an instanceName. Then they can be reached by calling getInsta
                               <td>
                                 <div>
                                   <p>Optional. Interval to run background flushing</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -247,7 +246,6 @@ the instances with an instanceName. Then they can be reached by calling getInsta
                               <td>
                                 <div>
                                   <p>Optional. The name you want to call this instance</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -256,8 +254,35 @@ the instances with an instanceName. Then they can be reached by calling getInsta
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>returns a mixpanel instance if needed to keep throughout the project. You can always get the instance by calling getInstance(name)</p>
+                        <p>returns a mixpanel instance if needed to keep throughout the project.
+You can always get the instance by calling getInstance(name)</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Method/initialize(token:flushInterval:instanceName:)" class="dashAnchor"></a>
+                    <a class="token" href="#/">initialize(token:flushInterval:instanceName:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">class</span> <span class="kt">Mixpanel</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -299,7 +324,6 @@ the instances with an instanceName. Then they can be reached by calling getInsta
                               <td>
                                 <div>
                                   <p>the instance name</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -309,7 +333,6 @@ the instances with an instanceName. Then they can be reached by calling getInsta
                       <div>
                         <h4>Return Value</h4>
                         <p>returns the mixpanel instance</p>
-
                       </div>
                     </section>
                   </div>
@@ -343,7 +366,6 @@ the instances with an instanceName. Then they can be reached by calling getInsta
                       <div>
                         <h4>Return Value</h4>
                         <p>returns the main Mixpanel instance</p>
-
                       </div>
                     </section>
                   </div>
@@ -385,7 +407,6 @@ the instances with an instanceName. Then they can be reached by calling getInsta
                               <td>
                                 <div>
                                   <p>the instance name</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -432,7 +453,6 @@ the instances with an instanceName. Then they can be reached by calling getInsta
                               <td>
                                 <div>
                                   <p>the instance name</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -447,8 +467,8 @@ the instances with an instanceName. Then they can be reached by calling getInsta
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2016 <a class="link" href="http://mixpanel.com" target="_blank" rel="external">Mixpanel</a>. All rights reserved. (Last updated: 2016-10-25)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2017 <a class="link" href="http://mixpanel.com" target="_blank" rel="external">Mixpanel</a>. All rights reserved. (Last updated: 2017-05-22)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

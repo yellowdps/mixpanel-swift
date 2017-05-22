@@ -14,7 +14,7 @@
     <a title="People Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">Mixpanel Docs</a> (99% documented)</p>
+        <p><a href="../index.html">Mixpanel Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/mixpanel/mixpanel-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -39,6 +39,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/People.html">People</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes.html#/s:C8Mixpanel10TweakStore">TweakStore</a>
               </li>
             </ul>
           </li>
@@ -84,9 +87,6 @@
                 <a href="../Extensions/String.html">String</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions/TweakLibraryType.html">TweakLibraryType</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Extensions/UIColor.html">UIColor</a>
               </li>
               <li class="nav-group-task">
@@ -119,6 +119,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/TweakClusterType.html">TweakClusterType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/TweakLibraryType.html">TweakLibraryType</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/TweakableType.html">TweakableType</a>
@@ -242,8 +245,8 @@ token passed to
                               </td>
                               <td>
                                 <div>
-                                  <p>device token as returned from <code>application:didRegisterForRemoteNotificationsWithDeviceToken:</code></p>
-
+                                  <p>device token as returned from
+<code>application:didRegisterForRemoteNotificationsWithDeviceToken:</code></p>
                                 </div>
                               </td>
                             </tr>
@@ -292,8 +295,8 @@ in conjunction with a call to <code>reset</code>, or when a user is logging out.
                               </td>
                               <td>
                                 <div>
-                                  <p>device token as returned from <code>application:didRegisterForRemoteNotificationsWithDeviceToken:</code></p>
-
+                                  <p>device token as returned from
+<code>application:didRegisterForRemoteNotificationsWithDeviceToken:</code></p>
                                 </div>
                               </td>
                             </tr>
@@ -325,7 +328,6 @@ You can override the current project token and distinct Id by
 including the special properties: $token and $distinct_id. If the existing
 user record on the server already has a value for a given property, the old
 value is overwritten. Other existing properties will not be affected.</p>
-
 <div class="aside aside-precondition">
     <p class="aside-title">Precondition</p>
     <p>You must identify for the set information to be linked to that user</p>
@@ -354,7 +356,6 @@ value is overwritten. Other existing properties will not be affected.</p>
                               <td>
                                 <div>
                                   <p>properties dictionary</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -404,7 +405,6 @@ MixpanelType can be either String, Int, UInt, Double, Float, Bool, [MixpanelType
                               <td>
                                 <div>
                                   <p>property name</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -417,7 +417,6 @@ MixpanelType can be either String, Int, UInt, Double, Float, Bool, [MixpanelType
                               <td>
                                 <div>
                                   <p>property value</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -470,7 +469,6 @@ representing the first time something happened.</p>
                               <td>
                                 <div>
                                   <p>properties dictionary</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -521,7 +519,6 @@ that don&rsquo;t exist there will be no effect.</p>
                               <td>
                                 <div>
                                   <p>properties array</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -572,7 +569,6 @@ will be set to the increment amount. Property values must be number objects.</p>
                               <td>
                                 <div>
                                   <p>properties array</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -620,7 +616,6 @@ amount.</p>
                               <td>
                                 <div>
                                   <p>property name</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -633,7 +628,6 @@ amount.</p>
                               <td>
                                 <div>
                                   <p>amount to increment by</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -683,7 +677,6 @@ MixpanelType can be either String, Int, UInt, Double, Float, Bool, [MixpanelType
                               <td>
                                 <div>
                                   <p>mapping of list property names to values to append</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -733,7 +726,6 @@ MixpanelType can be either String, Int, UInt, Double, Float, Bool, [MixpanelType
                               <td>
                                 <div>
                                   <p>mapping of list property names to values to remove</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -782,7 +774,6 @@ MixpanelType can be either String, Int, UInt, Double, Float, Bool, [MixpanelType
                               <td>
                                 <div>
                                   <p>mapping of list property names to lists to union</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -834,7 +825,6 @@ revenue analytics to see which products are generating the most revenue.</p>
                               <td>
                                 <div>
                                   <p>amount of revenue received</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -847,7 +837,6 @@ revenue analytics to see which products are generating the most revenue.</p>
                               <td>
                                 <div>
                                   <p>Optional. properties dictionary</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -916,8 +905,8 @@ revenue analytics to see which products are generating the most revenue.</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2016 <a class="link" href="http://mixpanel.com" target="_blank" rel="external">Mixpanel</a>. All rights reserved. (Last updated: 2016-10-25)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2017 <a class="link" href="http://mixpanel.com" target="_blank" rel="external">Mixpanel</a>. All rights reserved. (Last updated: 2017-05-22)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>
